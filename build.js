@@ -89,6 +89,7 @@ function readJsonFile(filePath) {
 
 
 const buildProject = () => {
+  console.log("start build");
   return new Promise((resolve, reject) => {
     const buildCommand = 'npm run build';
     exec(buildCommand, (err, stdout, stderr) => {
