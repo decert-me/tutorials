@@ -1,19 +1,8 @@
-require('dotenv').config();
 const https = require('https');
 const fs = require('fs');
 const fsextra = require('fs-extra');
 const path = require('path');
 const { exec } = require('child_process');
-
-const filesToDownload = JSON.parse(process.env.FILES_TO_DOWNLOAD).map(e => {
-    const url = e.split("/").reverse();
-    return e = `https://codeload.github.com/${url[1]}/${url[0]}/zip/refs/heads/main`
-})
-
-const filesNames = JSON.parse(process.env.FILES_TO_DOWNLOAD).map(e => {
-    const url = e.split("/").reverse();
-    return e = url[0]
-})
 
 const downloadFile = (url, destinationPath) => {
   return new Promise((resolve, reject) => {
@@ -31,7 +20,7 @@ const downloadFile = (url, destinationPath) => {
   });
 };
 
-const downloadAllFiles = async (folder) => {
+const downloadAllFiles = async (folder, filesToDownload) => {
   for (let i = 0; i < filesToDownload.length; i++) {
     const file = filesToDownload[i];
     await downloadFile(file, folder+"/"+i+".zip");
@@ -53,7 +42,7 @@ const extractFiles = (sourcePath, destinationPath) => {
   });
 };
 
-const extractFilesAndCopyFolder = async(destinationPath) => {
+const extractFilesAndCopyFolder = async(destinationPath, filesNames, filesToDownload) => {
     for (let i = 0; i < filesToDownload.length; i++) {
         const sourcePath = destinationPath+"/"+i+".zip"
         try {
@@ -81,6 +70,23 @@ const createFolder = (folderPath) => {
     });
 };
   
+function readJsonFile(filePath) {
+    return new Promise((resolve, reject) => {
+      fs.readFile(filePath, 'utf8', (err, data) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+        try {
+          const jsonData = JSON.parse(data);
+          resolve(jsonData);
+        } catch (e) {
+          reject(e);
+        }
+      });
+    });
+}
+
 
 const buildProject = () => {
   return new Promise((resolve, reject) => {
@@ -97,24 +103,55 @@ const buildProject = () => {
   });
 };
 
+const generateSidebar = () => {
+    return new Promise((resolve, reject) => {
+      const generateCommand = 'node generate.js';
+      exec(generateCommand, (err, stdout, stderr) => {
+        if (err) {
+          console.error(`Error running generate command: ${err}`);
+          reject(err);
+        } else {
+          console.log('generate successfully');
+          resolve();
+        }
+      });
+    });
+  };
+
 const main = async () => {
+
+  // init 
+  const tutorials = await readJsonFile("tutorials.json");
+  const filesToDownload = tutorials.map(e => {
+    const file = e.repoUrl;
+    const url = file.split("/").reverse();
+    return `https://codeload.github.com/${url[1]}/${url[0]}/zip/refs/heads/main`
+  })
+
+  const filesNames = tutorials.map(e => {
+    const file = e.repoUrl;
+    const url = file.split("/").reverse();
+    return url[0]
+  })
 
   // mkdir
   const folder = "./tmpl";
   createFolder(folder);
 
   // Download all files
-  await downloadAllFiles(folder);
+  await downloadAllFiles(folder, filesToDownload);
 
   // Extract downloaded files
   // copy to the docs
-  await extractFilesAndCopyFolder(folder);
+  await extractFilesAndCopyFolder(folder, filesNames, filesToDownload);
 
   // Delete destinationPath
   await fsextra.remove(folder);
 
+  await generateSidebar();
   // Build project
   await buildProject();
+
 };
 
 main();

@@ -3,7 +3,7 @@
 
 const lightCodeTheme = require('prism-react-renderer/themes/github');
 const darkCodeTheme = require('prism-react-renderer/themes/dracula');
-
+const navbarItems = require('./navbarItems.js');
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'Decert.me',
@@ -22,23 +22,10 @@ const config = {
     require.resolve('./sitePlugin'),
     "docusaurus-plugin-sass", 
     "docusaurus-node-polyfills",
-    [
-      'docusaurus-plugin-dotenv',
-      {
-          path: "./.env", // The path to your environment variables.
-          safe: false, // If false ignore safe-mode, if true load './.env.example', if a string load that file as the sample
-          systemvars: false, // Set to true if you would rather load all system variables as well (useful for CI purposes)
-          silent: false, //  If true, all warnings will be suppressed
-          expand: false, // Allows your variables to be "expanded" for reusability within your .env file
-          defaults: false, //  Adds support for dotenv-defaults. If set to true, uses ./.env.defaults
-          ignoreStub: true
-      }
-    ]
   ],
 
   url: 'https://decert.me',
   baseUrl: '/tutorial',
-// tutorial/solidity/
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
 
@@ -80,48 +67,25 @@ const config = {
         //   alt: 'Decert Logo',
         //   src: 'img/logo.png',
         // },
-        items: [
-          // {
-          //   label: '区块链基础',
-          //   position: 'left',
-          //   href: 'https://decert.me/tutorial/block_basic/start/',
-          // },
-          {
-            type: 'doc',
-            docId: 'block_basic/start',
-            position: 'left',
-            label: '区块链基础',
-          },
-          {
-            type: 'doc',
-            docId: 'solidity/intro',
-            position: 'left',
-            label: '学习 Solidity',
-          },
-          {
-            href: 'https://github.com/decert-me/learnsolidity',
-            label: 'GitHub',
-            position: 'right',
-          },
-        ],
+        items: navbarItems
       },
       footer: {
         style: 'dark',
         links: [
-          {
-            title: '教程',
-            items: [
-              {
-                label: '区块链基础',
-                href: '/block_basic/start',
-              },
-              {
-                label: 'Solidity 教程',
-                to: '/solidity/intro',
+          // {
+          //   title: '教程',
+          //   items: [
+          //     {
+          //       label: '区块链基础',
+          //       to: '/block_basic/start',
+          //     },
+          //     {
+          //       label: 'Solidity 教程',
+          //       to: '/solidity/intro',
                 
-              },
-            ],
-          },
+          //     },
+          //   ],
+          // },
           {
             title: '社区',
             items: [
