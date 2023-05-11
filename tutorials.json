@@ -2,11 +2,14 @@
     {
         "repoUrl": "https://github.com/decert-me/blockchain-basic",
         "label": "区块链基础",
-        "startPage": "start"
+        "startPage": "start",
+        "catalogueName": "blockchain-basic"
+
     },
     {
         "repoUrl": "https://github.com/decert-me/learnsolidity",
         "label": "学习 Solidity",
-        "startPage": "intro"
+        "startPage": "intro",
+        "catalogueName": "solidity"
     }
 ]
