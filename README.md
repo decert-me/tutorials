@@ -12,3 +12,5 @@
 ## 共同参与 
 见：https://github.com/decert-me/tutorials/wiki/%E5%85%B1%E5%90%8C%E5%8F%82%E4%B8%8E
 
+## 联系我们
+- Discord： https://discord.gg/kuSZHftTqe
