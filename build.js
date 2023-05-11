@@ -139,6 +139,8 @@ const main = async () => {
     return e.catalogueName
   })
 
+  await fsextra.remove("./docs");     //  预先删除
+
   // mkdir
   const folder = "./tmpl";
   createFolder(folder);
@@ -156,9 +158,6 @@ const main = async () => {
   await generateSidebar();
   // Build project
   await buildProject();
-
-
-
 
 };
 
