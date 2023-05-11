@@ -29,7 +29,7 @@ export default function AppFooter({ isMobile }) {
           <div className="right">
             <img src={Notion} onClick={()=>{window.open('https://decert.notion.site/Decert-me-8b479c6e443740f192a56f2e090829ab','_blank')}} />
             <img src={Twitter} onClick={()=>{window.open('https://twitter.com/decertme','_blank')}}></img>
-            <img src={Discord} onClick={()=>{window.open(`https://discord.gg/${process.env.REACT_APP_DISCORD_VERIFY_INVITE_LINK}`,'_blank')}}/>
+            <img src={Discord} onClick={()=>{window.open(`https://discord.gg/kuSZHftTqe`,'_blank')}}/>
             <img src={Github} onClick={()=>{window.open('https://github.com/decert-me','_blank')}} />
           </div>
         </div>
