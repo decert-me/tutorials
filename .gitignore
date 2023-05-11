@@ -16,6 +16,13 @@
 .env.test.local
 .env.production.local
 
+# docs
+/docs/*
+
+# config
+navbarItems.js
+sidebars.js
+
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

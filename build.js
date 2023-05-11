@@ -91,7 +91,7 @@ function readJsonFile(filePath) {
 const buildProject = () => {
   console.log("start build");
   return new Promise((resolve, reject) => {
-    const buildCommand = 'npm run build';
+    const buildCommand = 'npm run docusaurus build';
     exec(buildCommand, (err, stdout, stderr) => {
       if (err) {
         console.error(`Error running build command: ${err}`);
@@ -147,11 +147,14 @@ const main = async () => {
   await extractFilesAndCopyFolder(folder, filesNames, filesToDownload);
 
   // Delete destinationPath
-  await fsextra.remove(folder);
+  await fsextra.remove(folder)
 
   await generateSidebar();
   // Build project
   await buildProject();
+
+
+
 
 };
 
