@@ -42,7 +42,7 @@ const extractFiles = (sourcePath, destinationPath) => {
   });
 };
 
-const extractFilesAndCopyFolder = async(destinationPath, filesNames, filesToDownload) => {
+const extractFilesAndCopyFolder = async(destinationPath, filesNames, filesToDownload, catalogueNames) => {
     for (let i = 0; i < filesToDownload.length; i++) {
         const sourcePath = destinationPath+"/"+i+".zip"
         try {
@@ -51,7 +51,7 @@ const extractFilesAndCopyFolder = async(destinationPath, filesNames, filesToDown
             // 将 folderToCopy 从 destinationPath 复制到另一个文件夹
             // TODO ===> "unzip"+i to ==> xx-main
             const sourceFolder = path.join(destinationPath, filesNames[i]+"-main/docs");
-            const destinationFolder = `./docs/${filesNames[i]}`;
+            const destinationFolder = `./docs/${catalogueNames[i]}`;
             await fsextra.copy(sourceFolder, destinationFolder);
             console.log('Files extracted and folder copied successfully');
             } catch (err) {
@@ -135,6 +135,10 @@ const main = async () => {
     return url[0]
   })
 
+  const catalogueNames = tutorials.map(e => {
+    return e.catalogueName
+  })
+
   // mkdir
   const folder = "./tmpl";
   createFolder(folder);
@@ -144,7 +148,7 @@ const main = async () => {
 
   // Extract downloaded files
   // copy to the docs
-  await extractFilesAndCopyFolder(folder, filesNames, filesToDownload);
+  await extractFilesAndCopyFolder(folder, filesNames, filesToDownload, catalogueNames);
 
   // Delete destinationPath
   await fsextra.remove(folder)
