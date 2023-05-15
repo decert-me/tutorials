@@ -120,9 +120,12 @@ const generateSidebar = () => {
   };
 
 const main = async () => {
-
+  
   // init 
-  const tutorials = await readJsonFile("tutorials.json");
+  const index = process.argv.slice(2)[0];
+  const arr = await readJsonFile("tutorials.json");
+  const tutorials = index ? arr[Number(index)] : arr;
+
   const filesToDownload = tutorials.map(e => {
     const file = e.repoUrl;
     const url = file.split("/").reverse();
