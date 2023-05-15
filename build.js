@@ -124,7 +124,14 @@ const main = async () => {
   // init 
   const index = process.argv.slice(2)[0];
   const arr = await readJsonFile("tutorials.json");
-  const tutorials = index ? arr[Number(index)] : arr;
+  let tutorials = arr;
+  if (index) {
+    arr.map((e, i) => {
+      if (e.catalogueName === index) {
+        tutorials = [arr[i]]
+      }
+    })
+  }
 
   const filesToDownload = tutorials.map(e => {
     const file = e.repoUrl;
