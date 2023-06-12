@@ -34,3 +34,6 @@
 .navbar__inner{
   width: 1286px;
 }
+body{
+  line-height: 1.75;
+}
