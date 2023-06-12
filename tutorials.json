@@ -4,7 +4,6 @@
         "label": "区块链基础",
         "startPage": "start",
         "catalogueName": "blockchain-basic"
-
     },
     {
         "repoUrl": "https://github.com/decert-me/learnsolidity",
