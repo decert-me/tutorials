@@ -185,7 +185,6 @@ export default function DocBreadcrumbs() {
             {primaryMenu.concat(breadcrumbs).map((item, idx) => {
               const isLast = idx === primaryMenu.concat(breadcrumbs).length - 1;
               return (
-                <>
                 <BreadcrumbsItem
                   key={idx}
                   active={isLast}
@@ -199,7 +198,6 @@ export default function DocBreadcrumbs() {
                     {item.label}
                   </BreadcrumbsItemLink>
                 </BreadcrumbsItem>
-                </>
               );
             })}
           </ul>
