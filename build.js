@@ -121,7 +121,22 @@ const generateSidebar = () => {
         }
       });
     });
-  };
+};
+
+const compatible = () => {
+  return new Promise((resolve, reject) => {
+    const compatibleCommand = 'node compatible.js';
+    exec(compatibleCommand, (err, stdout, stderr) => {
+      if (err) {
+        console.error(`Error running compatible command: ${err}`);
+        reject(err);
+      } else {
+        console.log('compatible successfully');
+        resolve();
+      }
+    });
+  });
+};
 
 const main = async () => {
   
@@ -174,6 +189,8 @@ const main = async () => {
   await fsextra.remove(folder)
 
   await generateSidebar();
+
+  await compatible();
   // Build project
   await buildProject();
 
