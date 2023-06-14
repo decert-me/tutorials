@@ -131,15 +131,15 @@ const getNavbarItems = async(dir, navbarItems = []) => {
         label: 'GitHub',
         position: 'right',
     })
-    files.forEach((file, index) => {
-        const item = tutorials.filter(e => e.catalogueName === file)[0];
-        navbarItems.push({
-            type: 'doc',
-            docId: file+"/"+item.startPage,
-            position: 'left',
-            label: item.label,
-        },)
-    });
+    tutorials.map((e, i) => {
+      const file = files.filter(item => item === e.catalogueName)[0];
+      navbarItems.push({
+        type: 'doc',
+        docId: file+"/"+e.startPage,
+        position: 'left',
+        label: e.label,
+      })
+    })
     return navbarItems;
 };
 
