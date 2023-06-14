@@ -42,22 +42,110 @@ const extractFiles = (sourcePath, destinationPath) => {
   });
 };
 
-const extractFilesAndCopyFolder = async(destinationPath, filesNames, filesToDownload, catalogueNames) => {
-    for (let i = 0; i < filesToDownload.length; i++) {
-        const sourcePath = destinationPath+"/"+i+".zip"
+function getDirectory(data, root) {
+  let directory
+  if (data.indexOf("##") === -1) {
+    const regex = /\[(.*?)\]\((.*?)\)/;
+
+    directory = data.split("*")
+      .filter(item => item.includes('.md'))
+      .map(str => [
+        str.match(regex)[1], 
+        root + str.match(regex)[2], 
+        str.match(regex)[2]
+      ])
+  }else{
+    const lines = data.split('\n');
+    const result = [];
+    let currentCategory = '';
+    
+    lines.forEach((line, i) => {
+      if (line.startsWith('*')) {
+        const match = line.match(/\[([^\]]+)\]\(([^)]+)\)/);
+        if (match) {
+          const title = match[1];
+          const link = match[2];
+          const baseLinkP = root + link.split("/")[0];
+
+          const baseLink = root + link;
+          const targetLink = i + "_" + link.split("/")[0];
+          const file = i + "_" + link;
+          result.push({ title, link, file, baseLink, targetLink, baseLinkP, category: currentCategory });
+        }
+      } else if (line.startsWith('## ')) {
+        currentCategory = line.replace('## ', '');
+      } else if (line.trim() !== '') {
+        result.push({ title: line.trim(), link: undefined, category: currentCategory });
+      }
+    });
+    directory = result;
+  }
+  return directory
+}
+
+async function generateDocs(destinationFolder, flag, directory) {
+  if (flag) {
+    for (let i = 0; i < directory.length; i++) {
+      if (!directory[i].category) {
+        await fsextra.copy(directory[i].baseLinkP, destinationFolder+`/${i}_${directory[i].targetLink}`);
+      }else{
+        const link = directory[i].baseLink.split("/").pop();
+        const nowLink = `${i}${directory[i].file.split("/")[1]}`;
+        await new Promise((resolve, reject) => {
+          fs.readFileSync(directory[i].baseLink, 'utf-8').replace(link, nowLink)
+        }).then(() => {
+          fsextra.copy(directory[i].baseLink, destinationFolder+`/${directory[i].category}/${nowLink}`);
+        })
+        // 检查是否有图片
         try {
-            // Extract files from sourcePath to destinationPath
-            await extractFiles(sourcePath, destinationPath);
-            // 将 folderToCopy 从 destinationPath 复制到另一个文件夹
-            // TODO ===> "unzip"+i to ==> xx-main
-            const sourceFolder = path.join(destinationPath, filesNames[i]+"-main/docs");
-            const destinationFolder = `./docs/${catalogueNames[i]}`;
-            await fsextra.copy(sourceFolder, destinationFolder);
-            console.log('Files extracted and folder copied successfully');
-            } catch (err) {
-            console.error(err);
-            }
+          const stats = fs.statSync(directory[i].baseLinkP+"/img");
+          if (stats.isDirectory()) {
+            await fsextra.copy(directory[i].baseLinkP+"/img", destinationFolder+`/${directory[i].category}/img`);
+          }
+        } catch (error) {}
+        
+      }
     }
+  }else{
+    for (let i = 0; i < directory.length; i++) {
+      await fsextra.copy(directory[i][1], destinationFolder+`/${i}_${directory[i][2]}`);
+    }
+  }
+}
+
+const extractFilesAndCopyFolder = async(destinationPath, filesNames, filesToDownload, catalogueNames) => {
+  for (let i = 0; i < filesToDownload.length; i++) {
+    const sourcePath = destinationPath+"/"+i+".zip"
+    try {
+        // Extract files from sourcePath to destinationPath
+        await extractFiles(sourcePath, destinationPath);
+        // 将 folderToCopy 从 destinationPath 复制到另一个文件夹
+        // TODO ====> 查看SUMMARY
+        const root = destinationPath + "/" + filesNames[i] + "-main/";
+        const SUMMARY = root + "SUMMARY.md";
+        let flag = true;  //  true: 有title, false: 无title
+        const directory = await new Promise((resolve, reject) => {
+          fs.readFile(SUMMARY, 'utf8', (err, data) => {
+            if (err) reject(err)
+            flag = data.indexOf("##") === -1 ? false : true;
+            const directory = getDirectory(data, root)
+            resolve(directory)
+          });
+        })
+        .then(res => {return res})
+        .catch(err => console.log(err))
+
+        // 创建文档
+        // const sourceFolder = path.join(destinationPath, filesNames[i]+"-main");
+        const destinationFolder = `./docs/${catalogueNames[i]}`;
+        console.log(directory);
+        generateDocs(destinationFolder, flag, directory);
+        return
+        console.log('Files extracted and folder copied successfully');
+        } catch (err) {
+        console.error(err);
+    }
+  }
 }
 
 const createFolder = (folderPath) => {
@@ -153,14 +241,16 @@ const main = async () => {
 
   // mkdir
   const folder = "./tmpl";
-  createFolder(folder);
+  // createFolder(folder);
 
   // Download all files
-  await downloadAllFiles(folder, filesToDownload);
+  // await downloadAllFiles(folder, filesToDownload);
 
   // Extract downloaded files
   // copy to the docs
   await extractFilesAndCopyFolder(folder, filesNames, filesToDownload, catalogueNames);
+
+  return
 
   // Delete destinationPath
   await fsextra.remove(folder)
