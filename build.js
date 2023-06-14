@@ -4,6 +4,11 @@ const fsextra = require('fs-extra');
 const path = require('path');
 const { exec } = require('child_process');
 
+const common = {
+  gitbook: "/",
+  docusaurus: "/docs"
+}
+
 const downloadFile = (url, destinationPath) => {
   return new Promise((resolve, reject) => {
     https.get(url, (res) => {
@@ -42,18 +47,17 @@ const extractFiles = (sourcePath, destinationPath) => {
   });
 };
 
-const extractFilesAndCopyFolder = async(destinationPath, filesNames, filesToDownload, catalogueNames) => {
+const extractFilesAndCopyFolder = async(destinationPath, filesNames, filesToDownload, catalogueNames, docTypes) => {
     for (let i = 0; i < filesToDownload.length; i++) {
         const sourcePath = destinationPath+"/"+i+".zip"
+        const filePath = common[docTypes[i]];
         try {
             // Extract files from sourcePath to destinationPath
             await extractFiles(sourcePath, destinationPath);
             // 将 folderToCopy 从 destinationPath 复制到另一个文件夹
-            // TODO ===> "unzip"+i to ==> xx-main
-            const sourceFolder = path.join(destinationPath, filesNames[i]+"-main/docs");
+            const sourceFolder = path.join(destinationPath, filesNames[i]+"-main"+filePath);
             const destinationFolder = `./docs/${catalogueNames[i]}`;
             await fsextra.copy(sourceFolder, destinationFolder);
-            console.log('Files extracted and folder copied successfully');
             } catch (err) {
             console.error(err);
             }
@@ -149,6 +153,10 @@ const main = async () => {
     return e.catalogueName
   })
 
+  const docTypes = tutorials.map(e => {
+    return e.docType
+  })
+
   await fsextra.remove("./docs");     //  预先删除
 
   // mkdir
@@ -160,7 +168,7 @@ const main = async () => {
 
   // Extract downloaded files
   // copy to the docs
-  await extractFilesAndCopyFolder(folder, filesNames, filesToDownload, catalogueNames);
+  await extractFilesAndCopyFolder(folder, filesNames, filesToDownload, catalogueNames, docTypes);
 
   // Delete destinationPath
   await fsextra.remove(folder)
