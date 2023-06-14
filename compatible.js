@@ -5,12 +5,7 @@ const common = [
         path: "./docs/MasteringChainAnalytics/08_nft_analysis/readme.md",
         oldValue: "<br>",
         newValue: "<br/>"
-    },
-    {
-        path: "./docs/MasteringChainAnalytics/03_build_first_dashboard/readme.md",
-        oldValue: "(02_get_started/readme.md)",
-        newValue: "(../02_get_started/readme.md)"
-    },
+    }
 ]
 
 function modifyFile(arr) {
