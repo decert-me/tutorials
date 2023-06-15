@@ -45,8 +45,6 @@ const config = {
         docs: {
           routeBasePath: '/',
           sidebarPath: require.resolve('./sidebars.js'),
-          editUrl:
-            'https://github.com/decert-me/learnsolidity/tree/main/',
           remarkPlugins: [codeBlock]
         },
         blog: false,

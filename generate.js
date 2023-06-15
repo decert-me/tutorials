@@ -126,11 +126,11 @@ const getNavbarItems = async(dir, navbarItems = []) => {
     const files = fs.readdirSync(dir);
     const tutorials = await readJsonFile("tutorials.json");
     // 初始化
-    navbarItems.push({
-        href: 'https://github.com/decert-me/learnsolidity',
-        label: 'GitHub',
-        position: 'right',
-    })
+    // navbarItems.push({
+    //     href: 'https://github.com/decert-me/tutorials',
+    //     label: 'GitHub',
+    //     position: 'right',
+    // })
     tutorials.map((e, i) => {
       const file = files.filter(item => item === e.catalogueName)[0];
       navbarItems.push({
