@@ -58,9 +58,10 @@ function getDirectory(data, catalogueName) {
   return newArr.reverse()
 }
 
-const getSidebars = async(dir, sidebars = {}) => {
-    const files = fs.readdirSync(dir);
-    const tutorials = await readJsonFile("tutorials.json");
+const getSidebars = async(dir, tutorials, sidebars = {}) => {
+    const arr = fs.readdirSync(dir);
+    const files = tutorials.length !== arr.length ? [tutorials[0].catalogueName] : arr;
+    // const tutorials = await readJsonFile("tutorials.json");
     // files.forEach((file) => {
   for (let i = 0; i < files.length; i++) {
     const file = files[i]
@@ -109,6 +110,7 @@ function readJsonFile(filePath) {
     return new Promise((resolve, reject) => {
       fs.readFile(filePath, 'utf8', (err, data) => {
         if (err) {
+          console.log("error ===>", err);
           reject(err);
           return;
         }
@@ -116,15 +118,37 @@ function readJsonFile(filePath) {
           const jsonData = JSON.parse(data);
           resolve(jsonData);
         } catch (e) {
+          console.log("error ===>", e);
           reject(e);
         }
       });
     });
-  }
+}
 
-const getNavbarItems = async(dir, navbarItems = []) => {
-    const files = fs.readdirSync(dir);
-    const tutorials = await readJsonFile("tutorials.json");
+function readModuleFile(filePath) {
+  return new Promise((resolve, reject) => {
+    fs.readFile(filePath, 'utf8', (err, data) => {
+      if (err) {
+        console.log("error ===>", err);
+        reject(err);
+        return;
+      }
+      try {
+        const jsonData = JSON.parse(data.replace("module.exports = ","").replace(";",""));
+        resolve(jsonData);
+      } catch (e) {
+        console.log("error ===>", e);
+        reject(e);
+      }
+    });
+  });
+}
+
+const getNavbarItems = async(dir, tutorials, navbarItems = []) => {
+    // const files = fs.readdirSync(dir);
+    const arr = fs.readdirSync(dir);
+    const files = tutorials.length !== arr.length ? [tutorials[0].catalogueName] : arr;
+    // const tutorials = await readJsonFile("tutorials.json");
     // 初始化
     // navbarItems.push({
     //     href: 'https://github.com/decert-me/tutorials',
@@ -144,24 +168,64 @@ const getNavbarItems = async(dir, navbarItems = []) => {
 };
 
 
-
-async function generateSidebars(params) {
-  const sidebar = await getSidebars(DOCS_DIR);
-
-// 侧边栏
-fs.writeFileSync(
-  path.join(__dirname, 'sidebars.js'),
-  `module.exports = ${JSON.stringify(sidebar, null, 2)};`
-);
-}
-
-async function generateNavbarItemsFile() {
-    const navbarItems = await getNavbarItems(DOCS_DIR);
+async function generateSidebars(tutorials) {
+  const sidebar = await getSidebars(DOCS_DIR, tutorials);
+  const sidebars = await readModuleFile("sidebars.js");
+  if (Object.keys(sidebars).length > tutorials.length) {
+    const key = tutorials[0].catalogueName;
+    sidebars[key] = sidebar[key]
+    // 单个更新
     fs.writeFileSync(
-      path.join(__dirname, 'navbarItems.js'),
-      `module.exports = ${JSON.stringify(navbarItems, null, 2)};`
+      path.join(__dirname, 'sidebars.js'),
+      `module.exports = ${JSON.stringify(sidebars, null, 2)};`
     );
+  }else{
+    // 全量更新
+    // 侧边栏
+    fs.writeFileSync(
+      path.join(__dirname, 'sidebars.js'),
+      `module.exports = ${JSON.stringify(sidebar, null, 2)};`
+    );
+  }
 }
 
-generateSidebars();
-generateNavbarItemsFile(); // 执行函数
+async function generateNavbarItemsFile(tutorials) {
+    const navbarItems = await readModuleFile("navbarItems.js");
+    const navbarItem = await getNavbarItems(DOCS_DIR, tutorials);
+
+    if (Object.keys(navbarItems).length > tutorials.length) {
+      const key = tutorials[0].catalogueName;
+      navbarItems[key] = navbarItem[key]
+      // 单个更新
+      fs.writeFileSync(
+        path.join(__dirname, 'navbarItems.js'),
+        `module.exports = ${JSON.stringify(navbarItems, null, 2)};`
+      );
+    }else{
+      // 全量更新
+      // 侧边栏
+      fs.writeFileSync(
+        path.join(__dirname, 'navbarItems.js'),
+        `module.exports = ${JSON.stringify(navbarItem, null, 2)};`
+      );
+    }
+}
+
+
+const main = async () => {
+  const index = process.argv.slice(2)[0];
+  const arr = await readJsonFile("tutorials.json");
+  let tutorials = arr;
+  if (index) {
+    arr.map((e, i) => {
+      if (e.catalogueName === index) {
+        tutorials = [arr[i]]
+      }
+    })
+  }
+
+  await generateSidebars(tutorials);
+  await generateNavbarItemsFile(tutorials); // 执行函数
+}
+
+main();
