@@ -144,7 +144,6 @@ const getNavbarItems = async(dir, navbarItems = []) => {
 };
 
 
-
 async function generateSidebars(params) {
   const sidebar = await getSidebars(DOCS_DIR);
 
@@ -163,5 +162,11 @@ async function generateNavbarItemsFile() {
     );
 }
 
-generateSidebars();
-generateNavbarItemsFile(); // 执行函数
+
+const main = async () => {
+  
+  generateSidebars();
+  generateNavbarItemsFile(); // 执行函数
+}
+
+main();

@@ -110,7 +110,7 @@ const buildProject = () => {
 
 const generateSidebar = () => {
     return new Promise((resolve, reject) => {
-      const generateCommand = 'node generate.js';
+      const generateCommand = `node generate.js`;
       exec(generateCommand, (err, stdout, stderr) => {
         if (err) {
           console.error(`Error running generate command: ${err}`);
@@ -172,7 +172,8 @@ const main = async () => {
     return e.docType
   })
 
-  await fsextra.remove("./docs");     //  预先删除
+  //  全量更新时预先删除
+  !index && await fsextra.remove("./docs");     
 
   // mkdir
   const folder = "./tmpl";
@@ -193,6 +194,12 @@ const main = async () => {
   await compatible();
   // Build project
   await buildProject();
+
+  // 将JSON放到build中
+  await fsextra.copy("./tutorials.json", "./build/tutorials.json")
+  .then(res => {
+    console.log('copy tutorials.json successfully');
+  })
 
 };
 
