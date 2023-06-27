@@ -108,9 +108,9 @@ const buildProject = () => {
   });
 };
 
-const generateSidebar = (index) => {
+const generateSidebar = () => {
     return new Promise((resolve, reject) => {
-      const generateCommand = `node generate.js ${index}`;
+      const generateCommand = `node generate.js`;
       exec(generateCommand, (err, stdout, stderr) => {
         if (err) {
           console.error(`Error running generate command: ${err}`);
@@ -189,7 +189,7 @@ const main = async () => {
   // Delete destinationPath
   await fsextra.remove(folder)
 
-  await generateSidebar(index);
+  await generateSidebar();
 
   await compatible();
   // Build project
