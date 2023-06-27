@@ -15,7 +15,6 @@ function getDirectory(data, catalogueName) {
         if (match) {
           const title = match[1];
           const link = match[2].replace(".md","").replace(/^\d+_/, '');
-          console.log(link);
           result.push({ title, link, category: currentCategory });
         }
       } else if (line.startsWith('## ')) {
@@ -91,7 +90,6 @@ const getSidebars = async(dir, tutorials, sidebars = {}) => {
             });
           }).then(res => {
             sidebars[file] = res;
-            console.log(res);
           })
       } else {
             // 自动
@@ -129,15 +127,13 @@ function readModuleFile(filePath) {
   return new Promise((resolve, reject) => {
     fs.readFile(filePath, 'utf8', (err, data) => {
       if (err) {
-        console.log("error ===>", err);
-        reject(err);
-        return;
+        resolve(null);
+        return
       }
       try {
         const jsonData = JSON.parse(data.replace("module.exports = ","").replace(";",""));
         resolve(jsonData);
       } catch (e) {
-        console.log("error ===>", e);
         reject(e);
       }
     });
@@ -171,7 +167,7 @@ const getNavbarItems = async(dir, tutorials, navbarItems = []) => {
 async function generateSidebars(tutorials) {
   const sidebar = await getSidebars(DOCS_DIR, tutorials);
   const sidebars = await readModuleFile("sidebars.js");
-  if (Object.keys(sidebars).length > tutorials.length) {
+  if (sidebars && Object.keys(sidebars).length > tutorials.length) {
     const key = tutorials[0].catalogueName;
     sidebars[key] = sidebar[key]
     // 单个更新
@@ -193,7 +189,7 @@ async function generateNavbarItemsFile(tutorials) {
     const navbarItems = await readModuleFile("navbarItems.js");
     const navbarItem = await getNavbarItems(DOCS_DIR, tutorials);
 
-    if (Object.keys(navbarItems).length > tutorials.length) {
+    if (navbarItems && Object.keys(navbarItems).length > tutorials.length) {
       const key = tutorials[0].catalogueName;
       navbarItems[key] = navbarItem[key]
       // 单个更新
