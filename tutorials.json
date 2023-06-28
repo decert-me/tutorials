@@ -16,5 +16,14 @@
         "img": "https://ipfs.decert.me/images/learn-solidity.png",
         "desc": "Solidity是一种专门为以太坊平台设计的编程语言，它是EVM智能合约的核心，是区块链开发人员必须掌握的一项技能。",
         "docType": "docusaurus"
+    },
+    {
+        "repoUrl": "https://github.com/SixdegreeLab/MasteringChainAnalytics",
+        "label": "成为链上数据分析师",
+        "startPage": "/",
+        "catalogueName": "MasteringChainAnalytics",
+        "img": "https://ipfs.learnblockchain.cn/images/sixdegree.png",
+        "desc": "本教程是一个面向区块链爱好者的系列教程，帮助新手用户从零开始学习区块链数据分析，成为一名链上数据分析师。",
+        "docType": "gitbook"
     }
 ]
