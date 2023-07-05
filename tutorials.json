@@ -20,7 +20,7 @@
     {
         "repoUrl": "https://github.com/SixdegreeLab/MasteringChainAnalytics",
         "label": "成为链上数据分析师",
-        "startPage": "README",
+        "startPage": "/",
         "catalogueName": "MasteringChainAnalytics",
         "img": "https://ipfs.learnblockchain.cn/images/sixdegree.png",
         "desc": "本教程是一个面向区块链爱好者的系列教程，帮助新手用户从零开始学习区块链数据分析，成为一名链上数据分析师。",
