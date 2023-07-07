@@ -13,11 +13,11 @@ export default function CustomNav() {
 
     let [isOpenM, setIsOpenM] = useState(false);
     let [isMobile, setIsMobile] = useState(false);
-    let [language, setLanguage] = useState("cn");
+    let [language, setLanguage] = useState("CN");
     let [cache, setCache] = useState("");
     
     function toggleI18n() {
-        language = language === "cn" ? "en" : "cn";
+        language = language === "CN" ? "EN" : "CN";
         setLanguage(language);
     }
 
@@ -60,7 +60,7 @@ export default function CustomNav() {
                     </div>
                     {
                         menus.map((e,i) => 
-                            <a href={e.to} key={i}>
+                            <a href={e.to} key={i} className={i === 0 ? "active" : ""}>
                                 {e.label}
                             </a>    
                         )
@@ -87,10 +87,11 @@ export default function CustomNav() {
                         <Button 
                             type="ghost"
                             ghost
-                            className='lang'
+                            className='lang custom-btn'
+                            id='hover-btn-line'
                             onClick={() => toggleI18n()}
                         >
-                            {language === 'cn' ? "中文" : "EN"}
+                            {language === 'CN' ? "CN" : "EN"}
                         </Button>
                     }
                 </div>
