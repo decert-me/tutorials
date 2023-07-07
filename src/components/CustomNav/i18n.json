@@ -1,5 +1,5 @@
 {
-    "cn": {
+    "CN": {
         "explore": "挑战",
         "lesson": "教程",
         "lesson-sub": "推荐课程",
@@ -8,7 +8,7 @@
         "disconnect": "断开连接",
         "profile": "个人中心"
     },
-    "en": {
+    "EN": {
         "explore": "Challenges",
         "lesson": "Tutorials",
         "lesson-sub": "Recommended course",
