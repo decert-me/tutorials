@@ -25,6 +25,7 @@ const config = {
     require.resolve('./sitePlugin'),
     "docusaurus-plugin-sass", 
     "docusaurus-node-polyfills",
+    "docusaurus2-dotenv",
   ],
 
   url: 'https://decert.me',
