@@ -10,6 +10,7 @@ import DocSidebarItems from '@theme/DocSidebarItems';
 import styles from './styles.module.css';
 import './custom.scss';
 import { Button, Divider } from 'antd';
+import { tutorialsInit, tutorialsItemsInit } from '../../../../utils/tutorialsCache';
 function useShowAnnouncementBar() {
   const {isActive} = useAnnouncementBar();
   const [showAnnouncementBar, setShowAnnouncementBar] = useState(isActive);
@@ -28,6 +29,16 @@ export default function DocSidebarDesktopContent({path, sidebar, className}) {
 
   const json = require("../../../../../tutorials.json");
   let [selectItem, setSelectItem] = useState();
+  let [tutorials, setTutorials] = useState();
+
+  function init(params) {
+    // 1、所选教程 ==> arr
+    const items = tutorialsItemsInit(sidebar);
+    console.log(selectItem);
+    // 2、local初始化
+    tutorials = tutorialsInit(selectItem.catalogueName, items)
+    setTutorials([... tutorials]);
+  }
 
   useEffect(() => {
     json.forEach(e => {
@@ -36,6 +47,7 @@ export default function DocSidebarDesktopContent({path, sidebar, className}) {
         setSelectItem({...selectItem});
       }
     })
+    init();
   },[])
 
   return (
@@ -61,7 +73,10 @@ export default function DocSidebarDesktopContent({path, sidebar, className}) {
           <Button 
             type='primary'
             onClick={() => {
-              window.open(`https://decert.me/quests/${selectItem.challenge}`, '_blank')
+              console.log({path, sidebar});
+              console.log(selectItem);
+              console.log(tutorials);
+              // window.open(`https://decert.me/quests/${selectItem.challenge}`, '_blank')
             }}
           >
             开始挑战
