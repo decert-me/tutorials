@@ -18,11 +18,21 @@ export const authLoginSign = (data) => {
     })
 }
 
+
 // 获取个人资料
 export const getUser = (data) => {
     return serviceAxios({
         url: `/users/${data.address}`,
         method: "get",
+        data
+    })
+}
+
+// 获取阅读进度
+export const getTutorialProgress = (data) => {
+    return serviceAxios({
+        url: `/tutorial/progress`,
+        method: "post",
         data
     })
 }

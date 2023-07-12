@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useAccount, useDisconnect, useSigner } from "wagmi";
-import { getLoginMsg } from "../../request/public";
+import { authLoginSign, getLoginMsg } from "../../request/public";
 import { Modal } from 'antd';
 const { confirm } = Modal;
 
@@ -33,9 +33,23 @@ export default function CustomSign(params) {
 
     async function getSignature(params) {
         signer?.signMessage(nonce)
-        .then(res => {
-            res && localStorage.setItem(`decert.token`,res)
-            Modal.destroyAll();
+        // .then(res => {
+        //     res && localStorage.setItem(`decert.token`,res)
+        //     Modal.destroyAll();
+        // })
+        .then(async(res) => {
+            // 3、获取token
+            await authLoginSign({
+                address: address,
+                message: nonce,
+                signature: res
+            })
+            .then(res => {
+                if (res) {
+                    localStorage.setItem(`decert.token`,res.data.token)
+                    window.history.go(0)
+                }
+            })
         })
         .catch(err => {
             // 拒绝签名
