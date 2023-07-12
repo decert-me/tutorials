@@ -50,7 +50,9 @@ export default function CustomSign(params) {
     },[isConnected])
 
     useEffect(() => {
-        nonce && signer && getSignature();
+        if (signer) {
+            nonce && signer && getSignature();
+        }
     },[signer])
 
     return (
