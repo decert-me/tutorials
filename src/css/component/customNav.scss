@@ -51,8 +51,7 @@
     .nav-right{
         width: calc(214px);
         display: flex;
-        // justify-content: space-between;
-        justify-content: flex-end;
+        justify-content: space-between;
     }
     .custom-btn{
         width: 40px;
@@ -73,6 +72,13 @@
         &:hover, span:hover{
             color: #B47243;
             border-color: #B47243;
+        }
+    }
+    #hover-btn-full{
+        background-color: #8F5A35;
+        color: #fff;
+        &:hover{
+            background-color: #B47243;
         }
     }
     .lang{
@@ -110,9 +116,9 @@
     .test{
         width: 200px !important;
     }
-        .menu-item{
-            width: 100px;
-        }
+    .menu-item{
+        width: 100px;
+    }
 }
 .Header{
     background-color: #fff;
@@ -121,8 +127,19 @@
         color: #000;
     }
     .user{
-        color: #fff;
-        background-color: #000;
+        // background-color: #000;
+        align-items: center;
+        border-radius: 10px;
+        cursor: pointer;
+        display: flex;
+        font-size: 17px;
+        height: 40px;
+        padding-right: 16px;
+        border: 1px solid #8f5a35;
+        color: #8f5a35;
+        p{
+            margin: 0;
+        }
     }
 }
 .ModalConnect{
@@ -191,6 +208,23 @@ body{
 }
 .custom-bread{
     display: none;
+}
+.custom-dropmenu{
+    .ant-dropdown-menu{
+        padding: 8px 6px !important;
+        // box-shadow: none !important;
+    }
+    .ant-dropdown-menu-item{
+        height: 50px;
+        padding-left: 23px !important;
+    }
+    .ant-dropdown-menu-title-content{
+        font-weight: 500;
+    }
+    .ant-dropdown-menu-item-divider{
+        margin: 5px 0 !important;
+        background-color: #E9E9E9 !important;
+    }
 }
 
 @media screen and (max-width: 996px) {

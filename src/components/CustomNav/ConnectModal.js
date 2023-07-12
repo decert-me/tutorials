@@ -1,28 +1,35 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Divider, Modal } from "antd";
 import { useAccount, useConnect } from "wagmi";
+import { GlobalContext } from '../../provider';
+import { useWeb3Modal } from '@web3modal/react';
 
 
 export default function ConnectModal(props) {
 
     const { open, handleCancel } = props;
+
+    const { open: openWeb3Modal, close } = useWeb3Modal();
+    const { setIsSign } = useContext(GlobalContext);
     const { connect, connectors } = useConnect({
         chainId: Number(process.env.CHAIN_ID)
     });
     const { connector, isReconnecting } = useAccount({
         onConnect() {
-            handleCancel()
+            handleCancel();
         }
     })
 
     function goConnect(e) {
         if (e.name === "WalletConnect") {
             handleCancel()
+            openWeb3Modal()
+            setIsSign(true);
+            return
         }
-        
         connect({ connector: e })
+        setIsSign(true);
     }
-
 
     return (
         <Modal

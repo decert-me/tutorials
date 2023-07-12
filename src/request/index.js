@@ -25,13 +25,6 @@ serviceAxios.interceptors.request.use(
 serviceAxios.interceptors.response.use(
   res => {
     let data = res.data;
-    if (data.status !== 0) {
-      // if (data.data?.reload) {
-      //   store.dispatch(showCustomSigner());
-      //   return
-      // }
-      return null
-    }
     // 处理自己的业务逻辑，比如判断 token 是否过期等等
     // 代码块
     return data;

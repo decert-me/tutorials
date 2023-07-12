@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button } from "antd";
+import { Button, Dropdown } from "antd";
 import "../../css/component/customNav.scss"
 import logo from "../../../static/img/logo-normal.png"
 import {
@@ -8,8 +8,18 @@ import {
     GlobalOutlined
   } from '@ant-design/icons';
 import json from "./i18n.json";
+import { useAccount, useDisconnect } from 'wagmi';
+import ConnectModal from './connectModal';
+import { getMenu } from './menu';
+import ConnectButton from './ConnectButton';
 
 export default function CustomNav() {
+
+    const { address, isConnected } = useAccount()
+    const { disconnect } = useDisconnect();
+
+    let [openConnect, setOpenConnect] = useState(false);
+    let [menu, setMenu] = useState([]);     //  登陆后user展示下拉菜单
 
     let [isOpenM, setIsOpenM] = useState(false);
     let [isMobile, setIsMobile] = useState(false);
@@ -25,6 +35,14 @@ export default function CustomNav() {
         if (typeof window !== 'undefined') {
             window.open("https://decert.me", "_self");
         }
+    }
+
+    function openModal() {
+        setOpenConnect(true);
+    }
+
+    function handleCancel() {
+        setOpenConnect(false);
     }
 
     const menus = [
@@ -50,8 +68,16 @@ export default function CustomNav() {
         setIsMobile(isMobile);
     },[])
 
+    useEffect(() => {
+        if (isConnected) {
+            menu = getMenu(language, address, disconnect);
+            setMenu([...menu]);
+        }
+    },[isConnected])
+
     return (
         <>
+        <ConnectModal open={openConnect} handleCancel={handleCancel} />
         <div className="Header">
             <div className="header-content">
                 <div className='nav-left'>
@@ -84,15 +110,22 @@ export default function CustomNav() {
                             </div>
                         </>
                         :
-                        <Button 
-                            type="ghost"
-                            ghost
-                            className='lang custom-btn'
-                            id='hover-btn-line'
-                            onClick={() => toggleI18n()}
-                        >
-                            {language === 'CN' ? "CN" : "EN"}
-                        </Button>
+                        <>
+                            <Button 
+                                type="ghost"
+                                ghost
+                                className='lang custom-btn'
+                                id='hover-btn-line'
+                                onClick={() => toggleI18n()}
+                            >
+                                {language === 'CN' ? "CN" : "EN"}
+                            </Button>
+                            <ConnectButton
+                                isMobile={isMobile} 
+                                menu={menu} 
+                                openModal={openModal} 
+                            />
+                        </>
                     }
                 </div>
             </div>

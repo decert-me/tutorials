@@ -48,3 +48,7 @@ body{
     min-height: calc(100vh - 82px - 52px)
   }
 }
+
+.navbar--fixed-top{
+  z-index: 89;
+}
