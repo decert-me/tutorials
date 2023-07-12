@@ -106,6 +106,7 @@
             width: 32px;
             height: 32px;
             margin-left: 4px;
+            margin-right: 6px;
             overflow: hidden;
             border-radius: 50%;
         }
@@ -327,7 +328,7 @@ body{
             color: #000;
         }
         .nav-right{
-            
+            justify-content: flex-end;
         }
     }
     .mask-box{
@@ -379,7 +380,7 @@ body{
     }
     .mask-box-show{
         display: block;
-        z-index: 300;
+        z-index: 89;
     }
     .Header{
         background-color: #fff;

@@ -34,7 +34,7 @@ export default function CustomSign(params) {
     async function getSignature(params) {
         signer?.signMessage(nonce)
         .then(res => {
-            res?.data && localStorage.setItem(`decert.token`,res.data.token)
+            res && localStorage.setItem(`decert.token`,res)
             Modal.destroyAll();
         })
         .catch(err => {
@@ -55,7 +55,7 @@ export default function CustomSign(params) {
 
     return (
         <div>
-            
+
         </div>
     )
 }

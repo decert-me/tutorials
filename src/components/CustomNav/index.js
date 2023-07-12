@@ -8,15 +8,21 @@ import {
     GlobalOutlined
   } from '@ant-design/icons';
 import json from "./i18n.json";
-import { useAccount, useDisconnect } from 'wagmi';
 import ConnectModal from './connectModal';
-import { getMenu } from './menu';
 import ConnectButton from './ConnectButton';
+import { useAccount, useDisconnect } from 'wagmi';
+import { getMenu } from './menu';
+import { useWeb3Modal } from '@web3modal/react';
 
 export default function CustomNav() {
 
+    const { open } = useWeb3Modal();
     const { address, isConnected } = useAccount()
-    const { disconnect } = useDisconnect();
+    const { disconnect } = useDisconnect({
+        onSuccess() {
+            localStorage.removeItem("decert.token")
+        }
+    });
 
     let [openConnect, setOpenConnect] = useState(false);
     let [menu, setMenu] = useState([]);     //  登陆后user展示下拉菜单
@@ -38,6 +44,9 @@ export default function CustomNav() {
     }
 
     function openModal() {
+        isMobile ?
+        open()
+        :
         setOpenConnect(true);
     }
 
@@ -121,7 +130,6 @@ export default function CustomNav() {
                                 {language === 'CN' ? "CN" : "EN"}
                             </Button>
                             <ConnectButton
-                                isMobile={isMobile} 
                                 menu={menu} 
                                 openModal={openModal} 
                             />
@@ -149,6 +157,14 @@ export default function CustomNav() {
                         <p>{language === 'cn' ? "中文" : "EN"}</p>
                     </li>
                 </ul>
+
+
+                {
+                    isConnected ?
+                    <Button danger type="primary" onClick={() => disconnect()}>断开连接</Button>
+                    :
+                    <Button onClick={() => openModal()}>连接钱包</Button>
+                }
             </div>
         }
         </>
