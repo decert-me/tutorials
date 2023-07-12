@@ -25,6 +25,7 @@
     "@web3modal/react": "^2.3.3",
     "antd": "^5.4.0",
     "assert": "^2.0.0",
+    "axios": "^1.4.0",
     "clsx": "^1.2.1",
     "crypto-browserify": "^3.12.0",
     "docusaurus-node-polyfills": "^1.0.0",
