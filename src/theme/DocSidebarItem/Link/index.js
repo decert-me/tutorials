@@ -30,8 +30,11 @@ export default function DocSidebarItemLink({
         type="circle" 
         percent={percent} 
         showInfo={false}
-        size={20} 
-        className={clsx(styles["custom-icon"])}
+        size={level === 1 ? 20 : 18} 
+        className={clsx(
+          styles["custom-icon"],
+          level === 1 && styles["custom-iconBig"]
+        )}
         strokeColor="#43B472"
       />
     )
@@ -40,8 +43,10 @@ export default function DocSidebarItemLink({
   useEffect(() => {
     if (selectTutorial.length > 0) {
       const res = selectTutorial.find(e => e.docId === item.docId.replace(/\/readme$/i, "/"));
-      isFinish = res.is_finish;
-      setIsFinish(isFinish)
+      if (res) {        
+        isFinish = res.is_finish;
+        setIsFinish(isFinish)
+      }
     }
   },[selectTutorial])
 
@@ -77,7 +82,7 @@ export default function DocSidebarItemLink({
         {!isInternalLink && <IconExternalLink />}
         {
           level === 1 ?
-            isFinish && progress(100)
+            progress(isFinish ? 100 : 0)
           :
             <img 
               src={require(`@site/static/img/${isFinish ? "icon-read" : "icon-unread"}.png`).default} 

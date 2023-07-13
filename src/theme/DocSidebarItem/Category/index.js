@@ -1,5 +1,6 @@
-import React, {useEffect, useMemo} from 'react';
+import React, {useContext, useEffect, useMemo, useState} from 'react';
 import clsx from 'clsx';
+import styles from '../Link/styles.module.css';
 import {
   ThemeClassNames,
   useThemeConfig,
@@ -17,6 +18,8 @@ import Link from '@docusaurus/Link';
 import {translate} from '@docusaurus/Translate';
 import useIsBrowser from '@docusaurus/useIsBrowser';
 import DocSidebarItems from '@theme/DocSidebarItems';
+import { GlobalContext } from '../../../provider';
+import { Progress } from 'antd';
 // If we navigate to a category and it becomes active, it should automatically
 // expand itself
 function useAutoExpandActiveCategory({isActive, collapsed, updateCollapsed}) {
@@ -76,7 +79,13 @@ export default function DocSidebarItemCategory({
   index,
   ...props
 }) {
+
   const {items, label, collapsible, className, href} = item;
+  const { selectTutorial } = useContext(GlobalContext);
+
+  let [sum, setSum] = useState();
+  let [finishNum, setFinishNum] = useState(0);
+
   const {
     docs: {
       sidebar: {autoCollapseCategories},
@@ -102,6 +111,8 @@ export default function DocSidebarItemCategory({
     setCollapsed(toCollapsed);
   };
   useAutoExpandActiveCategory({isActive, collapsed, updateCollapsed});
+
+  
   useEffect(() => {
     if (
       collapsible &&
@@ -112,6 +123,21 @@ export default function DocSidebarItemCategory({
       setCollapsed(true);
     }
   }, [collapsible, expandedItem, index, setCollapsed, autoCollapseCategories]);
+
+  useEffect(() => {
+    const items = item.items
+    if (selectTutorial.length > 0) {
+      sum = items.length;
+      setSum(sum);
+      items.forEach(ele => {
+        if (selectTutorial.some(e => e.docId === ele.docId.replace(/\/readme$/i, "/") && e.is_finish === true)) {
+          finishNum += 1;
+        }
+      })
+      setFinishNum(finishNum);
+    }
+  },[selectTutorial])
+
   return (
     <li
       className={clsx(
@@ -122,7 +148,14 @@ export default function DocSidebarItemCategory({
           'menu__list-item--collapsed': collapsed,
         },
         className,
-      )}>
+      )}
+      onClick={(e) => {
+        if (href && collapsible) {
+          e.preventDefault();
+          updateCollapsed();
+        }
+      }}
+      >
       <div
         className={clsx('menu__list-item-collapsible', {
           'menu__list-item-collapsible--active': isCurrentPage,
@@ -154,9 +187,19 @@ export default function DocSidebarItemCategory({
           {...props}>
           {label}
       {/* TODO: 分步进度条 */}
-
+        <Progress
+          type="circle" 
+          percent={finishNum/sum*100} 
+          showInfo={false}
+          size={20} 
+          className={clsx(
+            styles["custom-icon"],
+            level === 1 && styles["custom-iconBig"]
+          )}
+          strokeColor="#43B472"
+        />
         </Link>
-        {href && collapsible && (
+        {/* {href && collapsible && (
           <>
           <CollapseButton
             categoryLabel={label}
@@ -166,7 +209,7 @@ export default function DocSidebarItemCategory({
             }}
           />
           </>
-        )}
+        )} */}
       </div>
 
       <Collapsible lazy as="ul" className="menu__list" collapsed={collapsed}>
