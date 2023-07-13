@@ -149,12 +149,6 @@ export default function DocSidebarItemCategory({
         },
         className,
       )}
-      onClick={(e) => {
-        if (href && collapsible) {
-          e.preventDefault();
-          updateCollapsed();
-        }
-      }}
       >
       <div
         className={clsx('menu__list-item-collapsible', {
@@ -171,7 +165,8 @@ export default function DocSidebarItemCategory({
               ? (e) => {
                   onItemClick?.(item);
                   if (href) {
-                    updateCollapsed(false);
+                    // updateCollapsed(false);
+                    updateCollapsed();
                   } else {
                     e.preventDefault();
                     updateCollapsed();
