@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Button, Dropdown } from "antd";
 import { useAccount } from 'wagmi';
 import CustomSign from '../CustomSign';
@@ -13,8 +13,7 @@ export default function ConnectButton(props) {
     } = props;
 
     const { isSign, updateUser, user } = useContext(GlobalContext);
-    const { address, isConnected } = useAccount();
-    let [ avatar, setAvatar ] = useState("");
+    const { address } = useAccount();
 
     function NickName(address) {
         return address && address.substring(0,5) + "..." + address.substring(38,42);
@@ -28,7 +27,6 @@ export default function ConnectButton(props) {
                 let obj = res.data;
                 let avatar = img ? process.env.BASE_URL + img : hashAvatar(address);
                 obj.avatar = avatar;
-                // setAvatar(avatar);
                 updateUser(obj);
             }
         })

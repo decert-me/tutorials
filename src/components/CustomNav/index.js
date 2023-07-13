@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Button, Dropdown, Modal } from "antd";
+import React, { useContext, useEffect, useState } from 'react';
+import { Button } from "antd";
 import "../../css/component/customNav.scss"
 import logo from "../../../static/img/logo-normal.png"
 import {
@@ -13,16 +13,18 @@ import ConnectButton from './ConnectButton';
 import { useAccount, useDisconnect } from 'wagmi';
 import { getMenu } from './menu';
 import { useWeb3Modal } from '@web3modal/react';
-import { useLocation } from '@docusaurus/router';
+import { GlobalContext } from '../../provider';
 
 export default function CustomNav() {
 
-    const location = useLocation();
     const { open } = useWeb3Modal();
     const { address, isConnected } = useAccount()
+    const { updateUser } = useContext(GlobalContext);
     const { disconnect } = useDisconnect({
         onSuccess() {
-            localStorage.removeItem("decert.token")
+            localStorage.removeItem("decert.token");
+            updateUser();
+            window.history.go(0);
         }
     });
 
@@ -85,14 +87,6 @@ export default function CustomNav() {
             setMenu([...menu]);
         }
     },[isConnected])
-
-    // useEffect(() => {
-    //     if (localStorage.getItem("wagmi.connected") && !isConnected) {
-    //         // 重新加载组件
-    //         key = new Date().getTime();
-    //         setKey(key);
-    //     }
-    // },[location])
 
     return (
         <>

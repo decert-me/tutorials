@@ -1,6 +1,5 @@
 import React, { createContext, useState } from 'react';
 import { updateProgress } from '../request/public';
-import { useAccount } from 'wagmi';
 import { updateLocalTutorial } from '../utils/tutorialsCache';
 
 // 创建全局上下文
@@ -9,7 +8,6 @@ const GlobalContext = createContext();
 // 创建一个提供器组件
 const GlobalContextProvider = ({ children }) => {
 
-  const { address } = useAccount();
   const [isSign, setIsSign] = useState(false);
   let [selectTutorial, setSelectTutorial] = useState([]);
   let [user, setUser] = useState();
@@ -49,8 +47,13 @@ const GlobalContextProvider = ({ children }) => {
   }
 
   function updateUser(params) {
-    user = params;
-    setUser({...user})
+    if (params) {
+      user = params;
+      setUser({...user})
+    }else{
+      user = null;
+      setUser(user);
+    }
   }
 
   return (
