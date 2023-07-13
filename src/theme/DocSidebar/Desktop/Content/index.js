@@ -38,6 +38,28 @@ export default function DocSidebarDesktopContent({path, sidebar, className}) {
   let [selectItem, setSelectItem] = useState();
   let [tutorials, setTutorials] = useState();
 
+  function findDocId(arr) {
+
+    for (let i = 0; i < arr.length; i++) {
+      const obj = arr[i];
+
+      if (obj.hasOwnProperty('docId')) {
+        return obj;
+      }
+    
+      if (obj.hasOwnProperty('items') && Array.isArray(obj.items)) {
+        for (let i = 0; i < obj.items.length; i++) {
+          const result = findDocId(obj.items);
+          if (result !== null) {
+            return result;
+          }
+        }
+      }
+    }
+    return null;
+  }
+  
+
   function init(params) {
     // 1、所选教程 ==> arr
     const items = tutorialsItemsInit(sidebar);
@@ -58,6 +80,9 @@ export default function DocSidebarDesktopContent({path, sidebar, className}) {
       })
     }else{
       // 2、local初始化
+      if (!selectItem) {
+        return
+      }
       tutorials = tutorialsInit(selectItem.catalogueName, items)
       setTutorials([... tutorials]);
     }
@@ -67,22 +92,23 @@ export default function DocSidebarDesktopContent({path, sidebar, className}) {
   }
 
   function update(params) {
-      json.forEach(e => {
-        if (path.indexOf(e.catalogueName) !== -1) {
-          selectItem = e;
-          setSelectItem({...selectItem});
-        }
-      })
-      init();
+    let docId = findDocId(sidebar).docId.split('/')[0];
+    json.forEach(e => {
+      if (docId === e.catalogueName) {
+        selectItem = e;
+        setSelectItem({...selectItem});
+      }
+    })
+    init();
   }
 
   useEffect(() => {
     address && update()
-  },[address])
+  },[sidebar, address])
 
   useEffect(() => {
     update()
-  },[])
+  },[sidebar])
 
   return (
     <nav
