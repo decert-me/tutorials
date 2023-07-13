@@ -1,7 +1,8 @@
+import { updateProgress } from "../request/public";
 
 export function tutorialsInit(catalogueName, items) {
     let tutorials = [];
-    // TODO: 查询local是否有该题缓存
+    // 查询local是否有该题缓存
     const local = localStorage.getItem("decert.tutorials");
     if (!local) {
         // 没有初始化过: 1、初始化tutorials 2、初始化当前category
@@ -48,7 +49,7 @@ export function catalogueNameInit(tutorials, catalogueName, items) {
     localStorage.setItem("decert.tutorials", JSON.stringify(tutorials))
 }
 
-export function tutorialsDataToCache(data) {
+export async function tutorialsDataToCache(data) {
     const local = localStorage.getItem("decert.tutorials");
     
     // 是否有local
@@ -56,10 +57,32 @@ export function tutorialsDataToCache(data) {
         // 是否有当前category的local
         const tutorials = JSON.parse(local);
         if (tutorials.some(ele => ele.catalogueName === data.catalogue_name)) {
-            // 有该题缓存, 缓存同步
-            tutorials.forEach(e => {
+            // local有该题缓存, local缓存同步data
+            // 所有为finish的更新
+
+            await tutorials.forEach(async(e) => {
                 if (e.catalogueName === data.catalogue_name) {
-                    e.list = data.data
+                    // 查找local所有finish
+                    let arr = [];
+                    let dataArr = [];
+                    e.list.forEach(item => {
+                        item.is_finish && arr.push(item)
+                    })
+                    data.data.forEach(item => {
+                        item.is_finish && dataArr.push(item)
+                    })
+                    // 如果后端数据没一个finish的则前端cache同步后端
+                    if (dataArr.length > 0) {
+                        // 后端 to local
+                        e.list = data.data
+                    }else{
+                        // local to 后端
+                        await updateProgress({
+                            catalogueName: e.catalogueName,
+                            data: arr
+                        })
+                    }
+                    
                 }
             })
             localStorage.setItem("decert.tutorials", JSON.stringify(tutorials))

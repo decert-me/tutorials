@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Dropdown } from "antd";
+import { Button, Dropdown, Modal } from "antd";
 import "../../css/component/customNav.scss"
 import logo from "../../../static/img/logo-normal.png"
 import {
@@ -13,9 +13,11 @@ import ConnectButton from './ConnectButton';
 import { useAccount, useDisconnect } from 'wagmi';
 import { getMenu } from './menu';
 import { useWeb3Modal } from '@web3modal/react';
+import { useLocation } from '@docusaurus/router';
 
 export default function CustomNav() {
 
+    const location = useLocation();
     const { open } = useWeb3Modal();
     const { address, isConnected } = useAccount()
     const { disconnect } = useDisconnect({
@@ -26,6 +28,7 @@ export default function CustomNav() {
 
     let [openConnect, setOpenConnect] = useState(false);
     let [menu, setMenu] = useState([]);     //  登陆后user展示下拉菜单
+    let [key, setKey] = useState();
 
     let [isOpenM, setIsOpenM] = useState(false);
     let [isMobile, setIsMobile] = useState(false);
@@ -84,6 +87,14 @@ export default function CustomNav() {
         }
     },[isConnected])
 
+    useEffect(() => {
+        if (localStorage.getItem("wagmi.connected") && !isConnected) {
+            // 重新加载组件
+            key = new Date().getTime();
+            setKey(key);
+        }
+    },[location])
+
     return (
         <>
         <ConnectModal open={openConnect} handleCancel={handleCancel} />
@@ -132,6 +143,7 @@ export default function CustomNav() {
                             <ConnectButton
                                 menu={menu} 
                                 openModal={openModal} 
+                                key={key}
                             />
                         </>
                     }

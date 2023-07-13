@@ -60,7 +60,7 @@ export default function DocSidebarDesktopContent({path, sidebar, className}) {
   }
   
 
-  function init(params) {
+  async function init(params) {
     // 1、所选教程 ==> arr
     const items = tutorialsItemsInit(sidebar);
 
@@ -68,7 +68,7 @@ export default function DocSidebarDesktopContent({path, sidebar, className}) {
       // 2、向后端发起请求
       const data = JSON.parse(JSON.stringify(items));
       data.forEach(e => delete e.is_finish)
-      getTutorialProgress({
+      await getTutorialProgress({
         catalogueName: selectItem.catalogueName,
         data: data
       })
@@ -103,8 +103,8 @@ export default function DocSidebarDesktopContent({path, sidebar, className}) {
   }
 
   useEffect(() => {
-    address && update()
-  },[sidebar, address])
+    address && init()
+  },[address])
 
   useEffect(() => {
     update()
