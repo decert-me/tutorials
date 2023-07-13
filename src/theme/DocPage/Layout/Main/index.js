@@ -19,11 +19,15 @@ export default function DocPageLayoutMain({hiddenSidebarContainer, children}) {
 
   function init(params) {
     const path = location.pathname.split("/tutorial/")[1];
+    const catalogueName = path.split("/")[0];
     selectItem = {
-      catalogueName: path.split("/")[0],
+      catalogueName: catalogueName,
       docId: path
     }
     setSelectItem({...selectItem});
+    if (catalogueName === "category") {
+      return
+    }
     isFinish = getTutorialStatus(selectItem);
     setIsFinish(isFinish)
   }
