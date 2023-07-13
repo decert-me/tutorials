@@ -28,7 +28,6 @@ export default function CustomNav() {
 
     let [openConnect, setOpenConnect] = useState(false);
     let [menu, setMenu] = useState([]);     //  登陆后user展示下拉菜单
-    let [key, setKey] = useState();
 
     let [isOpenM, setIsOpenM] = useState(false);
     let [isMobile, setIsMobile] = useState(false);
@@ -87,13 +86,13 @@ export default function CustomNav() {
         }
     },[isConnected])
 
-    useEffect(() => {
-        if (localStorage.getItem("wagmi.connected") && !isConnected) {
-            // 重新加载组件
-            key = new Date().getTime();
-            setKey(key);
-        }
-    },[location])
+    // useEffect(() => {
+    //     if (localStorage.getItem("wagmi.connected") && !isConnected) {
+    //         // 重新加载组件
+    //         key = new Date().getTime();
+    //         setKey(key);
+    //     }
+    // },[location])
 
     return (
         <>
@@ -143,7 +142,6 @@ export default function CustomNav() {
                             <ConnectButton
                                 menu={menu} 
                                 openModal={openModal} 
-                                key={key}
                             />
                         </>
                     }

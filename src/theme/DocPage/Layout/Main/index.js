@@ -5,13 +5,11 @@ import styles from './styles.module.css';
 import { useLocation } from '@docusaurus/router';
 import { getTutorialStatus } from '../../../../utils/tutorialsCache';
 import { GlobalContext } from '../../../../provider';
-import { useAccount } from 'wagmi';
 export default function DocPageLayoutMain({hiddenSidebarContainer, children}) {
 
   const sidebar = useDocsSidebar();
   const location = useLocation();
   const boxRef = useRef(null);
-  const { address } = useAccount();
   const { updateStatus } = useContext(GlobalContext);
   const [isBottomVisible, setIsBottomVisible] = useState(false);
   let [selectItem, setSelectItem] = useState();

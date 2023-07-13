@@ -12,6 +12,7 @@ const GlobalContextProvider = ({ children }) => {
   const { address } = useAccount();
   const [isSign, setIsSign] = useState(false);
   let [selectTutorial, setSelectTutorial] = useState([]);
+  let [user, setUser] = useState();
   
   function updateTutorial(arr) {
     selectTutorial = arr;
@@ -27,8 +28,8 @@ const GlobalContextProvider = ({ children }) => {
     setSelectTutorial([...selectTutorial]);
 
     // TODO: 后端更新、本地local更新
-    if (address) {
-      address &&
+    if (user?.address) {
+      user.address &&
       updateProgress({
         catalogueName: docId.split("/")[0],
         data: [
@@ -46,8 +47,22 @@ const GlobalContextProvider = ({ children }) => {
     })
   }
 
+  function updateUser(params) {
+    user = params;
+    setUser({...user})
+  }
+
   return (
-    <GlobalContext.Provider value={{ isSign, setIsSign, selectTutorial, updateTutorial, updateStatus }}>
+    <GlobalContext.Provider value={{ 
+      isSign, 
+      setIsSign, 
+      selectTutorial, 
+      updateTutorial, 
+      updateStatus,
+
+      updateUser,
+      user
+    }}>
       {children}
     </GlobalContext.Provider>
   );

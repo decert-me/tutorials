@@ -12,7 +12,7 @@ export default function ConnectButton(props) {
         menu, openModal
     } = props;
 
-    const { isSign } = useContext(GlobalContext);
+    const { isSign, updateUser, user } = useContext(GlobalContext);
     const { address, isConnected } = useAccount();
     let [ avatar, setAvatar ] = useState("");
 
@@ -25,8 +25,11 @@ export default function ConnectButton(props) {
         .then(res => {
             if (res.status === 0) {
                 const img = res.data.avatar;
-                avatar = img ? process.env.BASE_URL + img : hashAvatar(address);
-                setAvatar(avatar);
+                let obj = res.data;
+                let avatar = img ? process.env.BASE_URL + img : hashAvatar(address);
+                obj.avatar = avatar;
+                // setAvatar(avatar);
+                updateUser(obj);
             }
         })
     }
@@ -42,7 +45,7 @@ export default function ConnectButton(props) {
                 <CustomSign />
             }
             {
-                isConnected ?
+                user ?
                     <Dropdown
                         placement="bottom" 
                         // trigger="click"
@@ -55,8 +58,8 @@ export default function ConnectButton(props) {
                         }}
                     >
                         <div className="user" id="hover-btn-line">
-                            <img src={avatar} alt="" />
-                            <p>{NickName(address)}</p>
+                            <img src={user.avatar} alt="" />
+                            <p>{NickName(user.address)}</p>
                         </div>
                     </Dropdown>
                 :
