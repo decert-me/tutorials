@@ -124,9 +124,9 @@ export function updateLocalTutorial(params) {
         const tutorials = JSON.parse(local);
         tutorials.forEach(e => {
             if (e.catalogueName === catalogueName) {
-                e.list.forEach(e => {
-                    if (e.docId === docId) {
-                        e.is_finish = !e.is_finish;
+                e.list.forEach(ele => {
+                    if (ele.docId === docId) {
+                        ele.is_finish = !ele.is_finish;
                     }
                 })
             }

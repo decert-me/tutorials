@@ -19,18 +19,12 @@ const GlobalContextProvider = ({ children }) => {
     setSelectTutorial([...selectTutorial]);
   }
 
-  function updateStatus(docId) {
-    selectTutorial.forEach(e => {
-      if (e.docId === docId) {
-        e.is_finish = true;
-      }
-    })
-    setSelectTutorial([...selectTutorial]);
+  async function updateStatus(docId) {
 
     // TODO: 后端更新、本地local更新
     if (user?.address) {
       user.address &&
-      updateProgress({
+      await updateProgress({
         catalogueName: docId.split("/")[0],
         data: [
           {
@@ -45,6 +39,13 @@ const GlobalContextProvider = ({ children }) => {
       catalogueName: docId.split("/")[0],
       docId: docId
     })
+
+    selectTutorial.forEach(e => {
+      if (e.docId === docId) {
+        e.is_finish = true;
+      }
+    })
+    setSelectTutorial([...selectTutorial]);
   }
 
   function updateUser(params) {
