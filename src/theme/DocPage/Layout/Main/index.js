@@ -5,11 +5,13 @@ import styles from './styles.module.css';
 import { useLocation } from '@docusaurus/router';
 import { getTutorialStatus } from '../../../../utils/tutorialsCache';
 import { GlobalContext } from '../../../../provider';
+import { useAccount } from 'wagmi';
 export default function DocPageLayoutMain({hiddenSidebarContainer, children}) {
 
   const sidebar = useDocsSidebar();
   const location = useLocation();
   const boxRef = useRef(null);
+  const { address } = useAccount();
   const { updateStatus } = useContext(GlobalContext);
   const [isBottomVisible, setIsBottomVisible] = useState(false);
   let [selectItem, setSelectItem] = useState();
@@ -28,7 +30,7 @@ export default function DocPageLayoutMain({hiddenSidebarContainer, children}) {
 
   // 阅读完当前页
   function update(params) {
-    updateStatus(selectItem.docId);
+    updateStatus(selectItem.docId)
     setIsFinish(true);
   }
 
@@ -54,7 +56,7 @@ export default function DocPageLayoutMain({hiddenSidebarContainer, children}) {
 
   useEffect(() => {
     init()
-  },[])
+  },[location])
 
   return (
     <main

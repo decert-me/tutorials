@@ -76,6 +76,7 @@ export function tutorialsDataToCache(data) {
 export function getTutorialStatus(params) {
     const { catalogueName, docId } = params;
     const local = localStorage.getItem("decert.tutorials");
+    let flag;
     if (local) {
         const tutorials = JSON.parse(local);
         let selectTutorial;
@@ -86,8 +87,27 @@ export function getTutorialStatus(params) {
         })
         selectTutorial.forEach(e => {
             if (e.docId === docId) {
-                return e.is_finish
+                flag = e.is_finish
             }
         })
+        return flag
+    }
+}
+
+export function updateLocalTutorial(params) {
+    const { catalogueName, docId } = params;
+    const local = localStorage.getItem("decert.tutorials");
+    if (local) {
+        const tutorials = JSON.parse(local);
+        tutorials.forEach(e => {
+            if (e.catalogueName === catalogueName) {
+                e.list.forEach(e => {
+                    if (e.docId === docId) {
+                        e.is_finish = !e.is_finish;
+                    }
+                })
+            }
+        })
+        localStorage.setItem("decert.tutorials", JSON.stringify(tutorials))
     }
 }
