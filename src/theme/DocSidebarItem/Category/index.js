@@ -129,11 +129,13 @@ export default function DocSidebarItemCategory({
     if (selectTutorial.length > 0) {
       sum = items.length;
       setSum(sum);
+      let num = 0
       items.forEach(ele => {
         if (selectTutorial.some(e => e.docId === ele.docId.replace(/\/readme$/i, "/") && e.is_finish === true)) {
-          finishNum += 1;
+          num += 1;
         }
       })
+      finishNum = num;
       setFinishNum(finishNum);
     }
   },[selectTutorial])
