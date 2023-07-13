@@ -26,13 +26,13 @@ export function tutorialsItemsInit(sidebar) {
     sidebar.forEach(ele => {
         ele.docId ?
             arr.push({
-                docId: ele.docId,
+                docId: ele.docId.replace(/\/readme$/i, "/"),
                 is_finish: false
             })
             :
             ele.items.forEach(e => {
                 arr.push({
-                    docId: e.docId,
+                    docId: e.docId.replace(/\/readme$/i, "/"),
                     is_finish: false
                 })
             })
@@ -65,10 +65,29 @@ export function tutorialsDataToCache(data) {
             localStorage.setItem("decert.tutorials", JSON.stringify(tutorials))
         }else{
             // 没有该题缓存, 初始化后返回
-            catalogueNameInit(tutorials, data.catalogueName, data.data);
+            catalogueNameInit(tutorials, data.catalogue_name, data.data);
         }
     }else{
         // 直接初始化
         catalogueNameInit([], data.catalogue_name, data.data);
+    }
+}
+
+export function getTutorialStatus(params) {
+    const { catalogueName, docId } = params;
+    const local = localStorage.getItem("decert.tutorials");
+    if (local) {
+        const tutorials = JSON.parse(local);
+        let selectTutorial;
+        tutorials.forEach(e => {
+            if (e.catalogueName === catalogueName) {
+                selectTutorial = e.list;
+            }
+        })
+        selectTutorial.forEach(e => {
+            if (e.docId === docId) {
+                return e.is_finish
+            }
+        })
     }
 }
