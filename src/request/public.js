@@ -36,3 +36,12 @@ export const getTutorialProgress = (data) => {
         data
     })
 }
+
+// 更新阅读进度
+export const updateProgress = (data) => {
+    return serviceAxios({
+        url: `/tutorial/progress`,
+        method: "put",
+        data
+    })
+}
