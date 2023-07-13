@@ -24,6 +24,19 @@ export default function DocSidebarItemLink({
   const isInternalLink = isInternalUrl(href);
   let [isFinish, setIsFinish] = useState();
 
+  const progress = (percent) => {
+    return (
+      <Progress 
+        type="circle" 
+        percent={percent} 
+        showInfo={false}
+        size={20} 
+        className={clsx(styles["custom-icon"])}
+        strokeColor="#43B472"
+      />
+    )
+  }
+
   useEffect(() => {
     if (selectTutorial.length > 0) {
       const res = selectTutorial.find(e => e.docId === item.docId.replace(/\/readme$/i, "/"));
@@ -50,7 +63,8 @@ export default function DocSidebarItemLink({
           },
         )}
         style={{
-          position: "relative"
+          position: "relative",
+          paddingRight: 30
         }}
         autoAddBaseUrl={autoAddBaseUrl}
         aria-current={isActive ? 'page' : undefined}
@@ -63,26 +77,13 @@ export default function DocSidebarItemLink({
         {!isInternalLink && <IconExternalLink />}
         {
           level === 1 ?
-          isFinish &&
-          <Progress 
-            type="circle" 
-            percent={100} 
-            size={20} 
-            style={{
-              position: "absolute",
-              right: 12
-            }}
-          />
-            :
-            <Progress 
-            type="circle" 
-            percent={isFinish ? 100 : 0} 
-            size={20} 
-            style={{
-              position: "absolute",
-              right: 12
-            }}
-          />
+            isFinish && progress(100)
+          :
+            <img 
+              src={require(`@site/static/img/${isFinish ? "icon-read" : "icon-unread"}.png`).default} 
+              alt="" 
+              className={clsx(styles["custom-icon"])}
+            />
         }
       </Link>
     </li>
