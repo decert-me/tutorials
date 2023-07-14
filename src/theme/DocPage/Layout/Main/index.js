@@ -78,9 +78,10 @@ export default function DocPageLayoutMain({hiddenSidebarContainer, children}) {
         
       </div>
 
-
-      <CustomSidebar />
-
+      {
+        typeof window !== 'undefined' && window.screen.width < 996 &&
+        <CustomSidebar />
+      }
 
     </main>
   );
