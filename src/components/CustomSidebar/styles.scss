@@ -30,6 +30,16 @@
 .pb80 .ant-drawer-content-wrapper{
     padding-bottom: 80px;
 }
+
+.custom-line{
+    width: 42px;
+    height: 5px;
+    background-color: #E8E8E8;
+    border-radius: 5px;
+    position: absolute;
+    top: 11px;
+    left: calc((100% - 42px) / 2);
+}
 .custom-drawer{
     // height: calc(100vh - 60px - 50px) !important;
     .ant-drawer-content-wrapper{

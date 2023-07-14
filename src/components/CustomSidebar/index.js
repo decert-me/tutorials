@@ -15,7 +15,7 @@ export default function CustomSidebar(params) {
     let [tokenId, setTokenId] = useState();
 
     const showDrawer = () => {
-        setOpen(true);
+        setOpen(!open);
     };
 
     const onClose = () => {
@@ -67,6 +67,7 @@ export default function CustomSidebar(params) {
                             开始挑战</Button>
                     </div>
                 }
+                <div className="custom-line" onClick={() => showDrawer()} />
             </Drawer>
         </>
     )
