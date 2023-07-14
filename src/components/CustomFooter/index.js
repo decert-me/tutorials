@@ -14,7 +14,7 @@ export default function AppFooter({ isMobile }) {
           <div className="left">
             {
               typeof window !== 'undefined' && window.screen.width < 996 ?
-              <p className='title'>DeCert.me</p>
+              <p className='describe'>DeCert.me</p>
               :
               <div className="logo">
                 <img src={logo_white} alt="" />

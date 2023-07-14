@@ -5,6 +5,7 @@ import styles from './styles.module.css';
 import { useLocation } from '@docusaurus/router';
 import { getTutorialStatus } from '../../../../utils/tutorialsCache';
 import { GlobalContext } from '../../../../provider';
+import CustomSidebar from '../../../../components/CustomSidebar';
 export default function DocPageLayoutMain({hiddenSidebarContainer, children}) {
 
   const sidebar = useDocsSidebar();
@@ -74,7 +75,13 @@ export default function DocPageLayoutMain({hiddenSidebarContainer, children}) {
           hiddenSidebarContainer && styles.docItemWrapperEnhanced,
         )}>
         {children}
+        
       </div>
+
+
+      <CustomSidebar />
+
+
     </main>
   );
 }
