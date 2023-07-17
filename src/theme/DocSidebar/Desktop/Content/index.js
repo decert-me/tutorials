@@ -133,10 +133,7 @@ export default function DocSidebarDesktopContent({path, sidebar, className}) {
           <Button 
             type='primary'
             onClick={() => {
-              console.log({path, sidebar});
-              console.log(selectItem);
-              console.log(tutorials);
-              // window.open(`https://decert.me/quests/${selectItem.challenge}`, '_blank')
+              window.open(`https://decert.me/quests/${selectItem.challenge}`, '_blank')
             }}
           >
             开始挑战
