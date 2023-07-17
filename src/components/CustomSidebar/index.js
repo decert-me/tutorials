@@ -39,7 +39,7 @@ export default function CustomSidebar(params) {
             <div className="custom-sidebar"
                 onClick={showDrawer}
             >
-                click
+                <img src={require(`@site/static/img/icon-menu.png`).default} alt="" />
             </div>
 
 
