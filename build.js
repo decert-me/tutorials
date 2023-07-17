@@ -6,6 +6,7 @@ const { exec } = require('child_process');
 
 const common = {
   gitbook: "/",
+  mdBook: "/",
   docusaurus: "/docs"
 }
 
@@ -34,7 +35,7 @@ const downloadAllFiles = async (folder, filesToDownload) => {
 
 const extractFiles = (sourcePath, destinationPath) => {
   return new Promise((resolve, reject) => {
-    const extractCommand = `unzip -q -n ${sourcePath} -d ${destinationPath}`;
+    const extractCommand = `unar -o ${destinationPath} ${sourcePath}`;
     exec(extractCommand, (err, stdout, stderr) => {
       if (err) {
         console.error(`Error extracting file: ${err}`);
