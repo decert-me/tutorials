@@ -108,6 +108,9 @@ export function getTutorialStatus(params) {
                 selectTutorial = e.list;
             }
         })
+        if (!selectTutorial) {
+            return false
+        }
         selectTutorial.forEach(e => {
             if (e.docId === docId) {
                 flag = e.is_finish
