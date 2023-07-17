@@ -35,16 +35,32 @@ const downloadAllFiles = async (folder, filesToDownload) => {
 
 const extractFiles = (sourcePath, destinationPath) => {
   return new Promise((resolve, reject) => {
-    const extractCommand = `unar -o ${destinationPath} ${sourcePath}`;
-    exec(extractCommand, (err, stdout, stderr) => {
-      if (err) {
-        console.error(`Error extracting file: ${err}`);
-        reject(err);
-      } else {
-        console.log(`Files extracted successfully: ${destinationPath}`);
-        resolve();
-      }
-    });
+    if (process.platform === 'darwin') {
+      // console.log('当前环境是 macOS');
+      const extractCommand = `unar -o ${destinationPath} ${sourcePath}`;
+      exec(extractCommand, (err, stdout, stderr) => {
+        if (err) {
+          console.error(`Error extracting file: ${err}`);
+          reject(err);
+        } else {
+          console.log(`Files extracted successfully: ${destinationPath}`);
+          resolve();
+        }
+      });
+    } else if (process.platform === 'linux') {
+      // console.log('当前环境是 Linux');
+      const extractCommand = `unzip -q -n ${sourcePath} -d ${destinationPath}`;
+      exec(extractCommand, (err, stdout, stderr) => {
+        if (err) {
+          console.error(`Error extracting file: ${err}`);
+          reject(err);
+        } else {
+          console.log(`Files extracted successfully: ${destinationPath}`);
+          resolve();
+        }
+      });
+    }
+    
   });
 };
 
