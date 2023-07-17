@@ -59,10 +59,9 @@ function getDirectory(data, catalogueName) {
 
 function getMdBook(data, catalogueName) {
   const lines = data.split('\n');
-
   // 解析每一行的配置信息
   const summary = [
-    "sui-move-intro-course-zh/README"
+    `${catalogueName}/README`
   ];
   let currentChapter = null;
   let currentSection = null;

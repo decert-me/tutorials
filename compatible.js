@@ -37,24 +37,14 @@ const common = [
         newValue: "../../unit-two/lessons/6_capability_设计模式.md"
     },
     {
-        path: "./docs/sui-move-intro-course-zh/advanced-topics/BCS_encoding/lessons/BCS_encoding.md",
+        path: "./docs/sui-move-intro-course-zh/unit-two/lessons/1_使用sui_objects.md",
         oldValue: "../../unit-one/lessons/4_定制类型与能力.md#定制类型与能力",
         newValue: "../../unit-one/lessons/4_函数.md"
     },
     {
-        path: "./docs/sui-move-intro-course-zh/advanced-topics/BCS_encoding/lessons/BCS_encoding.md",
+        path: "./docs/sui-move-intro-course-zh/unit-two/lessons/6_capability_设计模式.md",
         oldValue: "../../unit-one/lessons/6_hello_world.md#viewing-the-object-with-sui-explorer",
         newValue: "../../unit-one/lessons/5_hello_world.md"
-    },
-    {
-        path: "./docs/sui-move-intro-course-zh/advanced-topics/BCS_encoding/lessons/BCS_encoding.md",
-        oldValue: "../example_projects/",
-        newValue: "https://github.com/RandyPen/sui-move-intro-course-zh/tree/main/advanced-topics/BCS_encoding/example_projects"
-    },
-    {
-        path: "./docs/sui-move-intro-course-zh/advanced-topics/BCS_encoding/lessons/BCS_encoding.md",
-        oldValue: "../example_projects/",
-        newValue: "https://github.com/RandyPen/sui-move-intro-course-zh/tree/main/advanced-topics/BCS_encoding/example_projects"
     }
 ]
 
