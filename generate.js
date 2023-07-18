@@ -139,8 +139,10 @@ const getSidebars = async(dir, sidebars = {}) => {
         break;
       case "docusaurus":
         sidebars[file] = await tutorialDocusaurus(file)
-      case "mdBook":
+        break;
+        case "mdBook":
         sidebars[file] = await tutorialMdBook(filename, root, tutorial)
+        break;
       default:
         break;
     }
