@@ -125,6 +125,9 @@ export default function DocSidebarItemCategory({
   }, [collapsible, expandedItem, index, setCollapsed, autoCollapseCategories]);
 
   useEffect(() => {
+    // if (!collapsible) {
+    //   return
+    // }
     const items = item.items
     if (selectTutorial.length > 0) {
       sum = items.length;
@@ -150,12 +153,15 @@ export default function DocSidebarItemCategory({
           'menu__list-item--collapsed': collapsed,
         },
         className,
+        !collapsible && "chapter-margin"
       )}
       >
       <div
         className={clsx('menu__list-item-collapsible', {
           'menu__list-item-collapsible--active': isCurrentPage,
-        })}>
+        },
+        !collapsible && "chapter-title"
+        )}>
         <Link
           className={clsx('menu__link', {
             // 'menu__link--sublist': collapsible,
@@ -183,30 +189,23 @@ export default function DocSidebarItemCategory({
           href={collapsible ? hrefWithSSRFallback ?? '#' : hrefWithSSRFallback}
           {...props}>
           {label}
-      {/* TODO: 分步进度条 */}
-        <Progress
-          type="circle" 
-          percent={finishNum/sum*100} 
-          showInfo={false}
-          size={20} 
-          className={clsx(
-            styles["custom-icon"],
-            level === 1 && styles["custom-iconBig"]
-          )}
-          strokeColor="#43B472"
-        />
+        {/* TODO: 分步进度条 */}
+        {finishNum}
+        {
+          finishNum !== 0 &&
+            <Progress
+              type="circle" 
+              percent={finishNum/sum*100} 
+              showInfo={false}
+              size={20} 
+              className={clsx(
+                styles["custom-icon"],
+                level === 1 && styles["custom-iconBig"]
+              )}
+              strokeColor="#43B472"
+            />
+        }
         </Link>
-        {/* {href && collapsible && (
-          <>
-          <CollapseButton
-            categoryLabel={label}
-            onClick={(e) => {
-              e.preventDefault();
-              updateCollapsed();
-            }}
-          />
-          </>
-        )} */}
       </div>
 
       <Collapsible lazy as="ul" className="menu__list" collapsed={collapsed}>

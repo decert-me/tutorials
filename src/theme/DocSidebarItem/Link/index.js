@@ -26,17 +26,22 @@ export default function DocSidebarItemLink({
 
   const progress = (percent) => {
     return (
-      <Progress 
-        type="circle" 
-        percent={percent} 
-        showInfo={false}
-        size={level === 1 ? 20 : 18} 
-        className={clsx(
-          styles["custom-icon"],
-          level === 1 && styles["custom-iconBig"]
-        )}
-        strokeColor="#43B472"
-      />
+      <>
+        {
+          percent !== 0 &&
+            <Progress 
+              type="circle" 
+              percent={percent} 
+              showInfo={false}
+              size={level === 1 ? 20 : 18} 
+              className={clsx(
+                styles["custom-icon"],
+                level === 1 && styles["custom-iconBig"]
+              )}
+              strokeColor="#43B472"
+            />
+        }
+      </>
     )
   }
 
@@ -84,11 +89,14 @@ export default function DocSidebarItemLink({
           level === 1 ?
             progress(isFinish ? 100 : 0)
           :
-            <img 
-              src={require(`@site/static/img/${isFinish ? "icon-read" : "icon-unread"}.png`).default} 
-              alt="" 
-              className={clsx(styles["custom-icon"])}
-            />
+            (
+              isFinish &&
+                <img 
+                  src={require(`@site/static/img/${isFinish ? "icon-read" : "icon-unread"}.png`).default} 
+                  alt="" 
+                  className={clsx(styles["custom-icon"])}
+                />
+            )
         }
       </Link>
     </li>

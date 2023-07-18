@@ -23,21 +23,21 @@ export function tutorialsInit(catalogueName, items) {
 }
 
 export function tutorialsItemsInit(sidebar) {
-    let arr = [];
-    sidebar.forEach(ele => {
-        ele.docId ?
+    function processSidebar(sidebar, arr) {
+        sidebar.forEach(ele => {
+          if (ele?.docId) {
             arr.push({
-                docId: ele.docId.replace(/\/readme$/i, "/"),
-                is_finish: false
-            })
-            :
-            ele.items.forEach(e => {
-                arr.push({
-                    docId: e.docId.replace(/\/readme$/i, "/"),
-                    is_finish: false
-                })
-            })
-    });
+              docId: ele.docId.replace(/\/readme$/i, "/"),
+              is_finish: false
+            });
+          } else if (ele.items) {
+            processSidebar(ele.items, arr);
+          }
+        });
+    }
+
+    const arr = [];
+    processSidebar(sidebar, arr);
     return arr
 }
 

@@ -2,7 +2,7 @@
     position: relative;
 }
 .menu_src-theme-DocSidebar-Desktop-Content-styles-module{
-    padding-bottom: 121px;
+    padding-bottom: 121px !important;
 }
 .custom-bottom{
     width: 100%;
@@ -24,5 +24,14 @@
         &:hover{
             background-color: #B47243 !important;
         }
+    }
+}
+
+.chapter-margin{
+    margin: 16px 0 !important;
+}
+.chapter-title{
+    a{
+        color: rgba(136,153,168,1.00) !important;
     }
 }

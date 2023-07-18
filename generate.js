@@ -3,58 +3,80 @@ const path = require('path');
 
 const DOCS_DIR = path.join(__dirname, 'docs');
 
-function getDirectory(data, catalogueName) {
-  let directory
-  const lines = data.split('\n');
-    const result = [];
-    let currentCategory = '';
-    
-    lines.forEach((line, i) => {
-      if (line.startsWith('*')) {
-        const match = line.match(/\[([^\]]+)\]\(([^)]+)\)/);
-        if (match) {
-          const title = match[1];
-          const link = match[2].replace(".md","").replace(/^\d+_/, '');
-          result.push({ title, link, category: currentCategory });
-        }
-      } else if (line.startsWith('## ')) {
-        currentCategory = line.replace('## ', '');
-      } else if (line.trim() !== '') {
-        result.push({ title: line.trim(), link: undefined, category: currentCategory });
-      }
-    });
-    directory = result;
-    const arr = [];
-    directory.map((e, i) => {
-      e.category ?
-      arr.push({
-        type: 'category',
-        label: e.category,
-        items: [
-          `${catalogueName}/${e.link}`
-        ],
-      })
-      :
-      arr.push(`${catalogueName}/${e.link}`)
-    })
+function getCategory({catalogueName,title}) {
+  const link = catalogueName + "/" + title.replace(".md",'').replace(/\d+_/, "").replace(/%20/g, " ");
+  const obj = {
+    type: "category",
+    label: title,
+    link: link,
+    items: [],
+    collapsed: true
+  }
+  return {
+    link,
+    obj
+  }
+}
 
-    const newArr = arr.reduceRight((acc, item) => {
-      if (typeof item === 'object') {
-        const existingIndex = acc.findIndex(obj => obj.label === item.label);
-      
-        if (existingIndex === -1) {
-          acc.push(item);
-        } else {
-          acc[existingIndex].items = [...item.items, ...acc[existingIndex].items];
-        }
-      } else {
-        acc.push(item);
+function getDirectory(data, catalogueName) {
+  const lines = data.split('\n');
+  // 解析每一行的配置信息
+  const summary = [];
+  let currentLabel = null;
+  let currentChapter = null;
+  let currentSection = null;
+
+  lines.forEach((line, i) => {
+    const matchTitle = line.match(/^##\s+(.+)$/)
+    const matchChapter = line.match(/^\* \[([^[\]]+)\]\(([^()]+)\)$/);
+    const matchSection = line.match(/^    \* \[([^[\]]+)\]\(([^()]+)\)$/);
+
+    // 匹配`##`标题
+    if (matchTitle) {
+      const chapterTitle = matchTitle[1];
+      currentLabel = {
+        type: "category",
+        label: chapterTitle,
+        collapsible: false,
+        collapsed: true,
+        items: []
       }
-      
-      return acc;
-    }, []);
-    
-  return newArr.reverse()
+      summary.push(currentLabel);
+    } else if (matchChapter && currentLabel) {
+        // 匹配`*`且传给父的items
+          const isCategory = lines.length > i+1 && lines[i+1].match(/^    \* \[([^[\]]+)\]\(([^()]+)\)$/);
+          if (isCategory) {
+            // 有子
+            let { obj } = getCategory({catalogueName, title: matchChapter[2]})
+            currentChapter = {...obj, link: {type: 'doc', id: obj.link}, label: matchChapter[1]}
+            currentLabel.items.push(currentChapter);
+          } else {
+            // 无子
+            const { link } = getCategory({catalogueName, title: matchChapter[2]})
+            currentLabel.items.push(link);
+          }
+    } else if (matchChapter) {
+          // 匹配`*`且传给summary
+          const isCategory = lines.length < i+1 && lines[i+1].match(/^    \* \[([^[\]]+)\]\(([^()]+)\)$/);
+          if (isCategory) {
+            // 有子
+            const { obj } = getCategory({catalogueName, title: matchChapter[2]})
+            summary.push(obj);
+          } else {
+            // 无子
+            const { link } = getCategory({catalogueName, title: matchChapter[2]})
+            summary.push(link);
+          }
+    } else if (matchSection && currentChapter) {
+      const sectionTitle = matchSection[1];
+      const sectionLink = matchSection[2];
+      // currentSection = { title: sectionTitle, link: sectionLink };
+      const { link } = getCategory({catalogueName, title: sectionLink})
+      currentSection = link.replace("./", catalogueName+"/").replace(".md",'').replace(/\d+_/, "").replace(/%20/g, " ");
+      currentChapter.items.push(currentSection);
+    }
+  });
+  return summary;
 }
 
 function getMdBook(data, catalogueName) {
