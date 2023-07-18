@@ -4,7 +4,7 @@ import { useAccount } from 'wagmi';
 import CustomSign from '../CustomSign';
 import { GlobalContext } from '../../provider';
 import { getUser } from '../../request/public';
-import { hashAvatar } from '../../utils/HashAvatar';
+import { hashAvatar } from '../../utils/hashAvatar';
 
 export default function ConnectButton(props) {
     

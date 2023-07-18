@@ -8,7 +8,7 @@ import {
     GlobalOutlined
   } from '@ant-design/icons';
 import json from "./i18n.json";
-import ConnectModal from './connectModal';
+import ConnectModal from './ConnectModal';
 import ConnectButton from './ConnectButton';
 import { useAccount, useDisconnect } from 'wagmi';
 import { getMenu } from './menu';
