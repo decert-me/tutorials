@@ -1,4 +1,7 @@
+const util = require('util');
 const fs = require('fs');
+const readFileAsync = util.promisify(fs.readFile);
+const writeFileAsync = util.promisify(fs.writeFile);
 
 const common = [
     {
@@ -45,31 +48,57 @@ const common = [
         path: "./docs/sui-move-intro-course-zh/unit-two/lessons/6_capability_设计模式.md",
         oldValue: "../../unit-one/lessons/6_hello_world.md#viewing-the-object-with-sui-explorer",
         newValue: "../../unit-one/lessons/5_hello_world.md"
+    },
+    {
+        path: "./docs/ethereum-development-with-go-book/README.md",
+        oldValue: "../zh/client",
+        newValue: "./client/README.md"
+    },
+    {
+        path: "./docs/ethereum-development-with-go-book/README.md",
+        oldValue: "((https://invite.slack.golangbridge.org/))",
+        newValue: "(https://invite.slack.golangbridge.org/)"
+    },
+    {
+        path: "./docs/ethereum-development-with-go-book/README.md",
+        oldValue: "((https://gophers.slack.com/messages/C9HP1S9V2/))",
+        newValue: "(https://gophers.slack.com/messages/C9HP1S9V2/)"
+    },
+    {
+        path: "./docs/ethereum-development-with-go-book/event-read/README.md",
+        oldValue: "((../smart-contract-compile))",
+        newValue: "(../smart-contract-compile/README.md)"
+    },
+    {
+        path: "./docs/ethereum-development-with-go-book/event-read/README.md",
+        oldValue: "((../event-subscribe))",
+        newValue: "(../event-subscribe/README.md)"
+    },
+    {
+        path: "./docs/ethereum-development-with-go-book/smart-contract-load/README.md",
+        oldValue: "<ContractName>",
+        newValue: "<ContractName/>"
     }
+
 ]
 
-function modifyFile(arr) {
-    arr.map(e => {
+async function modifyFile(arr) {
+    for (let i = 0; i < arr.length; i++) {
+      try {
         // 读取文件
-        fs.readFile(e.path, 'utf8', (err, data) => {
-            if (err) {
-            console.error(err);
-            return;
-            }
+        const data = await readFileAsync(arr[i].path, 'utf8');
         
-            // 修改文件内容
-            const modifiedData = data.replace(e.oldValue, e.newValue);
+        // 修改文件内容
+        const modifiedData = data.replace(arr[i].oldValue, arr[i].newValue);
         
-            // 写入文件
-            fs.writeFile(e.path, modifiedData, 'utf8', (err) => {
-                if (err) {
-                    console.error(err);
-                    return;
-                }
-            });
-        });
-    })
-}
+        // 写入文件
+        await writeFileAsync(arr[i].path, modifiedData, 'utf8');
+        console.log(`File ${arr[i].path} modified successfully.`);
+      } catch (err) {
+        console.error(`Error modifying file ${arr[i].path}: ${err}`);
+      }
+    }
+  }
 
 
 modifyFile(common);

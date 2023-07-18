@@ -190,7 +190,6 @@ export default function DocSidebarItemCategory({
           {...props}>
           {label}
         {/* TODO: 分步进度条 */}
-        {finishNum}
         {
           finishNum !== 0 &&
             <Progress

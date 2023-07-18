@@ -4,7 +4,8 @@ const path = require('path');
 const DOCS_DIR = path.join(__dirname, 'docs');
 
 function getCategory({catalogueName,title}) {
-  const link = catalogueName + "/" + title.replace(".md",'').replace(/\d+_/, "").replace(/%20/g, " ");
+  const newTitle = title.replace(".md",'').replace(/\d+_/, "").replace(/%20/g, " ");
+  const link = catalogueName + "/" + newTitle;
   const obj = {
     type: "category",
     label: title,
@@ -29,7 +30,7 @@ function getDirectory(data, catalogueName) {
   lines.forEach((line, i) => {
     const matchTitle = line.match(/^##\s+(.+)$/)
     const matchChapter = line.match(/^\* \[([^[\]]+)\]\(([^()]+)\)$/);
-    const matchSection = line.match(/^    \* \[([^[\]]+)\]\(([^()]+)\)$/);
+    const matchSection = line.match(/^  \* \[([^[\]]+)\]\(([^()]+)\)$/);
 
     // 匹配`##`标题
     if (matchTitle) {
@@ -44,7 +45,7 @@ function getDirectory(data, catalogueName) {
       summary.push(currentLabel);
     } else if (matchChapter && currentLabel) {
         // 匹配`*`且传给父的items
-          const isCategory = lines.length > i+1 && lines[i+1].match(/^    \* \[([^[\]]+)\]\(([^()]+)\)$/);
+          const isCategory = lines.length > i+1 && lines[i+1].match(/^  \* \[([^[\]]+)\]\(([^()]+)\)$/);
           if (isCategory) {
             // 有子
             let { obj } = getCategory({catalogueName, title: matchChapter[2]})
@@ -57,11 +58,12 @@ function getDirectory(data, catalogueName) {
           }
     } else if (matchChapter) {
           // 匹配`*`且传给summary
-          const isCategory = lines.length < i+1 && lines[i+1].match(/^    \* \[([^[\]]+)\]\(([^()]+)\)$/);
+          const isCategory = lines.length > i+1 && lines[i+1].match(/^  \* \[([^[\]]+)\]\(([^()]+)\)$/);
           if (isCategory) {
             // 有子
             const { obj } = getCategory({catalogueName, title: matchChapter[2]})
-            summary.push(obj);
+            currentChapter = {...obj, link: {type: 'doc', id: obj.link}, label: matchChapter[1]}
+            summary.push(currentChapter);
           } else {
             // 无子
             const { link } = getCategory({catalogueName, title: matchChapter[2]})
@@ -76,6 +78,14 @@ function getDirectory(data, catalogueName) {
       currentChapter.items.push(currentSection);
     }
   });
+  const isStringFound = summary.some(item => typeof item === 'string' && item.includes(catalogueName + "/README"));
+  if (!isStringFound) {
+    summary.unshift({
+        type: 'doc',
+        id: `${catalogueName}/README`,
+        label: '简介',
+    })
+  }
   return summary;
 }
 
