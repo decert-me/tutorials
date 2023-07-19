@@ -3,15 +3,20 @@ const path = require('path');
 
 const DOCS_DIR = path.join(__dirname, 'docs');
 
-function getCategory({catalogueName,title}) {
+function getCategory({catalogueName,title,label}) {
   const newTitle = title.replace(".md",'').replace(/\d+_/, "").replace(/%20/g, " ");
-  const link = catalogueName + "/" + newTitle;
+  const url = catalogueName + "/" + newTitle;
   const obj = {
     type: "category",
     label: title,
-    link: link,
+    link: url,
     items: [],
     collapsed: true
+  }
+  const link = {
+    type: "doc",
+    id: url.replace("./", catalogueName+"/").replace(".md",'').replace(/\d+_/, "").replace(/%20/g, " "),
+    label: label,
   }
   return {
     link,
@@ -53,7 +58,7 @@ function getDirectory(data, catalogueName) {
             currentLabel.items.push(currentChapter);
           } else {
             // 无子
-            const { link } = getCategory({catalogueName, title: matchChapter[2]})
+            const { link } = getCategory({catalogueName, title: matchChapter[2], label: matchChapter[1]})
             currentLabel.items.push(link);
           }
     } else if (matchChapter) {
@@ -66,15 +71,15 @@ function getDirectory(data, catalogueName) {
             summary.push(currentChapter);
           } else {
             // 无子
-            const { link } = getCategory({catalogueName, title: matchChapter[2]})
+            const { link } = getCategory({catalogueName, title: matchChapter[2], label: matchChapter[1]})
             summary.push(link);
           }
     } else if (matchSection && currentChapter) {
       const sectionTitle = matchSection[1];
       const sectionLink = matchSection[2];
       // currentSection = { title: sectionTitle, link: sectionLink };
-      const { link } = getCategory({catalogueName, title: sectionLink})
-      currentSection = link.replace("./", catalogueName+"/").replace(".md",'').replace(/\d+_/, "").replace(/%20/g, " ");
+      const { link } = getCategory({catalogueName, title: sectionLink, label: sectionTitle})
+      currentSection = link;
       currentChapter.items.push(currentSection);
     }
   });
