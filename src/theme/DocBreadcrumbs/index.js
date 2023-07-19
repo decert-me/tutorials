@@ -102,18 +102,20 @@ export default function DocBreadcrumbs() {
 
   useEffect(() => {
     const box = document.querySelector(".theme-doc-breadcrumbs");
-    const resizeObserver = new ResizeObserver(entries => {
-      // 监听到元素大小变化后执行的回调函数
-      const { height } = entries[0].contentRect;
-      top = height;
-      setTop(top);
-    });
-
-    resizeObserver.observe(box);
-
-    return () => {
-      resizeObserver.unobserve(box);
-    };
+    if (box) {
+      const resizeObserver = new ResizeObserver(entries => {
+        // 监听到元素大小变化后执行的回调函数
+        const { height } = entries[0].contentRect;
+        top = height;
+        setTop(top);
+      });
+  
+      resizeObserver.observe(box);
+  
+      return () => {
+        resizeObserver.unobserve(box);
+      };
+    }
   }, []);
 
   if (!breadcrumbs) {

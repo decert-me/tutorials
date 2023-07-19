@@ -3,9 +3,11 @@ const fs = require('fs');
 const fsextra = require('fs-extra');
 const path = require('path');
 const { exec } = require('child_process');
+const JSZip = require('jszip');
 
 const common = {
   gitbook: "/",
+  mdBook: "/",
   docusaurus: "/docs"
 }
 
@@ -32,30 +34,50 @@ const downloadAllFiles = async (folder, filesToDownload) => {
   }
 };
 
-const extractFiles = (sourcePath, destinationPath) => {
-  return new Promise((resolve, reject) => {
-    const extractCommand = `unzip -q -n ${sourcePath} -d ${destinationPath}`;
-    exec(extractCommand, (err, stdout, stderr) => {
-      if (err) {
-        console.error(`Error extracting file: ${err}`);
-        reject(err);
-      } else {
-        console.log(`Files extracted successfully: ${destinationPath}`);
-        resolve();
-      }
-    });
-  });
+const extractFiles = async(sourcePath, destinationPath) => {
+
+  await new Promise((resolve, reject) => {
+    fs.readFile(sourcePath, function(err, data) {
+      if (err) throw err;
+      const zip = new JSZip();
+      // 使用JSZip加载压缩文件数据
+      zip.loadAsync(data)
+        .then(function(zip) {
+          // 遍历压缩文件中的所有文件
+          zip.forEach(function(relativePath, zipEntry) {
+            const path = destinationPath + "/" + zipEntry.name;
+            // 如果是文件夹，则创建相应的文件夹
+            if (zipEntry.dir) {
+              fs.mkdirSync(path);
+            } else {
+              // 提取文件内容
+              zipEntry.async('nodebuffer').then(function(content) {
+                // 将文件内容写入磁盘
+                fs.writeFileSync(path, content);
+              });
+            }
+          });
+          resolve()
+          console.log(`Files extracted successfully: ${destinationPath}`);
+        })
+        .catch(function(err) {
+          console.error(`Error extracting file: ${err}`);
+        });
+    })
+  })
 };
 
-const extractFilesAndCopyFolder = async(destinationPath, filesNames, filesToDownload, catalogueNames, docTypes) => {
+const extractFilesAndCopyFolder = async(destinationPath, filesNames, filesToDownload, tutorial) => {
+    const { catalogueNames, branch, docTypes, docPath } = tutorial;
     for (let i = 0; i < filesToDownload.length; i++) {
         const sourcePath = destinationPath+"/"+i+".zip"
         const filePath = common[docTypes[i]];
+        const newPath = docPath[i] || "";
         try {
             // Extract files from sourcePath to destinationPath
             await extractFiles(sourcePath, destinationPath);
             // 将 folderToCopy 从 destinationPath 复制到另一个文件夹
-            const sourceFolder = path.join(destinationPath, filesNames[i]+"-main"+filePath);
+            const sourceFolder = path.join(destinationPath, filesNames[i]+`-${branch[i] || "main"}`+ filePath + newPath);
             const destinationFolder = `./docs/${catalogueNames[i]}`;
             await fsextra.copy(sourceFolder, destinationFolder);
             } catch (err) {
@@ -155,7 +177,7 @@ const main = async () => {
   const filesToDownload = tutorials.map(e => {
     const file = e.repoUrl;
     const url = file.split("/").reverse();
-    return `https://codeload.github.com/${url[1]}/${url[0]}/zip/refs/heads/main`
+    return `https://codeload.github.com/${url[1]}/${url[0]}/zip/refs/heads/${e.branch || "main"}`
   })
 
   const filesNames = tutorials.map(e => {
@@ -164,13 +186,15 @@ const main = async () => {
     return url[0]
   })
 
-  const catalogueNames = tutorials.map(e => {
-    return e.catalogueName
-  })
+  const tutorial = tutorials.reduce((acc, e) => {
+    acc.catalogueNames.push(e.catalogueName);
+    acc.branch.push(e.branch);
+    acc.docTypes.push(e.docType);
+    acc.docPath.push(e.docPath);
+    
+    return acc;
+  }, { catalogueNames: [], branch: [], docTypes: [], docPath: [] });
 
-  const docTypes = tutorials.map(e => {
-    return e.docType
-  })
 
   //  全量更新时预先删除
   !index && await fsextra.remove("./docs");     
@@ -184,7 +208,7 @@ const main = async () => {
 
   // Extract downloaded files
   // copy to the docs
-  await extractFilesAndCopyFolder(folder, filesNames, filesToDownload, catalogueNames, docTypes);
+  await extractFilesAndCopyFolder(folder, filesNames, filesToDownload, tutorial);
 
   // Delete destinationPath
   await fsextra.remove(folder)

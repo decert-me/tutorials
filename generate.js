@@ -3,104 +3,181 @@ const path = require('path');
 
 const DOCS_DIR = path.join(__dirname, 'docs');
 
-function getDirectory(data, catalogueName) {
-  let directory
-  const lines = data.split('\n');
-    const result = [];
-    let currentCategory = '';
-    
-    lines.forEach((line, i) => {
-      if (line.startsWith('*')) {
-        const match = line.match(/\[([^\]]+)\]\(([^)]+)\)/);
-        if (match) {
-          const title = match[1];
-          const link = match[2].replace(".md","").replace(/^\d+_/, '');
-          console.log(link);
-          result.push({ title, link, category: currentCategory });
-        }
-      } else if (line.startsWith('## ')) {
-        currentCategory = line.replace('## ', '');
-      } else if (line.trim() !== '') {
-        result.push({ title: line.trim(), link: undefined, category: currentCategory });
-      }
-    });
-    directory = result;
-    const arr = [];
-    directory.map((e, i) => {
-      e.category ?
-      arr.push({
-        type: 'category',
-        label: e.category,
-        items: [
-          `${catalogueName}/${e.link}`
-        ],
-      })
-      :
-      arr.push(`${catalogueName}/${e.link}`)
-    })
+function getCategory({catalogueName,title}) {
+  const newTitle = title.replace(".md",'').replace(/\d+_/, "").replace(/%20/g, " ");
+  const link = catalogueName + "/" + newTitle;
+  const obj = {
+    type: "category",
+    label: title,
+    link: link,
+    items: [],
+    collapsed: true
+  }
+  return {
+    link,
+    obj
+  }
+}
 
-    const newArr = arr.reduceRight((acc, item) => {
-      if (typeof item === 'object') {
-        const existingIndex = acc.findIndex(obj => obj.label === item.label);
-      
-        if (existingIndex === -1) {
-          acc.push(item);
-        } else {
-          acc[existingIndex].items = [...item.items, ...acc[existingIndex].items];
-        }
-      } else {
-        acc.push(item);
+function getDirectory(data, catalogueName) {
+  const lines = data.split('\n');
+  // 解析每一行的配置信息
+  const summary = [];
+  let currentLabel = null;
+  let currentChapter = null;
+  let currentSection = null;
+
+  lines.forEach((line, i) => {
+    const matchTitle = line.match(/^##\s+(.+)$/)
+    const matchChapter = line.match(/^\* \[([^[\]]+)\]\(([^()]+)\)$/);
+    const matchSection = line.match(/^  \* \[([^[\]]+)\]\(([^()]+)\)$/);
+
+    // 匹配`##`标题
+    if (matchTitle) {
+      const chapterTitle = matchTitle[1];
+      currentLabel = {
+        type: "category",
+        label: chapterTitle,
+        collapsible: false,
+        collapsed: true,
+        items: []
       }
-      
-      return acc;
-    }, []);
-    
-  return newArr.reverse()
+      summary.push(currentLabel);
+    } else if (matchChapter && currentLabel) {
+        // 匹配`*`且传给父的items
+          const isCategory = lines.length > i+1 && lines[i+1].match(/^  \* \[([^[\]]+)\]\(([^()]+)\)$/);
+          if (isCategory) {
+            // 有子
+            let { obj } = getCategory({catalogueName, title: matchChapter[2]})
+            currentChapter = {...obj, link: {type: 'doc', id: obj.link}, label: matchChapter[1]}
+            currentLabel.items.push(currentChapter);
+          } else {
+            // 无子
+            const { link } = getCategory({catalogueName, title: matchChapter[2]})
+            currentLabel.items.push(link);
+          }
+    } else if (matchChapter) {
+          // 匹配`*`且传给summary
+          const isCategory = lines.length > i+1 && lines[i+1].match(/^  \* \[([^[\]]+)\]\(([^()]+)\)$/);
+          if (isCategory) {
+            // 有子
+            const { obj } = getCategory({catalogueName, title: matchChapter[2]})
+            currentChapter = {...obj, link: {type: 'doc', id: obj.link}, label: matchChapter[1]}
+            summary.push(currentChapter);
+          } else {
+            // 无子
+            const { link } = getCategory({catalogueName, title: matchChapter[2]})
+            summary.push(link);
+          }
+    } else if (matchSection && currentChapter) {
+      const sectionTitle = matchSection[1];
+      const sectionLink = matchSection[2];
+      // currentSection = { title: sectionTitle, link: sectionLink };
+      const { link } = getCategory({catalogueName, title: sectionLink})
+      currentSection = link.replace("./", catalogueName+"/").replace(".md",'').replace(/\d+_/, "").replace(/%20/g, " ");
+      currentChapter.items.push(currentSection);
+    }
+  });
+  const isStringFound = summary.some(item => typeof item === 'string' && item.includes(catalogueName + "/README"));
+  if (!isStringFound) {
+    summary.unshift({
+        type: 'doc',
+        id: `${catalogueName}/README`,
+        label: '简介',
+    })
+  }
+  return summary;
+}
+
+function getMdBook(data, catalogueName) {
+  const lines = data.split('\n');
+  // 解析每一行的配置信息
+  const summary = [
+    `${catalogueName}/README`
+  ];
+  let currentChapter = null;
+  let currentSection = null;
+
+  lines.forEach((line) => {
+    const matchChapter = line.match(/^- \[([^[\]]+)\]\(([^()]+)\)$/);
+    const matchSection = line.match(/^    - \[([^[\]]+)\]\(([^()]+)\)$/);
+
+    if (matchChapter) {
+      const chapterTitle = matchChapter[1];
+      const chapterLink = matchChapter[2];
+      // currentChapter = { title: chapterTitle, link: chapterLink, sections: [] };
+      currentChapter = {
+        type : "category",
+        label: chapterTitle.replace("./", catalogueName+"/").replace(".md",'').replace(/\d+_/, "").replace(/%20/g, " "),
+        items: []
+      }
+      summary.push(currentChapter);
+    } else if (matchSection && currentChapter) {
+      const sectionTitle = matchSection[1];
+      const sectionLink = matchSection[2];
+      // currentSection = { title: sectionTitle, link: sectionLink };
+      currentSection = sectionLink.replace("./", catalogueName+"/").replace(".md",'').replace(/\d+_/, "").replace(/%20/g, " ");
+      currentChapter.items.push(currentSection);
+    }
+  });
+  return summary;
+}
+
+const tutorialGitbook = async(filename, root, tutorial) => {
+  return await new Promise((resolve, reject) => {
+    fs.readFile(root+"/"+filename, 'utf8', (err, data) => {
+      if (err) reject(err)
+      const arr = getDirectory(data, tutorial.catalogueName);
+      resolve(arr)
+    });
+  }).then(res => {
+    return res
+  })
+}
+
+const tutorialDocusaurus = async(file) => {
+  return [
+    {
+        type: "autogenerated",
+        dirName: file
+    }
+  ]
+}
+
+const tutorialMdBook = async(filename, root, tutorial) => {
+  return await new Promise((resolve, reject) => {
+    fs.readFile(root+"/"+filename, 'utf8', (err, data) => {
+      if (err) reject(err)
+      const arr = getMdBook(data, tutorial.catalogueName)
+      resolve(arr)
+    });
+  }).then(res => {
+    return res
+  })
 }
 
 const getSidebars = async(dir, sidebars = {}) => {
     const files = fs.readdirSync(dir);
     const tutorials = await readJsonFile("tutorials.json");
-    // files.forEach((file) => {
   for (let i = 0; i < files.length; i++) {
     const file = files[i]
     const root = dir+"/"+file;
-    const catalogueName = tutorials.filter(e => e.catalogueName === file)[0].catalogueName;
+    const tutorial = tutorials.filter(e => e.catalogueName === file)[0];
     // 读取当前文件目录
     const filename = "SUMMARY.md"
-    const isFileExists = await new Promise((resolve, reject) => {
-      fs.readdir(root, async(err, files) => {
-        if (err) {
-          console.error('Error reading directory:', err);
-          return;
-        }
-        // 检查是否存在指定文件
-        const isFileExists = files.includes(filename);
-        resolve(isFileExists)
-      })
-    }).then(res => {return res})
-      if (isFileExists) {
-          // 1、读取文件
-          await new Promise((resolve, reject) => {
-            fs.readFile(root+"/"+filename, 'utf8', (err, data) => {
-              if (err) reject(err)
-              flag = data.indexOf("##") === -1 ? false : true;
-              const arr = getDirectory(data, catalogueName);
-              resolve(arr)
-            });
-          }).then(res => {
-            sidebars[file] = res;
-            console.log(res);
-          })
-      } else {
-            // 自动
-            sidebars[file] = [
-              {
-                  type: "autogenerated",
-                  dirName: file
-              }
-            ]
-      }
+    switch (tutorial.docType) {
+      case "gitbook":
+        sidebars[file] = await tutorialGitbook(filename, root, tutorial)
+        break;
+      case "docusaurus":
+        sidebars[file] = await tutorialDocusaurus(file)
+        break;
+        case "mdBook":
+        sidebars[file] = await tutorialMdBook(filename, root, tutorial)
+        break;
+      default:
+        break;
+    }
   }
   return sidebars;
 };

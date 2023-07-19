@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Button } from "antd";
 import "../../css/component/customNav.scss"
 import logo from "../../../static/img/logo-normal.png"
@@ -8,8 +8,28 @@ import {
     GlobalOutlined
   } from '@ant-design/icons';
 import json from "./i18n.json";
+import ConnectModal from './ConnectModal';
+import ConnectButton from './ConnectButton';
+import { useAccount, useDisconnect } from 'wagmi';
+import { getMenu } from './menu';
+import { useWeb3Modal } from '@web3modal/react';
+import { GlobalContext } from '../../provider';
 
 export default function CustomNav() {
+
+    const { open } = useWeb3Modal();
+    const { address, isConnected } = useAccount()
+    const { updateUser } = useContext(GlobalContext);
+    const { disconnect } = useDisconnect({
+        onSuccess() {
+            localStorage.removeItem("decert.token");
+            updateUser();
+            window.history.go(0);
+        }
+    });
+
+    let [openConnect, setOpenConnect] = useState(false);
+    let [menu, setMenu] = useState([]);     //  登陆后user展示下拉菜单
 
     let [isOpenM, setIsOpenM] = useState(false);
     let [isMobile, setIsMobile] = useState(false);
@@ -25,6 +45,17 @@ export default function CustomNav() {
         if (typeof window !== 'undefined') {
             window.open("https://decert.me", "_self");
         }
+    }
+
+    function openModal() {
+        isMobile ?
+        open()
+        :
+        setOpenConnect(true);
+    }
+
+    function handleCancel() {
+        setOpenConnect(false);
     }
 
     const menus = [
@@ -50,8 +81,16 @@ export default function CustomNav() {
         setIsMobile(isMobile);
     },[])
 
+    useEffect(() => {
+        if (isConnected) {
+            menu = getMenu(language, address, disconnect);
+            setMenu([...menu]);
+        }
+    },[isConnected])
+
     return (
         <>
+        <ConnectModal open={openConnect} handleCancel={handleCancel} />
         <div className="Header">
             <div className="header-content">
                 <div className='nav-left'>
@@ -84,15 +123,21 @@ export default function CustomNav() {
                             </div>
                         </>
                         :
-                        <Button 
-                            type="ghost"
-                            ghost
-                            className='lang custom-btn'
-                            id='hover-btn-line'
-                            onClick={() => toggleI18n()}
-                        >
-                            {language === 'CN' ? "CN" : "EN"}
-                        </Button>
+                        <>
+                            <Button 
+                                type="ghost"
+                                ghost
+                                className='lang custom-btn'
+                                id='hover-btn-line'
+                                onClick={() => toggleI18n()}
+                            >
+                                {language === 'CN' ? "CN" : "EN"}
+                            </Button>
+                            <ConnectButton
+                                menu={menu} 
+                                openModal={openModal} 
+                            />
+                        </>
                     }
                 </div>
             </div>
@@ -116,6 +161,14 @@ export default function CustomNav() {
                         <p>{language === 'cn' ? "中文" : "EN"}</p>
                     </li>
                 </ul>
+
+
+                {
+                    isConnected ?
+                    <Button danger type="primary" onClick={() => disconnect()}>断开连接</Button>
+                    :
+                    <Button onClick={() => openModal()}>连接钱包</Button>
+                }
             </div>
         }
         </>

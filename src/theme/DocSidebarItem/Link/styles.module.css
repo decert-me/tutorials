@@ -1,0 +1,17 @@
+.menuExternalLink {
+  align-items: center;
+}
+
+.custom-icon{
+  width: 18px;
+  height: 18px;
+  position: absolute;
+  right: 12px;
+  top: 8px;
+}
+
+.custom-iconBig{
+  width: 20px;
+  height: 20px;
+  top: 6px;
+}

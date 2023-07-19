@@ -1,0 +1,37 @@
+#theme.docs.sidebar.navAriaLabel{
+    position: relative;
+}
+.menu_src-theme-DocSidebar-Desktop-Content-styles-module{
+    padding-bottom: 121px !important;
+}
+.custom-bottom{
+    width: 100%;
+    padding: 20px 0;
+    background-color: #fff;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    .line{
+        margin: 0;
+    }
+    button{
+        width: calc(100% - 40px);
+        height: 40px;
+        margin: 20px;
+        color: #FEFEFE;
+        font-weight: 500;
+        background-color: #8F5A35;
+        &:hover{
+            background-color: #B47243 !important;
+        }
+    }
+}
+
+.chapter-margin{
+    margin: 16px 0 !important;
+}
+.chapter-title{
+    a{
+        color: rgba(136,153,168,1.00) !important;
+    }
+}
