@@ -3,6 +3,7 @@ const fs = require('fs');
 const fsextra = require('fs-extra');
 const path = require('path');
 const { exec } = require('child_process');
+const JSZip = require('jszip');
 
 const common = {
   gitbook: "/",
@@ -33,35 +34,37 @@ const downloadAllFiles = async (folder, filesToDownload) => {
   }
 };
 
-const extractFiles = (sourcePath, destinationPath) => {
-  return new Promise((resolve, reject) => {
-    if (process.platform === 'darwin') {
-      // console.log('当前环境是 macOS');
-      const extractCommand = `unar -o ${destinationPath} ${sourcePath}`;
-      exec(extractCommand, (err, stdout, stderr) => {
-        if (err) {
-          console.error(`Error extracting file: ${err}`);
-          reject(err);
-        } else {
+const extractFiles = async(sourcePath, destinationPath) => {
+
+  await new Promise((resolve, reject) => {
+    fs.readFile(sourcePath, function(err, data) {
+      if (err) throw err;
+      const zip = new JSZip();
+      // 使用JSZip加载压缩文件数据
+      zip.loadAsync(data)
+        .then(function(zip) {
+          // 遍历压缩文件中的所有文件
+          zip.forEach(function(relativePath, zipEntry) {
+            const path = destinationPath + "/" + zipEntry.name;
+            // 如果是文件夹，则创建相应的文件夹
+            if (zipEntry.dir) {
+              fs.mkdirSync(path);
+            } else {
+              // 提取文件内容
+              zipEntry.async('nodebuffer').then(function(content) {
+                // 将文件内容写入磁盘
+                fs.writeFileSync(path, content);
+              });
+            }
+          });
+          resolve()
           console.log(`Files extracted successfully: ${destinationPath}`);
-          resolve();
-        }
-      });
-    } else if (process.platform === 'linux') {
-      // console.log('当前环境是 Linux');
-      const extractCommand = `unzip -q -n ${sourcePath} -d ${destinationPath}`;
-      exec(extractCommand, (err, stdout, stderr) => {
-        if (err) {
+        })
+        .catch(function(err) {
           console.error(`Error extracting file: ${err}`);
-          reject(err);
-        } else {
-          console.log(`Files extracted successfully: ${destinationPath}`);
-          resolve();
-        }
-      });
-    }
-    
-  });
+        });
+    })
+  })
 };
 
 const extractFilesAndCopyFolder = async(destinationPath, filesNames, filesToDownload, tutorial) => {
