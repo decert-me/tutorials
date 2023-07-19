@@ -5,7 +5,6 @@ import CustomSign from '../CustomSign';
 import { GlobalContext } from '../../provider';
 import { getUser } from '../../request/public';
 import { hashAvatar } from '../../utils/hashAvatar';
-import { useLocation } from '@docusaurus/router';
 
 export default function ConnectButton(props) {
     
@@ -15,7 +14,6 @@ export default function ConnectButton(props) {
 
     const { isSign, updateUser, user } = useContext(GlobalContext);
     const { address } = useAccount();
-    const location = useLocation();
 
     function NickName(address) {
         return address && address.substring(0,5) + "..." + address.substring(38,42);
@@ -41,7 +39,7 @@ export default function ConnectButton(props) {
     return (
         <>
             {
-                isSign && location.pathname !== "/tutorials" &&
+                isSign && window.location.href !== "https://decert.me/tutorials" &&
                 <CustomSign />
             }
             {
