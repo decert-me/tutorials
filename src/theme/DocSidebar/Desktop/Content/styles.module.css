@@ -14,3 +14,6 @@
     margin-bottom: var(--docusaurus-announcement-bar-height);
   }
 }
+.menu_src_DocSidebar{
+  padding-bottom: 121px !important;
+}
