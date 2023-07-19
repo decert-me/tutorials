@@ -4,7 +4,7 @@ import serverConfig from "./config.js";
 
 // Client-side-only code
 let serviceAxios = axios.create({
-  baseURL: serverConfig?.baseURL + process.env.BASE_API,
+  baseURL: serverConfig?.baseURL + "/v1",
   timeout: 60000 + 60000 // 请求超时设置
   //   withCredentials: false, // 跨域请求是否需要携带 cookie
 });

@@ -13,7 +13,7 @@ import { GlobalContextProvider } from '../provider';  //  全局变量
 // Default implementation, that you can customize
 export default function Root({children}) {
 
-    const projectId = process.env.PROJECT_ID;
+    const projectId = process.env.WALLETCONNECT_PROJECT_ID;
 
     const { chains, provider, webSocketProvider } = configureChains(
         [mainnet, polygonMumbai, polygon],

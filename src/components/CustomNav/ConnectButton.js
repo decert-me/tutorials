@@ -25,7 +25,7 @@ export default function ConnectButton(props) {
             if (res.status === 0) {
                 const img = res.data.avatar;
                 let obj = res.data;
-                let avatar = img ? process.env.BASE_URL + img : hashAvatar(address);
+                let avatar = img ? process.env.BASE_STATIC_URL + img : hashAvatar(address);
                 obj.avatar = avatar;
                 updateUser(obj);
             }
