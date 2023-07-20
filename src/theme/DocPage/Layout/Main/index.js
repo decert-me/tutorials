@@ -66,6 +66,7 @@ export default function DocPageLayoutMain({hiddenSidebarContainer, children}) {
       className={clsx(
         styles.docMainContainer,
         (hiddenSidebarContainer || !sidebar) && styles.docMainContainerEnhanced,
+        styles.margin_top_83
       )}>
       <div
         ref={boxRef}

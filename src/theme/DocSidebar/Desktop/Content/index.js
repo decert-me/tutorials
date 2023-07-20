@@ -124,7 +124,7 @@ export default function DocSidebarDesktopContent({path, sidebar, className}) {
         className,
         styles.menu_src_DocSidebar
       )}>
-      <ul className={clsx(ThemeClassNames.docs.docSidebarMenu, 'menu__list')}>
+      <ul className={clsx(ThemeClassNames.docs.docSidebarMenu, 'menu__list', styles.margin_top_83)}>
         <DocSidebarItems items={sidebar} activePath={path} level={1} />
       </ul>
       <div className="custom-bottom">
