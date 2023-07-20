@@ -15,7 +15,7 @@ function getCategory({catalogueName,title,label}) {
   }
   const link = {
     type: "doc",
-    id: url.replace("./", catalogueName+"/").replace(".md",'').replace(/\d+_/, "").replace(/%20/g, " "),
+    id: url.replace("./", "").replace(".md",'').replace(/\d+_/, "").replace(/%20/g, " "),
     label: label,
   }
   return {
@@ -121,7 +121,14 @@ function getMdBook(data, catalogueName) {
       const sectionTitle = matchSection[1];
       const sectionLink = matchSection[2];
       // currentSection = { title: sectionTitle, link: sectionLink };
-      currentSection = sectionLink.replace("./", catalogueName+"/").replace(".md",'').replace(/\d+_/, "").replace(/%20/g, " ");
+      // TODO: ======
+      // currentSection = sectionLink.replace("./", catalogueName+"/").replace(".md",'').replace(/\d+_/, "").replace(/%20/g, " ");
+      // currentChapter.items.push(currentSection);
+
+
+
+      const { link } = getCategory({catalogueName, title: sectionLink, label: sectionTitle})
+      currentSection = link;
       currentChapter.items.push(currentSection);
     }
   });
