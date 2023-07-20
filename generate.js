@@ -96,38 +96,57 @@ function getDirectory(data, catalogueName) {
 
 function getMdBook(data, catalogueName) {
   const lines = data.split('\n');
-  // 解析每一行的配置信息
-  const summary = [{
-    type: 'doc',
-    id: `${catalogueName}/README`,
-    label: '简介',
-}];
+  const summary = [];
   let currentChapter = null;
   let currentSection = null;
+  let currentSubSection = null; // 新增一个变量来跟踪小节中的小节
 
   lines.forEach((line) => {
     const matchChapter = line.match(/^- \[([^[\]]+)\]\(([^()]+)\)$/);
     const matchSection = line.match(/^    - \[([^[\]]+)\]\(([^()]+)\)$/);
+    const matchSection2 = line.match(/^      - \[([^[\]]+)\]\(([^()]+)\)$/);
 
     if (matchChapter) {
       const chapterTitle = matchChapter[1];
       const chapterLink = matchChapter[2];
-      // currentChapter = { title: chapterTitle, link: chapterLink, sections: [] };
       currentChapter = {
-        type : "category",
-        label: chapterTitle.replace("./", catalogueName+"/").replace(".md",'').replace(/\d+_/, "").replace(/%20/g, " "),
+        type: 'category',
+        label: chapterTitle.replace("./", catalogueName + "/").replace(".md", '').replace(/\d+_/, "").replace(/%20/g, " "),
         items: []
-      }
+      };
       summary.push(currentChapter);
-    } else if (matchSection && currentChapter) {
+      currentSection = null;
+      currentSubSection = null; // 重置小节中的小节
+    } else if (matchSection) {
       const sectionTitle = matchSection[1];
       const sectionLink = matchSection[2];
-
-      const { link } = getCategory({catalogueName, title: sectionLink, label: sectionTitle})
+      const { link } = getCategory({ catalogueName, title: sectionLink, label: sectionTitle });
       currentSection = link;
       currentChapter.items.push(currentSection);
+      currentSubSection = null; // 重置小节中的小节
+    } else if (matchSection2 && currentSection) {
+      const subSectionTitle = matchSection2[1];
+      const subSectionLink = matchSection2[2];
+      const { link } = getCategory({ catalogueName, title: subSectionLink, label: subSectionTitle });
+      currentSubSection = link;
+      // 注意这里，我们将小节中的小节添加到当前小节的`items`数组中
+      if (currentSection?.id) {
+        currentSection.link = {type: 'doc', id: currentSection.id}
+        delete currentSection.id
+      }
+      currentSection.items = currentSection.items || [];
+      currentSection.items.push(currentSubSection);
+      currentSection.type = 'category';
     }
   });
+  const isStringFound = summary.some(item => item?.id?.includes(catalogueName + "/README"));
+  if (!isStringFound) {
+    summary.unshift({
+        type: 'doc',
+        id: `${catalogueName}/README`,
+        label: '简介',
+    })
+  }
   return summary;
 }
 
