@@ -1,7 +1,9 @@
 .Header{
-    z-index: 1;
+    width: 100%;
     height: 82px;
+    z-index: 1;
     box-sizing: content-box;
+    position: fixed;
     &,.nav-left a{
         color: #000;
     }

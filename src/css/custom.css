@@ -43,9 +43,15 @@
 body{
   line-height: 1.75;
 }
+.main-wrapper{
+  min-height: calc(100vh - 52px);
+}
 @media screen and (min-width: 996px){
   .theme-doc-sidebar-container{
     min-height: calc(100vh - 82px - 52px)
+  }
+  .navbar--fixed-top{
+    top: 83px;
   }
 }
 
