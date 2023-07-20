@@ -1,13 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useAccount, useDisconnect, useSigner } from "wagmi";
 import { authLoginSign, getLoginMsg } from "../../request/public";
 import { Modal } from 'antd';
+import { GlobalContext } from "../../provider";
 const { confirm } = Modal;
 
 
 export default function CustomSign(params) {
     
     const { address, isConnected } = useAccount();
+    const { updateUser } = useContext(GlobalContext);
     const { disconnect } = useDisconnect();
     const { data: signer } = useSigner();
     let [nonce, setNonce] = useState();
@@ -32,7 +34,7 @@ export default function CustomSign(params) {
     }
 
     async function getSignature(params) {
-        signer?.signMessage(nonce)
+        await signer?.signMessage(nonce)
         // .then(res => {
         //     res && localStorage.setItem(`decert.token`,res)
         //     Modal.destroyAll();
@@ -55,6 +57,7 @@ export default function CustomSign(params) {
             // 拒绝签名
             Modal.destroyAll();
             disconnect();
+            updateUser();
         })
     }
 
