@@ -83,7 +83,7 @@ function getDirectory(data, catalogueName) {
       currentChapter.items.push(currentSection);
     }
   });
-  const isStringFound = summary.some(item => typeof item === 'string' && item.includes(catalogueName + "/README"));
+  const isStringFound = summary.some(item => item?.id?.includes(catalogueName + "/README"));
   if (!isStringFound) {
     summary.unshift({
         type: 'doc',
@@ -97,9 +97,11 @@ function getDirectory(data, catalogueName) {
 function getMdBook(data, catalogueName) {
   const lines = data.split('\n');
   // 解析每一行的配置信息
-  const summary = [
-    `${catalogueName}/README`
-  ];
+  const summary = [{
+    type: 'doc',
+    id: `${catalogueName}/README`,
+    label: '简介',
+}];
   let currentChapter = null;
   let currentSection = null;
 
@@ -120,12 +122,6 @@ function getMdBook(data, catalogueName) {
     } else if (matchSection && currentChapter) {
       const sectionTitle = matchSection[1];
       const sectionLink = matchSection[2];
-      // currentSection = { title: sectionTitle, link: sectionLink };
-      // TODO: ======
-      // currentSection = sectionLink.replace("./", catalogueName+"/").replace(".md",'').replace(/\d+_/, "").replace(/%20/g, " ");
-      // currentChapter.items.push(currentSection);
-
-
 
       const { link } = getCategory({catalogueName, title: sectionLink, label: sectionTitle})
       currentSection = link;
