@@ -42,7 +42,7 @@
     },
     {
         "repoUrl": "https://github.com/RandyPen/sui-move-intro-course-zh",
-        "label": "Sui Move导论",
+        "label": "Sui Move 导论",
         "startPage": "README",
         "catalogueName": "sui-move-intro-course-zh",
         "img": "https://ipfs.learnblockchain.cn/images/sui.png",
