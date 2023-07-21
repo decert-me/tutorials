@@ -58,3 +58,36 @@ body{
 .navbar--fixed-top{
   z-index: 89;
 }
+.navbar__item{
+  text-decoration: underline;
+  font-weight: 400;
+}
+.navbar__link--active{
+  text-decoration: none;
+}
+
+/* 面包屑导航栏 */
+.breadcrumbs{
+  position: relative;
+}
+.breadcrumbs_repo_url{
+  padding: 7px 12px;
+  border-radius: 6px;
+  background-color: #F5F5F7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1F1F1F;
+  position: absolute;
+  right: 0;
+}
+.breadcrumbs_repo_url img{
+  width: 16px;
+  height: 16px;
+}
+.breadcrumbs_repo_url p{
+  margin: 0;
+  margin-left: 5px;
+  font-size: 14px;
+  line-height: 20px;
+}
