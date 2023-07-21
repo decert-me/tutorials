@@ -19,6 +19,8 @@
     ) !important;
   }
   .margin_top_83{
-    margin-top: 83px !important;
+    margin-top: calc(92px + 8px) !important;
+    margin-left: 10px;
+    background-color: #FEFEFE;
   }
 }
