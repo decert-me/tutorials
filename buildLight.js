@@ -1,4 +1,5 @@
 const { exec } = require('child_process');
+const fsextra = require('fs-extra');
 
 
 
@@ -38,5 +39,10 @@ const main = async () => {
     await generateSidebar();
     // 打包
     await buildProject();
+    // 将JSON放到build中
+    await fsextra.copy("./tutorials.json", "./build/tutorials.json")
+    .then(res => {
+      console.log('copy tutorials.json successfully');
+    })
 }
 main();
