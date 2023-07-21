@@ -28,5 +28,24 @@
         "desc": "本教程是一个面向区块链爱好者的系列教程，帮助新手用户从零开始学习区块链数据分析，成为一名链上数据分析师。",
         "docType": "gitbook",
         "challenge": 10004
+    },    
+    {
+        "repoUrl": "https://github.com/miguelmota/ethereum-development-with-go-book",
+        "label": "用Go来做以太坊开发",
+        "startPage": "README",
+        "catalogueName": "ethereum-development-with-go-book",
+        "img": "https://ipfs.learnblockchain.cn/images/ethereum-development-with-go.jpg",
+        "desc": "这本迷你书的本意是给任何想用Go进行以太坊开发的同学一个概括的介绍。本意是如果你已经对以太坊和Go有一些熟悉，但是对于怎么把两者结合起来还有些无从下手，那这本书就是一个好的起点。",
+        "docType": "gitbook",
+        "branch": "master",
+        "docPath": "/zh"
+    },
+    {
+        "repoUrl": "https://github.com/RandyPen/sui-move-intro-course-zh",
+        "label": "Sui Move导论",
+        "startPage": "README",
+        "catalogueName": "sui-move-intro-course-zh",
+        "img": "https://ipfs.learnblockchain.cn/images/sui.png",
+        "docType": "mdBook"
     }
 ]
