@@ -74,7 +74,7 @@ export default function DocSidebarItemLink({
         )}
         style={{
           position: "relative",
-          paddingRight: 30
+          paddingRight: 44
         }}
         autoAddBaseUrl={autoAddBaseUrl}
         aria-current={isActive ? 'page' : undefined}

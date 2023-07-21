@@ -44,17 +44,29 @@ body{
   line-height: 1.75;
 }
 .main-wrapper{
-  min-height: calc(100vh - 52px);
+  min-height: calc(100vh - 50px);
 }
 @media screen and (min-width: 996px){
   .theme-doc-sidebar-container{
     min-height: calc(100vh - 82px - 52px)
   }
   .navbar--fixed-top{
-    top: 83px;
+    top: 92px;
+  }
+  .container{
+    min-height: calc(100vh - 152px);
   }
 }
 
+/* root */
+#__docusaurus{
+  background-color: #FBFBFB;
+}
+.theme-doc-sidebar-container{
+  border-right: 0 !important;
+}
+
+/* 导航栏 */
 .navbar--fixed-top{
   z-index: 89;
 }

@@ -151,7 +151,13 @@ export default function DocBreadcrumbs() {
   },[select])
 
   useEffect(() => {
-    const selectDoc = breadcrumbs[0].docId.split("/")[0];
+    const obj = breadcrumbs[0];
+    let selectDoc;
+    if (obj.type === "category") {
+      selectDoc = obj.href.split("/")[2];
+    }else{
+      selectDoc = obj.docId.split("/")[0];
+    }
     const arr = json.filter(e => e.catalogueName === selectDoc)
     selectRepoUrl = arr[0].repoUrl;
     setSelectRepoUrl(selectRepoUrl);

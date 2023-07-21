@@ -122,7 +122,8 @@ export default function DocSidebarDesktopContent({path, sidebar, className}) {
         styles.menu,
         showAnnouncementBar && styles.menuWithAnnouncementBar,
         className,
-        styles.menu_src_DocSidebar
+        styles.menu_src_DocSidebar,
+        selectItem?.challenge && styles.mb121
       )}>
       <ul className={clsx(ThemeClassNames.docs.docSidebarMenu, 'menu__list', styles.margin_top_83)}>
         <DocSidebarItems items={sidebar} activePath={path} level={1} />
