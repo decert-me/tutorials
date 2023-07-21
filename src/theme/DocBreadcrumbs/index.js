@@ -15,7 +15,19 @@ import {
 } from '@ant-design/icons';
 import { useLocation } from '@docusaurus/router';
 
-
+function RepoUrl(selectRepoUrl, isMobile) {
+  
+  return (
+    <a href={selectRepoUrl} target="_blank" rel="noopener noreferrer">
+      <div className="breadcrumbs_repo_url">
+        <img src={require(`@site/static/img/repo-link.png`).default} alt="" />
+        {
+          !isMobile && <p>来源链接</p>
+        }
+      </div>
+    </a>
+  )
+}
 // TODO move to design system folder
 function BreadcrumbsItemLink({children, href, isLast}) {
   const className = 'breadcrumbs__link';
@@ -62,8 +74,12 @@ function BreadcrumbsItem({children, active, index, addMicrodata, select, setSele
       })}
       onClick={() => isSelect()}
       className={clsx('breadcrumbs__item', {
-        'breadcrumbs__item--active': active,
-      })}>
+        // 'breadcrumbs__item--active': active,
+        // 'breadcrumbs_item_active': active,
+        },
+        active && styles.breadcrumbs_item_active
+
+      )}>
       {children}
       <meta itemProp="position" content={String(index + 1)} />
     </li>
@@ -76,6 +92,8 @@ function useNavbarItems() {
 }
 
 export default function DocBreadcrumbs() {
+
+  const json = require("../../../tutorials.json");
   const breadcrumbs = useSidebarBreadcrumbs();
   const items = useNavbarItems();
   const location = useLocation();
@@ -85,6 +103,8 @@ export default function DocBreadcrumbs() {
   let [select, setSelect] = useState(false);
   let [primaryMenu, setPrimaryMenu] = useState([]);
   let [top, setTop] = useState(0);
+  let [selectRepoUrl, setSelectRepoUrl] = useState();
+  
   
   function toggleMenu(params) {
     setIsShow(params)
@@ -131,6 +151,11 @@ export default function DocBreadcrumbs() {
   },[select])
 
   useEffect(() => {
+    const selectDoc = breadcrumbs[0].docId.split("/")[0];
+    const arr = json.filter(e => e.catalogueName === selectDoc)
+    selectRepoUrl = arr[0].repoUrl;
+    setSelectRepoUrl(selectRepoUrl);
+    
     isMobile = document.documentElement.clientWidth <= 996 ? true : false;
     setIsMobile(isMobile);
   },[])
@@ -153,6 +178,7 @@ export default function DocBreadcrumbs() {
               className="breadcrumbs"
               itemScope
               itemType="https://schema.org/BreadcrumbList">
+                {RepoUrl(selectRepoUrl, isMobile)}
               <li className='breadcrumbs__item'>
               <a href="https://decert.me/tutorials">
                 <HomeFilled style={{color: "#000"}} />
@@ -179,6 +205,7 @@ export default function DocBreadcrumbs() {
             className="breadcrumbs"
             itemScope
             itemType="https://schema.org/BreadcrumbList">
+              {RepoUrl(selectRepoUrl, isMobile)}
             <li className='breadcrumbs__item'>
               <a href="https://decert.me/tutorials">
                 <HomeFilled style={{color: "#000"}} />

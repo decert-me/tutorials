@@ -2,3 +2,10 @@
   --ifm-breadcrumb-size-multiplier: 0.8;
   margin-bottom: 0.8rem;
 }
+.breadcrumbs_item_active {
+  font-size: 12px;
+  font-weight: 600;
+}
+.breadcrumbs_item_active span{
+  color: #986344;
+}
