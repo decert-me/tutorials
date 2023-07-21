@@ -72,6 +72,12 @@ const config = {
         // },
         items: navbarItems
       },
+      colorMode: {
+        // Hide the day/night switch button
+        disableSwitch: true,
+        // Set the default mode to 'light' (day) mode
+        defaultMode: 'light',
+      },
       footer: {
         style: 'dark',
         links: [
