@@ -154,7 +154,8 @@ export default function DocBreadcrumbs() {
     const obj = breadcrumbs[0];
     let selectDoc;
     if (obj.type === "category") {
-      selectDoc = obj.href.split("/")[2];
+      const arr = obj.items.filter(e => e.type === "link");
+      selectDoc = arr[0].docId.split("/")[0];
     }else{
       selectDoc = obj.docId.split("/")[0];
     }
