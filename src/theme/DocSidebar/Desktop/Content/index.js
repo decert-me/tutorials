@@ -128,20 +128,21 @@ export default function DocSidebarDesktopContent({path, sidebar, className}) {
       <ul className={clsx(ThemeClassNames.docs.docSidebarMenu, 'menu__list', styles.margin_top_83)}>
         <DocSidebarItems items={sidebar} activePath={path} level={1} />
       </ul>
-      <div className="custom-bottom">
-        <Divider className='line'/>
-        {
+      {
           selectItem?.challenge &&
-          <Button 
-            type='primary'
-            onClick={() => {
-              window.open(`https://decert.me/quests/${selectItem.challenge}`, '_blank')
-            }}
-          >
-            开始挑战
-          </Button>
-        }
-      </div>
+          <div className="custom-bottom">
+            <Divider className='line'/>
+            
+              <Button 
+                type='primary'
+                onClick={() => {
+                  window.open(`https://decert.me/quests/${selectItem.challenge}`, '_blank')
+                }}
+              >
+                开始挑战
+              </Button>
+          </div>
+      }
     </nav>
   );
 }
