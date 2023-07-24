@@ -3,6 +3,10 @@ const path = require('path');
 
 const DOCS_DIR = path.join(__dirname, 'docs');
 
+function pathReplace(path) {
+  return path.replace(".md", '').replace(/\d+_/, "").replace(/%20/g, " ")
+}
+
 function getCategory({catalogueName,title,label}) {
   const newTitle = title.replace(".md",'').replace(/\d+_/, "").replace(/%20/g, " ");
   const url = catalogueName + "/" + newTitle;
@@ -226,20 +230,87 @@ function readJsonFile(filePath) {
     });
   }
 
+  function getCategoryJsonFiles(filepath) {
+    const files = fs.readdirSync(filepath);
+    return files.filter((file) => fs.statSync(`${filepath}/${file}`).isDirectory());
+  }
+
+  function findMDFiles(files) {
+    let startPage = "";
+    for (let i = 0; i < files.length; i++) {
+      const regex = new RegExp(`^${i}_`);
+      const matchingFiles = files.filter((file) => {
+        return regex.test(file) && file.endsWith('.md');
+      });
+      if (matchingFiles.length > 0) {
+        startPage = matchingFiles[0]
+        return startPage
+      }
+    }
+  }
+
+  function filterMDFiles(path) {
+    return fs.readdirSync(path, (err, files) => {
+      if (err) {
+        console.error('读取目录失败:', err);
+        return;
+      }
+      return files
+    });
+  }
+  
+  async function categoryContrast(path, filepath) {
+    let startPage = {
+      value: pathReplace(path),
+      index: Number(path.split("_")[0])
+    };
+    const categoryJsonFiles = getCategoryJsonFiles(filepath);
+    let maxPosition = {
+      position: 999,
+      jsonFile: ""
+    };
+    categoryJsonFiles.forEach((jsonFile) => {
+      const jsonData = JSON.parse(fs.readFileSync(`${filepath}/${jsonFile}/_category_.json`, 'utf8'));
+      if (jsonData.position < maxPosition.position) {
+        maxPosition = {
+          position: jsonData.position,
+          jsonFile: jsonFile
+        }
+      }
+    });
+    // TODO: 如果category.json比当前的startpage还要小，则遍历当前category.json的目录
+    if (maxPosition.position < startPage.index) {
+      const files = filterMDFiles(`${filepath}/${maxPosition.jsonFile}`);
+      const path = findMDFiles(files)
+      startPage.value = maxPosition.jsonFile + "/" + pathReplace(path);
+    }
+    return startPage.value
+  }
+
+  async function getStartPage(file, item) {
+    let page;
+    if (item.docType === "gitbook" || item.docType === "mdBook") {
+      page = "README"
+    }else {
+      // docusaurus
+      const filepath = `./docs/${item.catalogueName}`;
+      const files = filterMDFiles(filepath);
+        const path = findMDFiles(files)
+        const res = await categoryContrast(path, filepath)
+        page = res;
+    }
+    return page
+  }
+
 const getNavbarItems = async(dir, navbarItems = []) => {
     const files = fs.readdirSync(dir);
     const tutorials = await readJsonFile("tutorials.json");
-    // 初始化
-    // navbarItems.push({
-    //     href: 'https://github.com/decert-me/tutorials',
-    //     label: 'GitHub',
-    //     position: 'right',
-    // })
-    tutorials.map((e, i) => {
+    await tutorials.map(async(e, i) => {
       const file = files.filter(item => item === e.catalogueName)[0];
+      const startPage = await getStartPage(file, e);
       navbarItems.push({
         type: 'doc',
-        docId: file+"/"+e.startPage,
+        docId: file+"/"+startPage,
         position: 'left',
         label: e.label,
       })
