@@ -305,17 +305,22 @@ function readJsonFile(filePath) {
 const getNavbarItems = async(dir, navbarItems = []) => {
     const files = fs.readdirSync(dir);
     const tutorials = await readJsonFile("tutorials.json");
-    await tutorials.map(async(e, i) => {
-      const file = files.filter(item => item === e.catalogueName)[0];
-      const startPage = await getStartPage(file, e);
-      navbarItems.push({
-        type: 'doc',
-        docId: file+"/"+startPage,
-        position: 'left',
-        label: e.label,
+    await new Promise((resolve, reject) => {
+      tutorials.map(async(e, i) => {
+        const file = files.filter(item => item === e.catalogueName)[0];
+        const startPage = await getStartPage(file, e);
+        navbarItems.push({
+          type: 'doc',
+          docId: file+"/"+startPage,
+          position: 'left',
+          label: e.label,
+        })
+        if (i + 1 === tutorials.length) {
+          resolve()
+        }
       })
     })
-    return navbarItems;
+    return navbarItems.reverse();
 };
 
 
