@@ -13,7 +13,7 @@ export default function AppFooter({ isMobile }) {
     {label: "Dune", value: "https://dune.com/decertme/decert"},
     {label: "Notion", value: "https://decert.notion.site/Decert-me-8b479c6e443740f192a56f2e090829ab"},
     {label: "Twitter", value: "https://twitter.com/decertme"},
-    {label: "Discord", value: `https://discord.gg/${process.env.REACT_APP_DISCORD_VERIFY_INVITE_LINK}`},
+    {label: "Discord", value: `https://discord.gg/U3kRbnc6yG`},
     {label: "Github", value: "https://github.com/decert-me"},
   ]
 
