@@ -64,6 +64,9 @@ export default function DocPageLayoutMain({hiddenSidebarContainer, children}) {
   },[isBottomVisible])
 
   useEffect(() => {
+    if (location.pathname.indexOf("/tutorial/category") !== -1) {
+      return
+    }
     init()
   },[location])
 
