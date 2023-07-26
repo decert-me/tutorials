@@ -241,6 +241,7 @@ const getSidebars = async(files, tutorials, sidebars = {}) => {
           sidebars[file] = await tutorialGitbook(filename, root, tutorial)
           break;
         case "docusaurus":
+        case "video":
           sidebars[file] = await tutorialDocusaurus(file)
           break;
         case "mdBook":
@@ -249,10 +250,6 @@ const getSidebars = async(files, tutorials, sidebars = {}) => {
         default:
           break;
       }
-    }else{
-      // TODO: 生成video侧边栏
-      console.log("TODO: 生成video侧边栏");
-
     }
   }
   return sidebars;
@@ -351,20 +348,22 @@ const getNavbarItems = async(files, tutorials, navbarItems = []) => {
   await new Promise((resolve, reject) => {
     tutorials.map(async(e, i) => {
       const file = files.filter(item => item === e.catalogueName)[0];
+      const obj = {
+        type: 'doc',
+        position: 'left',
+        label: e.label,
+        docId: "",
+        category: e.category
+      }
       if (e.docType !== "video") {
         const startPage = await getStartPage(file, e);
-        navbarItems.push({
-          type: 'doc',
-          docId: file+"/"+startPage,
-          position: 'left',
-          label: e.label,
-        })
-        if (i + 1 === tutorials.length) {
-          resolve()
-        }
+        obj.docId = file+"/"+startPage;
       }else{
-        // TODO: video navbar
-        console.log("TODO: video navbar");
+        obj.docId = file+"/video0";
+      }
+      navbarItems.push(obj)
+      if (i + 1 === tutorials.length) {
+        resolve()
       }
     })
   })
@@ -411,7 +410,7 @@ async function generateVideo(tutorials) {
         });
       })
       // 发起请求 ==> 获取播放列表内容
-      const playlistId = 'PLRvr9ZwuLnyNP2QHHL7Hbs3wEcJL7fVMt';
+      const playlistId = ele.url.split("=").pop();
       await getPlaylistVideos(youtubeApiKey, playlistId)
       .then(result => {
         if (result.length > 0) {
