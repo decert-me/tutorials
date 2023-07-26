@@ -19,24 +19,10 @@ const buildProject = () => {
     });
 };
 
-const generateSidebar = () => {
-    return new Promise((resolve, reject) => {
-      const generateCommand = `node generate.js`;
-      exec(generateCommand, (err, stdout, stderr) => {
-        if (err) {
-          console.error(`Error running generate command: ${err}`);
-          reject(err);
-        } else {
-          console.log('generate successfully');
-          resolve();
-        }
-      });
-    });
-};
-
 const main = async () => {
+  const generate = require('./generate');
     // 生成
-    await generateSidebar();
+    await generate.main();
     // 打包
     await buildProject();
     // 将JSON放到build中

@@ -448,13 +448,16 @@ async function generateVideo(tutorials) {
 
 
 const main = async () => {
-  const files = fs.readdirSync(DOCS_DIR);
   const tutorials = await readJsonFile("tutorials.json");
-
   // TODO: video生成.md文件
   await generateVideo(tutorials);
-  generateSidebars(files, tutorials);
-  generateNavbarItemsFile(files, tutorials); // 执行函数
+
+  const files = fs.readdirSync(DOCS_DIR);
+
+  await generateSidebars(files, tutorials);
+  await generateNavbarItemsFile(files, tutorials); // 执行函数
 }
 
-main();
+module.exports = {
+  main
+};

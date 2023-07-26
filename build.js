@@ -134,21 +134,6 @@ const buildProject = () => {
   });
 };
 
-const generateSidebar = () => {
-    return new Promise((resolve, reject) => {
-      const generateCommand = `node generate.js`;
-      exec(generateCommand, (err, stdout, stderr) => {
-        if (err) {
-          console.error(`Error running generate command: ${err}`);
-          reject(err);
-        } else {
-          console.log('generate successfully');
-          resolve();
-        }
-      });
-    });
-};
-
 const compatible = () => {
   return new Promise((resolve, reject) => {
     const compatibleCommand = 'node compatible.js';
@@ -211,6 +196,7 @@ const main = async () => {
 
   // mkdir
   const folder = "./tmpl";
+  const generate = require('./generate');
   createFolder(folder);
   createFolder("./docs")
   // Download all files
@@ -223,7 +209,7 @@ const main = async () => {
   // Delete destinationPath
   await fsextra.remove(folder)
 
-  await generateSidebar();
+  await generate.main();
 
   await compatible();
   // Build project
