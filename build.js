@@ -212,7 +212,7 @@ const main = async () => {
   // mkdir
   const folder = "./tmpl";
   createFolder(folder);
-
+  createFolder("./docs")
   // Download all files
   await downloadAllFiles(folder, filesToDownload);
 
