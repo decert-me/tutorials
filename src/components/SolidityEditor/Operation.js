@@ -53,7 +53,8 @@ export default function Operation(props) {
         const version = /pragma solidity ((\^|>=)\d+\.\d+\.\d+|>=\d+\.\d+\.\d+ <\d+\.\d+\.\d+);/;
         const versionResult = code.match(version);
 
-        selectVersion = getVersion(versionResult[1]);
+        // 若没有版本号则默认^0.8.0
+        selectVersion = getVersion(versionResult ? versionResult[1] : "0.8.0");
         setSelectVersion(selectVersion);
 
         contractName = result[1];
