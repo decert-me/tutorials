@@ -345,29 +345,31 @@ function readJsonFile(filePath) {
   }
 
 const getNavbarItems = async(files, tutorials, navbarItems = []) => {
-  await new Promise((resolve, reject) => {
-    tutorials.map(async(e, i) => {
-      const file = files.filter(item => item === e.catalogueName)[0];
-      const obj = {
-        type: 'doc',
-        position: 'left',
-        label: e.label,
-        docId: "",
-        category: e.category
+  await new Promise(async(resolve, reject) => {
+      for (let i = 0; i < tutorials.length; i++) {
+        const e = tutorials[i];
+        const file = files.filter(item => item === e.catalogueName)[0];
+        const obj = {
+          type: 'doc',
+          position: 'left',
+          label: e.label,
+          docId: "",
+          category: e.category
+        }
+        if (e.docType !== "video") {
+          const startPage = await getStartPage(file, e);
+          obj.docId = file+"/"+startPage;
+        }else{
+          obj.docId = file+"/video0";
+        }
+        navbarItems.push(obj)
+        if (i + 1 === tutorials.length) {
+          resolve()
+        }
       }
-      if (e.docType !== "video") {
-        const startPage = await getStartPage(file, e);
-        obj.docId = file+"/"+startPage;
-      }else{
-        obj.docId = file+"/video0";
-      }
-      navbarItems.push(obj)
-      if (i + 1 === tutorials.length) {
-        resolve()
-      }
-    })
+      
   })
-  return navbarItems.reverse();
+  return navbarItems;
 };
 
 
