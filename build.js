@@ -29,8 +29,10 @@ const downloadFile = (url, destinationPath) => {
 
 const downloadAllFiles = async (folder, filesToDownload) => {
   for (let i = 0; i < filesToDownload.length; i++) {
-    const file = filesToDownload[i];
-    await downloadFile(file, folder+"/"+i+".zip");
+    if (filesToDownload[i]) {
+      const file = filesToDownload[i];
+      await downloadFile(file, folder+"/"+i+".zip");
+    }
   }
 };
 
@@ -70,19 +72,21 @@ const extractFiles = async(sourcePath, destinationPath) => {
 const extractFilesAndCopyFolder = async(destinationPath, filesNames, filesToDownload, tutorial) => {
     const { catalogueNames, branch, docTypes, docPath } = tutorial;
     for (let i = 0; i < filesToDownload.length; i++) {
-        const sourcePath = destinationPath+"/"+i+".zip"
-        const filePath = common[docTypes[i]];
-        const newPath = docPath[i] || "";
-        try {
+        if (filesToDownload[i]) {
+          const sourcePath = destinationPath+"/"+i+".zip"
+          const filePath = common[docTypes[i]];
+          const newPath = docPath[i] || "";
+          try {
             // Extract files from sourcePath to destinationPath
             await extractFiles(sourcePath, destinationPath);
             // 将 folderToCopy 从 destinationPath 复制到另一个文件夹
             const sourceFolder = path.join(destinationPath, filesNames[i]+`-${branch[i] || "main"}`+ filePath + newPath);
             const destinationFolder = `./docs/${catalogueNames[i]}`;
             await fsextra.copy(sourceFolder, destinationFolder);
-            } catch (err) {
+          } catch (err) {
             console.error(err);
-            }
+          }
+        }
     }
 }
 
@@ -175,12 +179,18 @@ const main = async () => {
   }
 
   const filesToDownload = tutorials.map(e => {
+    if (e.docType === "video") {
+      return
+    }
     const file = e.repoUrl;
     const url = file.split("/").reverse();
     return `https://codeload.github.com/${url[1]}/${url[0]}/zip/refs/heads/${e.branch || "main"}`
   })
 
   const filesNames = tutorials.map(e => {
+    if (e.docType === "video") {
+      return
+    }
     const file = e.repoUrl;
     const url = file.split("/").reverse();
     return url[0]
