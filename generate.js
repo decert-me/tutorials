@@ -427,7 +427,7 @@ async function generateVideo(tutorials) {
       for (let i = 0; i < videoItems.length; i++) {
         const videoItem = videoItems[i];
         const fileName = `./docs/${ele.catalogueName}/video${i}.md`;
-        const fileContent = `# ${videoItem.label}\n\n<iframe src="https://www.youtube.com/embed/${videoItem.id}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen> </iframe>`;
+        const fileContent = `# ${videoItem.label}\n\n<CustomVideo videoId="${videoItem.id}" />`;
 
         // 使用 fs.writeFile() 创建并写入文件
         await new Promise((resolve, reject) => {
