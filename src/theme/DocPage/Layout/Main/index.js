@@ -21,7 +21,6 @@ export default function DocPageLayoutMain({hiddenSidebarContainer, children}) {
     const path = location.pathname.split("/tutorial/")[1];
     const catalogueName = path.split("/")[0];
     const selectJson = json.filter(e => e.catalogueName === catalogueName)[0];
-    // TODO: catalogueName 匹配JSON 添加docType字段
     selectItem = {
       catalogueName: catalogueName,
       docId: path,
@@ -37,7 +36,6 @@ export default function DocPageLayoutMain({hiddenSidebarContainer, children}) {
 
   // 阅读完当前页
   function update(params) {
-    // TODO: 根据docType来更新
     if (selectItem.docType === "video") {
       return
     }
