@@ -160,7 +160,7 @@ export default function DocBreadcrumbs() {
       selectDoc = obj.docId.split("/")[0];
     }
     const arr = json.filter(e => e.catalogueName === selectDoc)
-    selectRepoUrl = arr[0].repoUrl;
+    selectRepoUrl = arr[0]?.repoUrl || arr[0]?.url;
     setSelectRepoUrl(selectRepoUrl);
     
     isMobile = document.documentElement.clientWidth <= 996 ? true : false;
@@ -185,7 +185,7 @@ export default function DocBreadcrumbs() {
               className="breadcrumbs"
               itemScope
               itemType="https://schema.org/BreadcrumbList">
-                {RepoUrl(selectRepoUrl, isMobile)}
+                { selectRepoUrl && RepoUrl(selectRepoUrl, isMobile) }
               <li className='breadcrumbs__item'>
               <a href="https://decert.me/tutorials">
                 <HomeFilled style={{color: "#000"}} />
@@ -212,7 +212,7 @@ export default function DocBreadcrumbs() {
             className="breadcrumbs"
             itemScope
             itemType="https://schema.org/BreadcrumbList">
-              {RepoUrl(selectRepoUrl, isMobile)}
+              { selectRepoUrl && RepoUrl(selectRepoUrl, isMobile) }
             <li className='breadcrumbs__item'>
               <a href="https://decert.me/tutorials">
                 <HomeFilled style={{color: "#000"}} />
