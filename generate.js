@@ -1,10 +1,51 @@
 const fs = require('fs');
 const path = require('path');
+require('dotenv').config();
+const fsextra = require('fs-extra');
+const axios = require('axios');
 
 const DOCS_DIR = path.join(__dirname, 'docs');
+const youtubeApiKey = process.env.YOUTUBE_API_KEY;
 
 function pathReplace(path) {
   return path.replace(".md", '').replace(/\d+_/, "").replace(/%20/g, " ")
+}
+
+async function getPlaylistVideos(apiKey, playlistId) {
+  const baseUrl = 'https://www.googleapis.com/youtube/v3/playlistItems';
+  const params = {
+    part: 'snippet',
+    playlistId: playlistId,
+    key: apiKey,
+    maxResults: 50 // 可以自定义每次请求返回的最大结果数量
+  };
+
+  let videoItems = [];
+
+  try {
+    while (true) {
+      const response = await axios.get(baseUrl, { params });
+      const data = response.data;
+      for (const item of data.items) {
+        const snippet = item.snippet;
+        const videoId = snippet.resourceId.videoId;
+        videoItems.push({
+            label: snippet.title,
+            id: videoId
+        });
+      }
+
+      if (data.nextPageToken) {
+        params.pageToken = data.nextPageToken;
+      } else {
+        break;
+      }
+    }
+  } catch (error) {
+    console.error('An error occurred:', error.message);
+  }
+
+  return videoItems;
 }
 
 function getCategory({catalogueName,title,label}) {
@@ -187,27 +228,31 @@ const tutorialMdBook = async(filename, root, tutorial) => {
   })
 }
 
-const getSidebars = async(dir, sidebars = {}) => {
-    const files = fs.readdirSync(dir);
-    const tutorials = await readJsonFile("tutorials.json");
+const getSidebars = async(files, tutorials, sidebars = {}) => {
   for (let i = 0; i < files.length; i++) {
     const file = files[i]
-    const root = dir+"/"+file;
+    const root = DOCS_DIR+"/"+file;
     const tutorial = tutorials.filter(e => e.catalogueName === file)[0];
     // 读取当前文件目录
     const filename = "SUMMARY.md"
-    switch (tutorial.docType) {
-      case "gitbook":
-        sidebars[file] = await tutorialGitbook(filename, root, tutorial)
-        break;
-      case "docusaurus":
-        sidebars[file] = await tutorialDocusaurus(file)
-        break;
+    if (tutorial) {      
+      switch (tutorial.docType) {
+        case "gitbook":
+          sidebars[file] = await tutorialGitbook(filename, root, tutorial)
+          break;
+        case "docusaurus":
+          sidebars[file] = await tutorialDocusaurus(file)
+          break;
         case "mdBook":
-        sidebars[file] = await tutorialMdBook(filename, root, tutorial)
-        break;
-      default:
-        break;
+          sidebars[file] = await tutorialMdBook(filename, root, tutorial)
+          break;
+        default:
+          break;
+      }
+    }else{
+      // TODO: 生成video侧边栏
+      console.log("TODO: 生成video侧边栏");
+
     }
   }
   return sidebars;
@@ -278,7 +323,7 @@ function readJsonFile(filePath) {
         }
       }
     });
-    // TODO: 如果category.json比当前的startpage还要小，则遍历当前category.json的目录
+    // 如果category.json比当前的startpage还要小，则遍历当前category.json的目录
     if (maxPosition.position < startPage.index) {
       const files = filterMDFiles(`${filepath}/${maxPosition.jsonFile}`);
       const path = findMDFiles(files)
@@ -302,12 +347,11 @@ function readJsonFile(filePath) {
     return page
   }
 
-const getNavbarItems = async(dir, navbarItems = []) => {
-    const files = fs.readdirSync(dir);
-    const tutorials = await readJsonFile("tutorials.json");
-    await new Promise((resolve, reject) => {
-      tutorials.map(async(e, i) => {
-        const file = files.filter(item => item === e.catalogueName)[0];
+const getNavbarItems = async(files, tutorials, navbarItems = []) => {
+  await new Promise((resolve, reject) => {
+    tutorials.map(async(e, i) => {
+      const file = files.filter(item => item === e.catalogueName)[0];
+      if (e.docType !== "video") {
         const startPage = await getStartPage(file, e);
         navbarItems.push({
           type: 'doc',
@@ -318,35 +362,100 @@ const getNavbarItems = async(dir, navbarItems = []) => {
         if (i + 1 === tutorials.length) {
           resolve()
         }
-      })
+      }else{
+        // TODO: video navbar
+        console.log("TODO: video navbar");
+      }
     })
-    return navbarItems.reverse();
+  })
+  return navbarItems.reverse();
 };
 
 
-async function generateSidebars(params) {
-  const sidebar = await getSidebars(DOCS_DIR);
-
-// 侧边栏
-fs.writeFileSync(
-  path.join(__dirname, 'sidebars.js'),
-  `module.exports = ${JSON.stringify(sidebar, null, 2)};`
-);
+async function generateSidebars(files, tutorials) {
+  const sidebar = await getSidebars(files, tutorials);
+  // 侧边栏
+  fs.writeFileSync(
+    path.join(__dirname, 'sidebars.js'),
+    `module.exports = ${JSON.stringify(sidebar, null, 2)};`
+  );
 }
 
-async function generateNavbarItemsFile() {
-    const navbarItems = await getNavbarItems(DOCS_DIR);
-    fs.writeFileSync(
-      path.join(__dirname, 'navbarItems.js'),
-      `module.exports = ${JSON.stringify(navbarItems, null, 2)};`
-    );
+async function generateNavbarItemsFile(files, tutorials) {
+  const navbarItems = await getNavbarItems(files, tutorials);
+  fs.writeFileSync(
+    path.join(__dirname, 'navbarItems.js'),
+    `module.exports = ${JSON.stringify(navbarItems, null, 2)};`
+  );
+}
+
+async function generateVideo(tutorials) {
+  // TODO: 发起
+  for (let i = 0; i < tutorials.length; i++) {
+    const ele = tutorials[i];
+    let videoItems = []
+    if (ele.docType === "video") {
+      // TODO: 移除之前生成的文档 => 生成新文档
+      const folderPath = `./docs/${ele.catalogueName}`;
+      await new Promise(async(resolve, reject) => {        
+        await fsextra.remove(folderPath);
+        fs.mkdir(folderPath, (err) => {
+          if (err) {
+            // 如果出现错误，例如文件夹已存在或权限问题，会在这里处理
+            console.error('无法创建文件夹:', err);
+            reject();
+          } else {
+            console.log('文件夹已成功创建。');
+            resolve();
+          }
+        });
+      })
+      // 发起请求 ==> 获取播放列表内容
+      const playlistId = 'PLRvr9ZwuLnyNP2QHHL7Hbs3wEcJL7fVMt';
+      await getPlaylistVideos(youtubeApiKey, playlistId)
+      .then(result => {
+        if (result.length > 0) {
+          console.log("列表获取成功。");
+          videoItems = result;
+        } else {
+          console.log('Failed to fetch video links.');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error.message);
+      });
+
+      for (let i = 0; i < videoItems.length; i++) {
+        const videoItem = videoItems[i];
+        const fileName = `./docs/${ele.catalogueName}/video${i}.md`;
+        const fileContent = `# ${videoItem.label}\n\n<iframe src="https://www.youtube.com/embed/${videoItem.id}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen> </iframe>`;
+
+        // 使用 fs.writeFile() 创建并写入文件
+        await new Promise((resolve, reject) => {
+          fs.writeFile(fileName, fileContent, (err) => {
+            if (err) {
+              console.error(`无法写入文件 ${fileName}:`, err);
+              reject()
+            } else {
+              console.log(`文件 ${fileName} 已成功创建。`);
+              resolve()
+            }
+          });
+        })
+      }
+    }
+  }
 }
 
 
 const main = async () => {
-  
-  generateSidebars();
-  generateNavbarItemsFile(); // 执行函数
+  const files = fs.readdirSync(DOCS_DIR);
+  const tutorials = await readJsonFile("tutorials.json");
+
+  // TODO: video生成.md文件
+  await generateVideo(tutorials);
+  generateSidebars(files, tutorials);
+  generateNavbarItemsFile(files, tutorials); // 执行函数
 }
 
 main();
