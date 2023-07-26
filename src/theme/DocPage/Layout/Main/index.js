@@ -12,6 +12,7 @@ export default function DocPageLayoutMain({hiddenSidebarContainer, children}) {
   const location = useLocation();
   const boxRef = useRef(null);
   const { updateStatus } = useContext(GlobalContext);
+  const json = require("@site/tutorials.json");
   const [isBottomVisible, setIsBottomVisible] = useState(false);
   let [selectItem, setSelectItem] = useState();
   let [isFinish, setIsFinish] = useState();
@@ -19,9 +20,12 @@ export default function DocPageLayoutMain({hiddenSidebarContainer, children}) {
   function init(params) {
     const path = location.pathname.split("/tutorial/")[1];
     const catalogueName = path.split("/")[0];
+    const selectJson = json.filter(e => e.catalogueName === catalogueName)[0];
+    // TODO: catalogueName 匹配JSON 添加docType字段
     selectItem = {
       catalogueName: catalogueName,
-      docId: path
+      docId: path,
+      docType: selectJson.docType
     }
     setSelectItem({...selectItem});
     if (catalogueName === "category") {
@@ -33,6 +37,10 @@ export default function DocPageLayoutMain({hiddenSidebarContainer, children}) {
 
   // 阅读完当前页
   function update(params) {
+    // TODO: 根据docType来更新
+    if (selectItem.docType === "video") {
+      return
+    }
     updateStatus(selectItem.docId)
     setIsFinish(true);
   }
