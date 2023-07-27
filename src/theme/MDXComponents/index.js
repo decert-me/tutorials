@@ -10,6 +10,7 @@ import MDXImg from '@theme/MDXComponents/Img';
 import Admonition from '@theme/Admonition';
 import Mermaid from '@theme/Mermaid';
 import SolidityEditor from '@site/src/components/SolidityEditor';
+import CustomVideo from '@site/src/components/CustomVideo';
 const MDXComponents = {
   head: MDXHead,
   code: MDXCode,
@@ -25,6 +26,7 @@ const MDXComponents = {
   h5: (props) => <MDXHeading as="h5" {...props} />,
   h6: (props) => <MDXHeading as="h6" {...props} />,
   SolidityEditor: (props) => <SolidityEditor {...props} />,
+  CustomVideo: (props) => <CustomVideo {...props} />,
   admonition: Admonition,
   mermaid: Mermaid,
 };

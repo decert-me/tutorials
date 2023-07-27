@@ -1,9 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {useThemeConfig} from '@docusaurus/theme-common';
 import {
   splitNavbarItems,
   useNavbarMobileSidebar,
-  // useSidebarBreadcrumbs
 } from '@docusaurus/theme-common/internal';
 import NavbarItem from '@theme/NavbarItem';
 import NavbarColorModeToggle from '@theme/Navbar/ColorModeToggle';
@@ -12,13 +11,15 @@ import NavbarMobileSidebarToggle from '@theme/Navbar/MobileSidebar/Toggle';
 import NavbarLogo from '@theme/Navbar/Logo';
 import NavbarSearch from '@theme/Navbar/Search';
 import styles from './styles.module.css';
-
-
+import CustomNavbarItems from '../../../components/CustomNavbarItems';
 function useNavbarItems() {
   // TODO temporary casting until ThemeConfig type is improved
   return useThemeConfig().navbar.items;
 }
 function NavbarItems({items}) {
+  useEffect(() => {
+    console.log(items);
+  },[])
   return (
     <>
       {items.map((item, i) => (
@@ -35,16 +36,12 @@ function NavbarContentLayout({left, right}) {
     </div>
   );
 }
-
 export default function NavbarContent() {
   const mobileSidebar = useNavbarMobileSidebar();
   const items = useNavbarItems();
   const [leftItems, rightItems] = splitNavbarItems(items);
   const searchBarItem = items.find((item) => item.type === 'search');
-
-
   return (
-    <>
     <NavbarContentLayout
       left={
         // TODO stop hardcoding items?
@@ -52,6 +49,7 @@ export default function NavbarContent() {
           {!mobileSidebar.disabled && <NavbarMobileSidebarToggle />}
           <NavbarLogo />
           <NavbarItems items={leftItems} />
+          {/* <CustomNavbarItems items={leftItems} /> */}
         </>
       }
       right={
@@ -68,6 +66,5 @@ export default function NavbarContent() {
         </>
       }
     />
-    </>
   );
 }
