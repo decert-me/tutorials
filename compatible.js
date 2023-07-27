@@ -87,6 +87,14 @@ const common = [
 
 ]
 
+const empty = [
+    {
+        path: "./docs/sui-move-intro-course-zh/advanced-topics/upgrade_packages/readme.md",
+        oldValue: "",
+        newValue: "# 合约升级"
+    },
+]
+
 async function modifyFile(arr) {
     for (let i = 0; i < arr.length; i++) {
       try {
@@ -102,6 +110,17 @@ async function modifyFile(arr) {
       } catch (err) {
         console.error(`Error modifying file ${arr[i].path}: ${err}`);
       }
+    }
+    // 添加空文档处理
+    for (let i = 0; i < empty.length; i++) {
+        const element = empty[i];
+        try {
+            const fileData = element.newValue
+            await writeFileAsync(element.path, fileData, 'utf8');
+            console.log(`File ${element.path} modified successfully.`);
+        } catch (error) {
+            console.error(`Error modifying file ${element.path}: ${error}`);
+        }
     }
   }
 
