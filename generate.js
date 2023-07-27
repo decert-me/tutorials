@@ -3,6 +3,8 @@ const path = require('path');
 require('dotenv').config();
 const fsextra = require('fs-extra');
 const axios = require('axios');
+const util = require('util');
+const readFileAsync = util.promisify(fs.readFile);
 
 const DOCS_DIR = path.join(__dirname, 'docs');
 const youtubeApiKey = process.env.YOUTUBE_API_KEY;
@@ -10,6 +12,25 @@ const weights = require('./weights');
 
 function pathReplace(path) {
   return path.replace(".md", '').replace(/\d+_/, "").replace(/%20/g, " ")
+}
+
+async function fillterCategoryDoc(summary) {
+  // 读内容==> 空: generated-index : 有: doc
+  async function traverseItems(items) {
+    for (const item of items) {
+      if (item.type === 'category' && item?.link) {
+        const data = await readFileAsync("./docs/"+item.link.id+".md", 'utf8');
+        if (data === "") {
+          item.link = { type: 'generated-index' }
+        }
+      }
+      if (item.items && item.items.length > 0) {
+        await traverseItems(item.items);
+      }
+    }
+  }
+  await traverseItems(summary)
+  return summary
 }
 
 async function getPlaylistVideos(apiKey, playlistId) {
@@ -140,14 +161,14 @@ function getDirectory(data, catalogueName) {
   return summary;
 }
 
-function getMdBook(data, catalogueName) {
+async function getMdBook(data, catalogueName) {
   const lines = data.split('\n');
   const summary = [];
   let currentChapter = null;
   let currentSection = null;
   let currentSubSection = null; // 新增一个变量来跟踪小节中的小节
 
-  lines.forEach((line) => {
+  lines.forEach((line, index) => {
     const matchChapter = line.match(/^- \[([^[\]]+)\]\(([^()]+)\)$/);
     const matchSection = line.match(/^    - \[([^[\]]+)\]\(([^()]+)\)$/);
     const matchSection2 = line.match(/^      - \[([^[\]]+)\]\(([^()]+)\)$/);
@@ -175,7 +196,7 @@ function getMdBook(data, catalogueName) {
       const subSectionLink = matchSection2[2];
       const { link } = getCategory({ catalogueName, title: subSectionLink, label: subSectionTitle });
       currentSubSection = link;
-      // 注意这里，我们将小节中的小节添加到当前小节的`items`数组中
+      // 将小节中的小节添加到当前小节的`items`数组中
       if (currentSection?.id) {
         currentSection.link = {type: 'doc', id: currentSection.id}
         delete currentSection.id
@@ -193,6 +214,9 @@ function getMdBook(data, catalogueName) {
         label: '简介',
     })
   }
+  // TODO: 查找type为category且本身有内容的文档
+  await fillterCategoryDoc(summary)
+  
   return summary;
 }
 
@@ -219,9 +243,9 @@ const tutorialDocusaurus = async(file) => {
 
 const tutorialMdBook = async(filename, root, tutorial) => {
   return await new Promise((resolve, reject) => {
-    fs.readFile(root+"/"+filename, 'utf8', (err, data) => {
+    fs.readFile(root+"/"+filename, 'utf8', async(err, data) => {
       if (err) reject(err)
-      const arr = getMdBook(data, tutorial.catalogueName)
+      const arr = await getMdBook(data, tutorial.catalogueName)
       resolve(arr)
     });
   }).then(res => {
@@ -416,7 +440,6 @@ async function generateVideo(tutorials) {
       await getPlaylistVideos(youtubeApiKey, playlistId)
       .then(result => {
         if (result.length > 0) {
-          console.log("列表获取成功 ===>", result);
           videoItems = result;
         } else {
           console.log('Failed to fetch video links.');
@@ -462,7 +485,6 @@ const main = async () => {
   await generateVideo(tutorials);
 
   const files = fs.readdirSync(DOCS_DIR);
-
   await generateSidebars(files, tutorials);
   await generateNavbarItemsFile(files, tutorials); // 执行函数
 }
