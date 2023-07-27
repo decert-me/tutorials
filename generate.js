@@ -6,6 +6,7 @@ const axios = require('axios');
 
 const DOCS_DIR = path.join(__dirname, 'docs');
 const youtubeApiKey = process.env.YOUTUBE_API_KEY;
+const weights = require('./weights');
 
 function pathReplace(path) {
   return path.replace(".md", '').replace(/\d+_/, "").replace(/%20/g, " ")
@@ -391,12 +392,11 @@ async function generateNavbarItemsFile(files, tutorials) {
 }
 
 async function generateVideo(tutorials) {
-  // TODO: 发起
   for (let i = 0; i < tutorials.length; i++) {
     const ele = tutorials[i];
     let videoItems = []
     if (ele.docType === "video") {
-      // TODO: 移除之前生成的文档 => 生成新文档
+      // 移除之前生成的文档 => 生成新文档
       const folderPath = `./docs/${ele.catalogueName}`;
       await new Promise(async(resolve, reject) => {        
         await fsextra.remove(folderPath);
@@ -416,7 +416,7 @@ async function generateVideo(tutorials) {
       await getPlaylistVideos(youtubeApiKey, playlistId)
       .then(result => {
         if (result.length > 0) {
-          console.log("列表获取成功。");
+          console.log("列表获取成功 ===>", result);
           videoItems = result;
         } else {
           console.log('Failed to fetch video links.');
@@ -425,10 +425,17 @@ async function generateVideo(tutorials) {
       .catch(error => {
         console.error('Error:', error.message);
       });
-
+      // 根据有序配置添加权重
+      if (ele?.sort) {
+        videoItems.sort();
+        videoItems.forEach(obj => {
+          obj.weights = 200;
+        })
+        videoItems = weights.toSort(ele.catalogueName, videoItems);
+      }
       for (let i = 0; i < videoItems.length; i++) {
         const videoItem = videoItems[i];
-        const fileName = `./docs/${ele.catalogueName}/video${i}.md`;
+        const fileName = `./docs/${ele.catalogueName}/${i}_video${i}.md`;
         const fileContent = `# ${videoItem.label}\n\n<CustomVideo videoId="${videoItem.id}" />`;
 
         // 使用 fs.writeFile() 创建并写入文件
@@ -459,6 +466,7 @@ const main = async () => {
   await generateSidebars(files, tutorials);
   await generateNavbarItemsFile(files, tutorials); // 执行函数
 }
+main()
 
 module.exports = {
   main
