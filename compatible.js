@@ -50,6 +50,11 @@ const common = [
         newValue: "../../unit-one/lessons/5_hello_world.md"
     },
     {
+        path: "./docs/sui-move-intro-course-zh/advanced-topics/BCS_encoding/lessons/BCS_编码.md",
+        oldValue: "../example_projects/",
+        newValue: "https://github.com/RandyPen/sui-move-intro-course-zh/tree/main/advanced-topics/BCS_encoding/example_projects"
+    },
+    {
         path: "./docs/ethereum-development-with-go-book/README.md",
         oldValue: "../zh/client",
         newValue: "./client/README.md"
