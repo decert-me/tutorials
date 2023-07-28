@@ -188,6 +188,17 @@ export default function DocSidebarItemCategory({
           aria-expanded={collapsible ? !collapsed : undefined}
           href={collapsible ? hrefWithSSRFallback ?? '#' : hrefWithSSRFallback}
           {...props}>
+            {/* {
+              collapsible && !collapsed && <img src={require("@site/static/img/icon-category_open.png").default} />
+            } */}
+            {
+              collapsible && 
+              <img 
+                src={require("@site/static/img/icon-category.png").default}
+                className={`icon-category ${!collapsed ? "icon-category-active" : ""}`}
+                // !collapsed
+               />
+            }
           {label}
         {/* TODO: 分步进度条 */}
         {
