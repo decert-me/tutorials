@@ -7,7 +7,6 @@ import ReactPlayer from 'react-player'
 export default function CustomVideo({videoId, videoCategory, time_length}) {
 
     const location = useLocation();
-    const local = localStorage.getItem("decert.tutorials");
     const { updateStatus } = useContext(GlobalContext);
     let [selectItem, setSelectItem] = useState();
     let [isFinish, setIsFinish] = useState();
@@ -35,7 +34,7 @@ export default function CustomVideo({videoId, videoCategory, time_length}) {
     }
 
     // 获取本地存储当前page的时间
-    function getUpdateLocal() {
+    function getUpdateLocal(local) {
         // 1、获取本地数据 --- 如果没有则请求`https://api.bilibili.com/x/player/playurl?...` : 则获取
         const json = JSON.parse(local)
         const doc = json.filter(e => e.catalogueName === selectItem.catalogueName)[0];
@@ -85,7 +84,9 @@ export default function CustomVideo({videoId, videoCategory, time_length}) {
     },[location])
 
     useEffect(() => {
-        !isFinish && local && videoCategory !== "youtube" && getUpdateLocal()
+        const local = localStorage.getItem("decert.tutorials");
+
+        !isFinish && local && videoCategory !== "youtube" && getUpdateLocal(local)
         
         return () => {
         //   如果!isFinish 获取当前时间戳、减去start时间戳，记录在local中.
