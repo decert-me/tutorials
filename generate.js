@@ -5,6 +5,7 @@ const fsextra = require('fs-extra');
 const axios = require('axios');
 const util = require('util');
 const readFileAsync = util.promisify(fs.readFile);
+const bilibili = require('./utils/video/bilibili');
 
 const DOCS_DIR = path.join(__dirname, 'docs');
 const youtubeApiKey = process.env.YOUTUBE_API_KEY;
@@ -214,7 +215,7 @@ async function getMdBook(data, catalogueName) {
         label: '简介',
     })
   }
-  // TODO: 查找type为category且本身有内容的文档
+  // 查找type为category且本身有内容的文档
   await fillterCategoryDoc(summary)
   
   return summary;
@@ -415,65 +416,80 @@ async function generateNavbarItemsFile(files, tutorials) {
   );
 }
 
+async function startGenerate(ele) {
+  let videoItems = []
+  // 移除之前生成的文档 => 生成新文档
+  const folderPath = `./docs/${ele.catalogueName}`;
+  await new Promise(async(resolve, reject) => {        
+    await fsextra.remove(folderPath);
+    fs.mkdir(folderPath, (err) => {
+      if (err) {
+        // 如果出现错误，例如文件夹已存在或权限问题，会在这里处理
+        console.error('无法创建文件夹:', err);
+        reject();
+      } else {
+        console.log('文件夹已成功创建。');
+        resolve();
+      }
+    });
+  })
+  // TODO: 判断适配类型: bilibili、Youtebe
+  if (ele.videoCategory === "youtube") {
+    // 发起请求 ==> 获取播放列表内容
+    const playlistId = ele.url.split("=").pop();
+    await getPlaylistVideos(youtubeApiKey, playlistId)
+    .then(result => {
+      if (result.length > 0) {
+        videoItems = result;
+      } else {
+        console.log('Failed to fetch video links.');
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error.message);
+    });
+  }else{
+    // bilibili
+    const arr = ele.videoItems;
+    for (let i = 0; i < arr.length; i++) {
+      const element = arr[i];
+      element.time_length = await bilibili.getBilibiliTimeLength(element.id);
+    }
+    videoItems = arr;
+  }
+  // 根据有序配置添加权重
+  if (ele?.sort) {
+    videoItems.sort();
+    videoItems.forEach(obj => {
+      obj.weights = 200;
+    })
+    videoItems = weights.toSort(ele.catalogueName, videoItems);
+  }
+  for (let i = 0; i < videoItems.length; i++) {
+    const videoItem = videoItems[i];
+    const fileName = `./docs/${ele.catalogueName}/${i}_video${i}.md`;
+    const fileContent = `# ${videoItem.label}\n\n<CustomVideo videoId="${videoItem.id}" videoCategory="${ele.videoCategory}" ${videoItem.time_length ? "time_length=\"" + videoItem.time_length + "\"" : ""} />`;
+
+    // 使用 fs.writeFile() 创建并写入文件
+    await new Promise((resolve, reject) => {
+      fs.writeFile(fileName, fileContent, (err) => {
+        if (err) {
+          console.error(`无法写入文件 ${fileName}:`, err);
+          reject()
+        } else {
+          console.log(`文件 ${fileName} 已成功创建。`);
+          resolve()
+        }
+      });
+    })
+  }
+}
+
 async function generateVideo(tutorials) {
   for (let i = 0; i < tutorials.length; i++) {
     const ele = tutorials[i];
-    let videoItems = []
     if (ele.docType === "video") {
-      // 移除之前生成的文档 => 生成新文档
-      const folderPath = `./docs/${ele.catalogueName}`;
-      await new Promise(async(resolve, reject) => {        
-        await fsextra.remove(folderPath);
-        fs.mkdir(folderPath, (err) => {
-          if (err) {
-            // 如果出现错误，例如文件夹已存在或权限问题，会在这里处理
-            console.error('无法创建文件夹:', err);
-            reject();
-          } else {
-            console.log('文件夹已成功创建。');
-            resolve();
-          }
-        });
-      })
-      // 发起请求 ==> 获取播放列表内容
-      const playlistId = ele.url.split("=").pop();
-      await getPlaylistVideos(youtubeApiKey, playlistId)
-      .then(result => {
-        if (result.length > 0) {
-          videoItems = result;
-        } else {
-          console.log('Failed to fetch video links.');
-        }
-      })
-      .catch(error => {
-        console.error('Error:', error.message);
-      });
-      // 根据有序配置添加权重
-      if (ele?.sort) {
-        videoItems.sort();
-        videoItems.forEach(obj => {
-          obj.weights = 200;
-        })
-        videoItems = weights.toSort(ele.catalogueName, videoItems);
-      }
-      for (let i = 0; i < videoItems.length; i++) {
-        const videoItem = videoItems[i];
-        const fileName = `./docs/${ele.catalogueName}/${i}_video${i}.md`;
-        const fileContent = `# ${videoItem.label}\n\n<CustomVideo videoId="${videoItem.id}" />`;
-
-        // 使用 fs.writeFile() 创建并写入文件
-        await new Promise((resolve, reject) => {
-          fs.writeFile(fileName, fileContent, (err) => {
-            if (err) {
-              console.error(`无法写入文件 ${fileName}:`, err);
-              reject()
-            } else {
-              console.log(`文件 ${fileName} 已成功创建。`);
-              resolve()
-            }
-          });
-        })
-      }
+      await startGenerate(ele)
     }
   }
 }
@@ -481,7 +497,7 @@ async function generateVideo(tutorials) {
 
 const main = async () => {
   const tutorials = await readJsonFile("tutorials.json");
-  // TODO: video生成.md文件
+  // video生成.md文件
   await generateVideo(tutorials);
 
   const files = fs.readdirSync(DOCS_DIR);
