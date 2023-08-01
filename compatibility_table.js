@@ -82,7 +82,7 @@ const replace = [
     {
         path: "./navbarItems.js",
         oldValue: "ingopedia/README",
-        newValue: "ingopedia/Readme"
+        newValue: "ingopedia/communityguide"
     }
 ]
 
