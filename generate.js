@@ -505,7 +505,6 @@ const main = async () => {
   await generateNavbarItemsFile(files, tutorials); // 执行函数
 }
 
-main()
 module.exports = {
   main
 };
