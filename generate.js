@@ -181,7 +181,13 @@ async function getMdBook(data, catalogueName) {
         type: 'category',
         label: chapterTitle.replace("./", catalogueName + "/").replace(".md", '').replace(/\d+_/, "").replace(/%20/g, " "),
         items: []
-      };
+      }
+      if (chapterLink) {
+        currentChapter.link = {
+          type: "doc",
+          id: chapterLink.replace("./", catalogueName + "/").replace(".md", '').replace(/\d+_/, "").replace(/%20/g, " ")
+        }
+      }
       summary.push(currentChapter);
       currentSection = null;
       currentSubSection = null; // 重置小节中的小节
@@ -208,7 +214,7 @@ async function getMdBook(data, catalogueName) {
     }
   });
   const isStringFound = summary.some(item => item?.id?.includes(catalogueName + "/README"));
-  if (!isStringFound) {
+  if (!isStringFound && catalogueName !== "ingopedia") {
     summary.unshift({
         type: 'doc',
         id: `${catalogueName}/README`,
@@ -386,7 +392,7 @@ const getNavbarItems = async(files, tutorials, navbarItems = []) => {
           const startPage = await getStartPage(file, e);
           obj.docId = file+"/"+startPage;
         }else{
-          obj.docId = file+"/video0";
+          obj.docId = file+"/video0md";
         }
         navbarItems.push(obj)
         if (i + 1 === tutorials.length) {
@@ -467,7 +473,7 @@ async function startGenerate(ele) {
   }
   for (let i = 0; i < videoItems.length; i++) {
     const videoItem = videoItems[i];
-    const fileName = `./docs/${ele.catalogueName}/${i}_video${i}.md`;
+    const fileName = `./docs/${ele.catalogueName}/${i}_video${i}md.md`;
     const fileContent = `# ${videoItem.label}\n\n<CustomVideo videoId="${videoItem.id}" videoCategory="${ele.videoCategory}" ${videoItem.time_length ? "time_length=\"" + videoItem.time_length + "\"" : ""} />`;
 
     // 使用 fs.writeFile() 创建并写入文件
