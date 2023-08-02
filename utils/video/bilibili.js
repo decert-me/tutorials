@@ -4,7 +4,6 @@ const axios = require('axios');
 async function getBilibiliTimeLength(params) {
     const url = `https://api.bilibili.com/x/player/playurl?${params}`;
     const referer = url;
-    console.log(url);
     const headers = {
         Referer: referer,
     };
