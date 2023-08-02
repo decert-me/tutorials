@@ -3,16 +3,23 @@ function parseLabel(label, catalogueName) {
   const match = label.match(regex);
   return {
     label: match[1],
-    id: match[2].replace("./", catalogueName + "/").replace(".md", '').replace(/\d+_/, "").replace(/%20/g, " ")
+    id: catalogueName + "/" + match[2].replace("./", "").replace(".md",'').replace(/\d+_/, "").replace(/%20/g, " ")
   }
 }
 
 function refactor(params, catalogueName) {
   let arr = params;
   arr.forEach((e,i) => {
+    if (e.isTitle) {
+    // 跳过h2标题
+      arr[i] = {
+        type: "html",
+        value: e.label,
+      }
+      return
+    }
     // 解构label
     const obj = parseLabel(e.label, catalogueName)
-
     if (e.items.length === 0) {
       arr[i] = { ...obj, type: "doc" }
       delete arr[i].items
@@ -28,6 +35,7 @@ function refactor(params, catalogueName) {
       }
       arr[i].items = refactor(e.items, catalogueName)
     }
+    delete arr[i].isTitle
   })
   return arr
 }
@@ -35,9 +43,10 @@ function refactor(params, catalogueName) {
 function parseSummary(tokens, catalogueName) {
     const result = [];
     let ulOpen = -1;  //  ul层级
-  
+    let tag = "";
+    
     function pushItem(obj) {
-      if (ulOpen < 0) return;
+      if (ulOpen < 0 && !obj.isTitle) return;
     
       let target = result;
       for (let i = 0; i < ulOpen; i++) {
@@ -52,7 +61,9 @@ function parseSummary(tokens, catalogueName) {
       if (token.content.trim() === "Summary") {
         return
       }
-  
+
+      if (token?.tag) tag = token.tag;
+
       switch (token.type) {
         case "bullet_list_open":
           ulOpen += 1;
@@ -61,12 +72,11 @@ function parseSummary(tokens, catalogueName) {
           ulOpen -= 1;
           break;
         case "inline":
-          pushItem({label: token.content.trim(), items: []})
+          pushItem({label: token.content.trim(), items: [], isTitle: tag === "h2"})
         default:
           break;
       }
     });
-
     return refactor(result, catalogueName);
 }
 

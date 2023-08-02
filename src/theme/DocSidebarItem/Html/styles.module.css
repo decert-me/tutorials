@@ -4,3 +4,10 @@
       var(--ifm-menu-link-padding-horizontal);
   }
 }
+.chapterTitle{
+  height: 54px;
+  margin-top: 16px;
+  padding-left: 30px;
+  line-height: 54px;
+  color: rgba(136,153,168,1.00);
+}

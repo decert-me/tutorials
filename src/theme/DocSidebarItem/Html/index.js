@@ -11,6 +11,7 @@ export default function DocSidebarItemHtml({item, level, index}) {
         ThemeClassNames.docs.docSidebarItemLinkLevel(level),
         defaultStyle && [styles.menuHtmlItem, 'menu__list-item'],
         className,
+        styles.chapterTitle
       )}
       key={index}
       // eslint-disable-next-line react/no-danger
