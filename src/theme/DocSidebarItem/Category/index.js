@@ -134,6 +134,16 @@ export default function DocSidebarItemCategory({
       setSum(sum);
       let num = 0
       items.forEach(ele => {
+        if (ele?.items && ele.items.length > 0) {
+          let length = ele.items.length;
+          ele.items.forEach(element => {
+            if (selectTutorial.some(e => e.docId === element.docId?.replace(/\/readme$/i, "/") && e.is_finish === true)) {
+              length -= 1;
+            }
+          })
+          if (length === 0) num += 1;
+          return
+        }
         if (selectTutorial.some(e => e.docId === ele.docId?.replace(/\/readme$/i, "/") && e.is_finish === true)) {
           num += 1;
         }
@@ -184,6 +194,10 @@ export default function DocSidebarItemCategory({
                   onItemClick?.(item);
                 }
           }
+          style={{
+            position: "relative",
+            paddingRight: 52
+          }}
           aria-current={isCurrentPage ? 'page' : undefined}
           aria-expanded={collapsible ? !collapsed : undefined}
           href={collapsible ? hrefWithSSRFallback ?? '#' : hrefWithSSRFallback}

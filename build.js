@@ -1,4 +1,3 @@
-const https = require('https');
 const util = require('util');
 const fs = require('fs');
 const readFileAsync = util.promisify(fs.readFile);
@@ -6,7 +5,8 @@ const writeFileAsync = util.promisify(fs.writeFile);
 const fsextra = require('fs-extra');
 const path = require('path');
 const { exec } = require('child_process');
-const JSZip = require('jszip');
+const axios = require('axios');
+const { execSync } = require('child_process');
 
 const common = {
   gitbook: "/",
@@ -14,76 +14,56 @@ const common = {
   docusaurus: "/docs"
 }
 
-const downloadFile = (url, destinationPath) => {
-  return new Promise((resolve, reject) => {
-    https.get(url, (res) => {
-      const stream = fs.createWriteStream(destinationPath);
-      res.pipe(stream);
-      stream.on('finish', () => {
-        console.log(`File downloaded successfully: ${destinationPath}`);
-        resolve();
-      });
-    }).on('error', (err) => {
-      console.error(`Error downloading file: ${err.message}`);
-      reject(err);
-    });
+// 辅助函数：从GitHub仓库URL中提取仓库路径（格式为：username/repo）
+function getRepoPath(repoUrl) {
+  const repoPath = repoUrl.replace('https://github.com/', '');
+  return repoPath.endsWith('.git') ? repoPath.slice(0, -4) : repoPath;
+}
+
+const downloadFile = async(repoUrl, commitHash, catalogueName) => {
+  const targetFolder = `./tmpl/${catalogueName}`; // 替换为你要将代码拉取到的目标文件夹
+  await axios.get(`https://api.github.com/repos/${getRepoPath(repoUrl)}`)
+  .then(async(response) => {
+    const repoInfo = response.data;
+    const cloneUrl = repoInfo.clone_url;
+
+    // 使用Git命令将代码克隆到目标文件夹
+    try {
+      execSync(`git clone ${cloneUrl} ${targetFolder}`);
+      console.log('代码克隆成功！');
+
+      // 切换到指定的commit
+      execSync(`cd ${targetFolder} && git checkout ${commitHash}`);
+      console.log(`已切换到commit：${commitHash}`);
+    } catch (error) {
+      console.error('代码克隆或切换commit失败:', error.message);
+    }
+  })
+  .catch(error => {
+    console.error('获取GitHub仓库信息失败:', error.message);
   });
 };
 
-const downloadAllFiles = async (folder, filesToDownload) => {
+const downloadAllFiles = async (filesToDownload) => {
   for (let i = 0; i < filesToDownload.length; i++) {
     if (filesToDownload[i]) {
-      const file = filesToDownload[i];
-      await downloadFile(file, folder+"/"+i+".zip");
+      const {repoUrl, commitHash, catalogueName} = filesToDownload[i];
+      await downloadFile(repoUrl, commitHash, catalogueName);
     }
   }
 };
 
-const extractFiles = async(sourcePath, destinationPath) => {
-
-  await new Promise((resolve, reject) => {
-    fs.readFile(sourcePath, function(err, data) {
-      if (err) throw err;
-      const zip = new JSZip();
-      // 使用JSZip加载压缩文件数据
-      zip.loadAsync(data)
-        .then(function(zip) {
-          // 遍历压缩文件中的所有文件
-          zip.forEach(function(relativePath, zipEntry) {
-            const path = destinationPath + "/" + zipEntry.name;
-            // 如果是文件夹，则创建相应的文件夹
-            if (zipEntry.dir) {
-              fs.mkdirSync(path);
-            } else {
-              // 提取文件内容
-              zipEntry.async('nodebuffer').then(function(content) {
-                // 将文件内容写入磁盘
-                fs.writeFileSync(path, content);
-              });
-            }
-          });
-          resolve()
-          console.log(`Files extracted successfully: ${destinationPath}`);
-        })
-        .catch(function(err) {
-          console.error(`Error extracting file: ${err}`);
-        });
-    })
-  })
-};
 
 const extractFilesAndCopyFolder = async(destinationPath, filesNames, filesToDownload, tutorial) => {
-    const { catalogueNames, branch, docTypes, docPath } = tutorial;
+    const { catalogueNames, docTypes, docPath } = tutorial;
     for (let i = 0; i < filesToDownload.length; i++) {
         if (filesToDownload[i]) {
           const sourcePath = destinationPath+"/"+i+".zip"
           const filePath = common[docTypes[i]];
           const newPath = docPath[i] || "";
           try {
-            // Extract files from sourcePath to destinationPath
-            await extractFiles(sourcePath, destinationPath);
             // 将 folderToCopy 从 destinationPath 复制到另一个文件夹
-            const sourceFolder = path.join(destinationPath, filesNames[i]+`-${branch[i] || "main"}`+ filePath + newPath);
+            const sourceFolder = path.join(destinationPath, filesNames[i] + filePath + newPath);
             const destinationFolder = `./docs/${catalogueNames[i]}`;
             await fsextra.copy(sourceFolder, destinationFolder);
           } catch (err) {
@@ -172,7 +152,11 @@ const main = async () => {
     }
     const file = e.repoUrl;
     const url = file.split("/").reverse();
-    return `https://codeload.github.com/${url[1]}/${url[0]}/zip/refs/heads/${e.branch || "main"}`
+    return {
+      repoUrl: `${url[1]}/${url[0]}`,
+      commitHash: e.commitHash,
+      catalogueName: e.catalogueName
+    }
   })
 
   const filesNames = tutorials.map(e => {
@@ -186,12 +170,11 @@ const main = async () => {
 
   const tutorial = tutorials.reduce((acc, e) => {
     acc.catalogueNames.push(e.catalogueName);
-    acc.branch.push(e.branch);
     acc.docTypes.push(e.docType);
     acc.docPath.push(e.docPath);
-    
+
     return acc;
-  }, { catalogueNames: [], branch: [], docTypes: [], docPath: [] });
+  }, { catalogueNames: [], docTypes: [], docPath: [] });
 
 
   //  全量更新时预先删除
@@ -203,7 +186,7 @@ const main = async () => {
   createFolder(folder);
   createFolder("./docs")
   // Download all files
-  await downloadAllFiles(folder, filesToDownload);
+  await downloadAllFiles(filesToDownload);
 
   // Extract downloaded files
   // copy to the docs
