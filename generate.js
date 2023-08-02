@@ -362,7 +362,7 @@ const main = async () => {
   await generateSidebars(files, tutorials);
   await generateNavbarItemsFile(files, tutorials); // 执行函数
 }
-main()
+
 module.exports = {
   main
 };
