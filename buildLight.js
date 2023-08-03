@@ -19,10 +19,28 @@ const buildProject = () => {
     });
 };
 
+const compatible = () => {
+  console.log("start compatible");
+  return new Promise((resolve, reject) => {
+    const buildCommand = 'node compatible.js';
+    exec(buildCommand, (err, stdout, stderr) => {
+      if (err) {
+        console.error(`Error running compatible command: ${err}`);
+        reject(err);
+      } else {
+        console.log('Compatible completed successfully');
+        resolve();
+      }
+    });
+  });
+};
+
 const main = async () => {
   const generate = require('./generate');
     // 生成
     await generate.main();
+    // 兼容
+    await compatible();
     // 打包
     await buildProject();
     // 将JSON放到build中
