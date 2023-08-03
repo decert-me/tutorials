@@ -24,8 +24,9 @@
         "img": "https://ipfs.learnblockchain.cn/images/sixdegree.png",
         "desc": "本教程是一个面向区块链爱好者的系列教程，帮助新手用户从零开始学习区块链数据分析，成为一名链上数据分析师。",
         "docType": "gitbook",
-        "challenge": 10004
-    },    
+        "challenge": 10004,
+        "commitHash": "cfb5403f14932b520adc9084673bd1c011f1aa2b"
+    },
     {
         "repoUrl": "https://github.com/miguelmota/ethereum-development-with-go-book",
         "label": "用Go来做以太坊开发",
@@ -43,5 +44,17 @@
         "catalogueName": "sui-move-intro-course-zh",
         "img": "https://ipfs.learnblockchain.cn/images/sui.png",
         "docType": "mdBook"
+    },
+    {
+        "repoUrl": "https://github.com/ingonyama-zk/ingopedia",
+        "label": "ZKP Encyclopedia",
+        "startPage": "README",
+        "catalogueName": "ingopedia",
+        "img": "https://ipfs.learnblockchain.cn/images/helmet4a.png",
+        "desc": "A curated list of ZK/FHE resources and links. ",
+        "docType": "mdBook",
+        "branch": "master",
+        "docPath": "/src",
+        "commitHash": "9f27ed7ab0fdd92c446a14e1df59891c17f6e8ed"
     }
 ]
