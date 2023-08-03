@@ -20,8 +20,8 @@ function getRepoPath(repoUrl) {
   return repoPath.endsWith('.git') ? repoPath.slice(0, -4) : repoPath;
 }
 
-const downloadFile = async(repoUrl, commitHash, catalogueName) => {
-  const targetFolder = `./tmpl/${catalogueName}`; // 替换为你要将代码拉取到的目标文件夹
+const downloadFile = async(repoUrl, commitHash) => {
+  const targetFolder = `./tmpl/${repoUrl.split("/").reverse()[0]}`; // 替换为你要将代码拉取到的目标文件夹
   await axios.get(`https://api.github.com/repos/${getRepoPath(repoUrl)}`)
   .then(async(response) => {
     const repoInfo = response.data;
@@ -58,12 +58,12 @@ const extractFilesAndCopyFolder = async(destinationPath, filesNames, filesToDown
     const { catalogueNames, docTypes, docPath } = tutorial;
     for (let i = 0; i < filesToDownload.length; i++) {
         if (filesToDownload[i]) {
-          const sourcePath = destinationPath+"/"+i+".zip"
           const filePath = common[docTypes[i]];
           const newPath = docPath[i] || "";
           try {
             // 将 folderToCopy 从 destinationPath 复制到另一个文件夹
             const sourceFolder = path.join(destinationPath, filesNames[i] + filePath + newPath);
+            console.log(sourceFolder, "===>", filesNames[i]);
             const destinationFolder = `./docs/${catalogueNames[i]}`;
             await fsextra.copy(sourceFolder, destinationFolder);
           } catch (err) {
