@@ -20,8 +20,8 @@ function getRepoPath(repoUrl) {
   return repoPath.endsWith('.git') ? repoPath.slice(0, -4) : repoPath;
 }
 
-const downloadFile = async(repoUrl, commitHash, catalogueName) => {
-  const targetFolder = `./tmpl/${catalogueName}`; // 替换为你要将代码拉取到的目标文件夹
+const downloadFile = async(repoUrl, commitHash) => {
+  const targetFolder = `./tmpl/${repoUrl.split("/").reverse()[0]}`; // 替换为你要将代码拉取到的目标文件夹
   await axios.get(`https://api.github.com/repos/${getRepoPath(repoUrl)}`)
   .then(async(response) => {
     const repoInfo = response.data;
@@ -32,9 +32,11 @@ const downloadFile = async(repoUrl, commitHash, catalogueName) => {
       execSync(`git clone ${cloneUrl} ${targetFolder}`);
       console.log('代码克隆成功！');
 
-      // 切换到指定的commit
-      execSync(`cd ${targetFolder} && git checkout ${commitHash}`);
-      console.log(`已切换到commit：${commitHash}`);
+      if (commitHash) {        
+        // 切换到指定的commit
+        execSync(`cd ${targetFolder} && git checkout ${commitHash}`);
+        console.log(`已切换到commit：${commitHash}`);
+      }
     } catch (error) {
       console.error('代码克隆或切换commit失败:', error.message);
     }
@@ -58,12 +60,12 @@ const extractFilesAndCopyFolder = async(destinationPath, filesNames, filesToDown
     const { catalogueNames, docTypes, docPath } = tutorial;
     for (let i = 0; i < filesToDownload.length; i++) {
         if (filesToDownload[i]) {
-          const sourcePath = destinationPath+"/"+i+".zip"
           const filePath = common[docTypes[i]];
           const newPath = docPath[i] || "";
           try {
             // 将 folderToCopy 从 destinationPath 复制到另一个文件夹
             const sourceFolder = path.join(destinationPath, filesNames[i] + filePath + newPath);
+            console.log(sourceFolder, "===>", filesNames[i]);
             const destinationFolder = `./docs/${catalogueNames[i]}`;
             await fsextra.copy(sourceFolder, destinationFolder);
           } catch (err) {
@@ -193,7 +195,7 @@ const main = async () => {
   await extractFilesAndCopyFolder(folder, filesNames, filesToDownload, tutorial);
 
   // Delete destinationPath
-  await fsextra.remove(folder)
+  // await fsextra.remove(folder)
 
   await generate.main();
 
