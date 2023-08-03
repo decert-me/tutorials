@@ -25,15 +25,14 @@ export default function CustomSign(params) {
             content: null,
             footer: null
         });
+    }
 
+    async function getSignature(params) {
         nonce = await getLoginMsg({address})
         .then(res => {
             return res.data.loginMessage;
         })
         setNonce(nonce);
-    }
-
-    async function getSignature(params) {
         await signer?.signMessage(nonce)
         // .then(res => {
         //     res && localStorage.setItem(`decert.token`,res)
@@ -68,7 +67,7 @@ export default function CustomSign(params) {
 
     useEffect(() => {
         if (signer) {
-            nonce && signer && getSignature();
+            signer && getSignature();
         }
     },[signer])
 
