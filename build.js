@@ -195,7 +195,7 @@ const main = async () => {
   await extractFilesAndCopyFolder(folder, filesNames, filesToDownload, tutorial);
 
   // Delete destinationPath
-  await fsextra.remove(folder)
+  // await fsextra.remove(folder)
 
   await generate.main();
 
