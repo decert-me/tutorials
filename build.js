@@ -32,9 +32,11 @@ const downloadFile = async(repoUrl, commitHash) => {
       execSync(`git clone ${cloneUrl} ${targetFolder}`);
       console.log('代码克隆成功！');
 
-      // 切换到指定的commit
-      execSync(`cd ${targetFolder} && git checkout ${commitHash}`);
-      console.log(`已切换到commit：${commitHash}`);
+      if (commitHash) {        
+        // 切换到指定的commit
+        execSync(`cd ${targetFolder} && git checkout ${commitHash}`);
+        console.log(`已切换到commit：${commitHash}`);
+      }
     } catch (error) {
       console.error('代码克隆或切换commit失败:', error.message);
     }
