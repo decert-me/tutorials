@@ -112,7 +112,7 @@ export function getTutorialStatus(params) {
             return false
         }
         selectTutorial.forEach(e => {
-            if (e.docId === docId) {
+            if (docId.indexOf(e.docId) !== -1) {
                 flag = e.is_finish
             }
         })

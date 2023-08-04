@@ -13,7 +13,7 @@ export default function DocPageLayoutMain({hiddenSidebarContainer, children}) {
   const boxRef = useRef(null);
   const { updateStatus } = useContext(GlobalContext);
   const json = require("@site/tutorials.json");
-  const [isBottomVisible, setIsBottomVisible] = useState(false);
+  let [isBottomVisible, setIsBottomVisible] = useState(false);
   let [selectItem, setSelectItem] = useState();
   let [isFinish, setIsFinish] = useState();
 
@@ -47,8 +47,8 @@ export default function DocPageLayoutMain({hiddenSidebarContainer, children}) {
     if (boxRef.current) {
       const elementRect = boxRef.current.getBoundingClientRect();
       const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
-      const isVisible = elementRect.bottom * 0.8 <= viewportHeight;
-      setIsBottomVisible(isVisible);
+      isBottomVisible = elementRect.bottom * 0.8 <= viewportHeight;
+      setIsBottomVisible(isBottomVisible);
     }
   };
 
