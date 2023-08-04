@@ -47,7 +47,7 @@ export default function DocPageLayoutMain({hiddenSidebarContainer, children}) {
     if (boxRef.current) {
       const elementRect = boxRef.current.getBoundingClientRect();
       const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
-      const isVisible = elementRect.bottom <= viewportHeight;
+      const isVisible = elementRect.bottom * 0.8 <= viewportHeight;
       setIsBottomVisible(isVisible);
     }
   };
