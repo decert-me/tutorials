@@ -67,7 +67,7 @@ export default function CustomVideo({videoId, videoCategory, time_length, youtub
     }
 
     function changeError(params) {
-        console.log(params);
+        console.log("error ====>", params);
         error = !error
         setError(error)
     }
@@ -136,9 +136,7 @@ export default function CustomVideo({videoId, videoCategory, time_length, youtub
                                             <p>网址为 <a href={youtubeInfo.url} target="_blank" rel="noopener noreferrer">{youtubeInfo.url}</a> 的网页可能暂时无法连接,或者它已永久性地移动到了新网址。</p>
                                         </div>
                                     :
-                                        <Spin size="large">
-                                            <img src={youtubeInfo.img} alt="" />
-                                        </Spin>
+                                        <Spin size="large" />
                                 )
                         }
                     </>

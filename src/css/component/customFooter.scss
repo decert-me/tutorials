@@ -103,9 +103,9 @@
 .CustomVideo{
     position: relative;
     background-color: rgba($color: #D9D9D9, $alpha: 0.1);
-    .ant-spin-nested-loading {
+    .ant-spin {
         position: absolute;
-        top: 0;
+        left: calc((100% - 32px) / 2);
     }
     .error{
         width: 100%;

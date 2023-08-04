@@ -117,8 +117,8 @@ body{
   .CustomVideo{
     height: 500px;
   }
-  img{
-    width: 100%;
+  .CustomVideo .ant-spin{
+    top: calc((500px - 38px) / 2);
   }
   iframe{
     width: 100%;
@@ -132,8 +132,8 @@ body{
   .CustomVideo{
     height: 335px;
   }
-  img{
-    width: 100%;
+  .CustomVideo .ant-spin{
+    top: calc((335px - 38px) / 2);
   }
   iframe{
     width: 100%;
