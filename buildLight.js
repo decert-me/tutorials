@@ -1,5 +1,9 @@
 const { exec } = require('child_process');
 const fsextra = require('fs-extra');
+const fs = require('fs');
+const util = require('util');
+const readFileAsync = util.promisify(fs.readFile);
+const writeFileAsync = util.promisify(fs.writeFile);
 
 
 
@@ -44,9 +48,19 @@ const main = async () => {
     // 打包
     await buildProject();
     // 将JSON放到build中
+    const buildPath = "./build/tutorials.json";
     await fsextra.copy("./tutorials.json", "./build/tutorials.json")
     .then(res => {
       console.log('copy tutorials.json successfully');
     })
+    const json = await readFileAsync(buildPath, 'utf8');
+    const data = eval(json);
+    const navbarItems = require("./navbarItems");
+
+    data.forEach((ele, index) => {
+      ele.startPage = navbarItems[index].docId;
+    })
+
+    await writeFileAsync(buildPath, JSON.stringify(data), 'utf8');
 }
 main();
