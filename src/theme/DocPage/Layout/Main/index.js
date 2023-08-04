@@ -21,6 +21,7 @@ export default function DocPageLayoutMain({hiddenSidebarContainer, children}) {
     const path = location.pathname.split("/tutorial/")[1];
     const catalogueName = path.split("/")[0];
     const selectJson = json.filter(e => e.catalogueName === catalogueName)[0];
+    setIsBottomVisible(false);
     selectItem = {
       catalogueName: catalogueName,
       docId: path,
