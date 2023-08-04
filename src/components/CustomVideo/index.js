@@ -3,13 +3,16 @@ import { useLocation } from '@docusaurus/router';
 import { getTutorialStatus } from '../../utils/tutorialsCache';
 import { GlobalContext } from '../../provider';
 import ReactPlayer from 'react-player'
+import { Spin } from 'antd';
 
-export default function CustomVideo({videoId, videoCategory, time_length}) {
+export default function CustomVideo({videoId, videoCategory, time_length, youtubeInfo}) {
 
     const location = useLocation();
     const { updateStatus } = useContext(GlobalContext);
     let [selectItem, setSelectItem] = useState();
     let [isFinish, setIsFinish] = useState();
+    let [loading, setLoading] = useState(false);     //  iframe加载
+    let [error, setError] = useState(false);    //  iframe加载失败
     
     let [timeStamp, setTimeStamp] = useState();     //  bilibili使用
     let [startTimeStamp, setStartTimeStamp] = useState();   //  开始计时的时间戳
@@ -58,6 +61,17 @@ export default function CustomVideo({videoId, videoCategory, time_length}) {
         }, timeout);
     }
 
+    function changeLoading(params) {
+        loading = !loading
+        setLoading(loading)
+    }
+
+    function changeError(params) {
+        console.log(params);
+        error = !error
+        setError(error)
+    }
+
     // 阅读完当前页
     function update(params) {
         updateStatus(selectItem.docId)
@@ -96,20 +110,43 @@ export default function CustomVideo({videoId, videoCategory, time_length}) {
                 setUpdateLocal();
             }
         };
-      }, [location]);
+    }, [location]);
 
     return (
-        videoCategory === "youtube" ?
-            <ReactPlayer 
-            url={`https://www.youtube.com/embed/${videoId}`}
-            controls={true}
-            width={"auto"}
-            height={"auto"}
-            onEnded={() => update()}
-        />
-        :
+        <div className="CustomVideo">
+            {
+                videoCategory === "youtube" ?
+                    <>
+                        <ReactPlayer 
+                            url={`https://www.youtube.com/embed/${videoId}`}
+                            controls={true}
+                            width={"auto"}
+                            height={"auto"}
+                            onEnded={() => update()}
+                            onReady={() => changeLoading()}
+                            onError={(err) => changeError(err)}
+                        />
+                        {
+                            !loading &&
+                                (
 
-        <iframe src={`//player.bilibili.com/player.html?${videoId}`}>
-        </iframe>
+                                    error ?
+                                        <div className="error">
+                                            <img src={require("@site/static/img/icon-neterror.png").default} alt="" />
+                                            <p>网址为 <a href={youtubeInfo.url} target="_blank" rel="noopener noreferrer">{youtubeInfo.url}</a> 的网页可能暂时无法连接,或者它已永久性地移动到了新网址。</p>
+                                        </div>
+                                    :
+                                        <Spin size="large">
+                                            <img src={youtubeInfo.img} alt="" />
+                                        </Spin>
+                                )
+                        }
+                    </>
+                :
+
+                <iframe src={`//player.bilibili.com/player.html?${videoId}`}>
+                </iframe>
+            }
+        </div>
     )
 }
