@@ -53,18 +53,7 @@ function BreadcrumbsItemLink({children, href, isLast}) {
 }
 // TODO move to design system folder
 function BreadcrumbsItem({children, active, index, addMicrodata, select, setSelect, toggleMenu}) {
-  function isSelect(params) {
-    if (setSelect) {      
-      if (index === 1) {
-        toggleMenu(false)
-        setSelect(!select)
-      }
-      if (index === 0) {
-        toggleMenu(true)
-        setSelect(!select)
-      }
-    }
-  }
+
   return (
     <li
       {...(addMicrodata && {
@@ -72,7 +61,6 @@ function BreadcrumbsItem({children, active, index, addMicrodata, select, setSele
         itemProp: 'itemListElement',
         itemType: 'https://schema.org/ListItem',
       })}
-      onClick={() => isSelect()}
       className={clsx('breadcrumbs__item', {
         // 'breadcrumbs__item--active': active,
         // 'breadcrumbs_item_active': active,

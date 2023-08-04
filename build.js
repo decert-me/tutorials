@@ -65,7 +65,6 @@ const extractFilesAndCopyFolder = async(destinationPath, filesNames, filesToDown
           try {
             // 将 folderToCopy 从 destinationPath 复制到另一个文件夹
             const sourceFolder = path.join(destinationPath, filesNames[i] + filePath + newPath);
-            console.log(sourceFolder, "===>", filesNames[i]);
             const destinationFolder = `./docs/${catalogueNames[i]}`;
             await fsextra.copy(sourceFolder, destinationFolder);
           } catch (err) {
