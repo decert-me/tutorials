@@ -114,14 +114,32 @@ body{
 
 /* iframe */
 @media screen and (min-width: 996px){
+  .CustomVideo{
+    height: 500px;
+  }
+  .CustomVideo .ant-spin{
+    top: calc((500px - 38px) / 2);
+  }
   iframe{
     width: 100%;
     height: 500px;
   }
+  .error p{
+    width: 700px;
+  }
 }
 @media screen and (max-width: 995px){
+  .CustomVideo{
+    height: 335px;
+  }
+  .CustomVideo .ant-spin{
+    top: calc((335px - 38px) / 2);
+  }
   iframe{
     width: 100%;
     height: 335px;
+  }
+  .error p{
+    width: 300px;
   }
 }

@@ -57,10 +57,11 @@ async function getPlaylistVideos(apiKey, playlistId) {
         const videoId = snippet.resourceId.videoId;
         videoItems.push({
             label: snippet.title,
-            id: videoId
+            id: videoId,
+            img: snippet.thumbnails.maxres.url,
+            url: `https://www.youtube.com/watch?v=${videoId}&list=${playlistId}`
         });
       }
-
       if (data.nextPageToken) {
         params.pageToken = data.nextPageToken;
       } else {
@@ -326,7 +327,7 @@ async function startGenerate(ele) {
   for (let i = 0; i < videoItems.length; i++) {
     const videoItem = videoItems[i];
     const fileName = `./docs/${ele.catalogueName}/${i}_video${i}.md`;
-    const fileContent = `# ${videoItem.label}\n\n<CustomVideo videoId="${videoItem.id}" videoCategory="${ele.videoCategory}" ${videoItem.time_length ? "time_length=\"" + videoItem.time_length + "\"" : ""} />`;
+    const fileContent = `# ${videoItem.label}\n\n<CustomVideo videoId="${videoItem.id}" videoCategory="${ele.videoCategory}" ${videoItem.time_length ? "time_length=\"" + videoItem.time_length + "\"" : ""} youtubeInfo={${ele.videoCategory === "youtube" ? JSON.stringify(videoItem) : null}} />`;
 
     // 使用 fs.writeFile() 创建并写入文件
     await new Promise((resolve, reject) => {
