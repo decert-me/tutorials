@@ -104,7 +104,7 @@ export default function CustomVideo({videoId, videoCategory, time_length, youtub
         
         return () => {
         //   如果!isFinish 获取当前时间戳、减去start时间戳，记录在local中.
-            if (!isFinish) {
+            if (!isFinish && videoCategory === "bilibili" && timeStamp !== undefined) {
                 timeStamp.time_readed = (new Date().getTime() - startTimeStamp).toFixed(0);
                 setTimeStamp({...timeStamp});
                 setUpdateLocal();
