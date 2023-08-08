@@ -2,7 +2,7 @@
 
 const common = [
     {
-        catalogueName: "ZK",
+        catalogueName: "ZK-Shanghai",
         weights: [
             {
                 id: "MgJskhhYY2o",
