@@ -146,7 +146,7 @@ const main = async () => {
       }
     })
   }
-
+  
   const filesToDownload = tutorials.map(e => {
     if (e.docType === "video") {
       return
@@ -159,7 +159,7 @@ const main = async () => {
       catalogueName: e.catalogueName
     }
   })
-
+  
   const filesNames = tutorials.map(e => {
     if (e.docType === "video") {
       return
