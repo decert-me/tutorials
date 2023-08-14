@@ -20,8 +20,8 @@ function getRepoPath(repoUrl) {
   return repoPath.endsWith('.git') ? repoPath.slice(0, -4) : repoPath;
 }
 
-const downloadFile = async(repoUrl, commitHash) => {
-  const targetFolder = `./tmpl/${repoUrl.split("/").reverse()[0]}`; // 替换为你要将代码拉取到的目标文件夹
+const downloadFile = async(repoUrl, commitHash, catalogueName) => {
+  const targetFolder = `./tmpl/${catalogueName}/${repoUrl.split("/").reverse()[0]}`; // 替换为你要将代码拉取到的目标文件夹
   await axios.get(`https://api.github.com/repos/${getRepoPath(repoUrl)}`)
   .then(async(response) => {
     const repoInfo = response.data;
@@ -166,7 +166,7 @@ const main = async () => {
     }
     const file = e.repoUrl;
     const url = file.split("/").reverse();
-    return url[0]
+    return e.catalogueName + "/" + url[0]
   })
 
   const tutorial = tutorials.reduce((acc, e) => {
