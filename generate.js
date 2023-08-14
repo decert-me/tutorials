@@ -79,7 +79,7 @@ async function getParseSummary(data, catalogueName) {
   const tokens = md.parse(data, {});
   const summary = parse.parseSummary(tokens, catalogueName);
   const isStringFound = summary.some(item => item?.id?.includes(catalogueName + "/README"));
-  if (!isStringFound && catalogueName !== "ingopedia") {
+  if (!isStringFound && (catalogueName !== "ingopedia" && catalogueName !== "zkp-encyclopaedia")) {
     summary.unshift({
         type: 'doc',
         id: `${catalogueName}/README`,
@@ -355,13 +355,22 @@ async function generateVideo(tutorials) {
 
 
 const main = async () => {
-  const tutorials = await readJsonFile("tutorials.json");
+  const index = process.argv.slice(2)[0];
+  const arr = await readJsonFile("tutorials.json");
+  let tutorials = arr;
+  if (index) {
+    arr.map((e, i) => {
+      if (e.catalogueName === index) {
+        tutorials = [arr[i]]
+      }
+    })
+  }
   // video生成.md文件
   await generateVideo(tutorials);
 
   const files = fs.readdirSync(DOCS_DIR);
-  await generateSidebars(files, tutorials);
-  await generateNavbarItemsFile(files, tutorials); // 执行函数
+  await generateSidebars(files, arr);
+  await generateNavbarItemsFile(files, arr); // 执行函数
 }
 
 module.exports = {
