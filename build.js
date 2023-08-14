@@ -139,6 +139,11 @@ const main = async () => {
   const index = process.argv.slice(2)[0];
   const arr = await readJsonFile("tutorials.json");
   let tutorials = arr;
+
+  const path = "./siteBaseUrl.js"
+  const data = index ? `module.exports = "/tutorial/${index}"` : `module.exports = ""`;
+  await writeFileAsync(path, data, 'utf8');
+
   if (index) {
     arr.map((e, i) => {
       if (e.catalogueName === index) {

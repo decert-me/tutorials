@@ -5,6 +5,7 @@ const lightCodeTheme = require('prism-react-renderer/themes/github');
 const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 const codeBlock = require('./src/comment/codeBlock');
 const navbarItems = require('./navbarItems.js');
+const baseUrl = require('./siteBaseUrl');
 
 
 /** @type {import('@docusaurus/types').Config} */
@@ -29,7 +30,7 @@ const config = {
   ],
 
   url: 'https://decert.me',
-  baseUrl: '/tutorial',
+  baseUrl: baseUrl !== "" ? baseUrl : '/tutorial',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
 
