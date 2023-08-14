@@ -63,6 +63,11 @@ const replace = [
         path: "./navbarItems.js",
         oldValue: "ingopedia/README",
         newValue: "ingopedia/communityguide"
+    },
+    {
+        path: "./navbarItems.js",
+        oldValue: "zkp-encyclopaedia/README",
+        newValue: "zkp-encyclopaedia/communityguide"
     }
 ]
 

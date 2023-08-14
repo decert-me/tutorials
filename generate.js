@@ -79,7 +79,7 @@ async function getParseSummary(data, catalogueName) {
   const tokens = md.parse(data, {});
   const summary = parse.parseSummary(tokens, catalogueName);
   const isStringFound = summary.some(item => item?.id?.includes(catalogueName + "/README"));
-  if (!isStringFound && catalogueName !== "ingopedia") {
+  if (!isStringFound && (catalogueName !== "ingopedia" && catalogueName !== "zkp-encyclopaedia")) {
     summary.unshift({
         type: 'doc',
         id: `${catalogueName}/README`,
