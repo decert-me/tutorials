@@ -1,4 +1,5 @@
 import React from 'react';
+// import "../locales/config"
 import { WagmiConfig, configureChains, createClient } from 'wagmi';
 import { mainnet, polygon, polygonMumbai } from 'wagmi/chains'
 import { publicProvider } from 'wagmi/providers/public'
@@ -53,7 +54,7 @@ export default function Root({children}) {
         <GlobalContextProvider>
 
             <WagmiConfig client={wagmiClient}>
-                <>{children}</>
+                {children}
             </WagmiConfig>
             <Web3Modal projectId={projectId} ethereumClient={ethereumClient} />
         </GlobalContextProvider>

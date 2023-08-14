@@ -1,4 +1,4 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useEffect, useState } from 'react';
 import { updateProgress } from '../request/public';
 import { updateLocalTutorial } from '../utils/tutorialsCache';
 
@@ -11,6 +11,8 @@ const GlobalContextProvider = ({ children }) => {
   const [isSign, setIsSign] = useState(false);
   let [selectTutorial, setSelectTutorial] = useState([]);
   let [user, setUser] = useState();
+  let [isMobile, setIsMobile] = useState();
+
   
   function updateTutorial(arr) {
     selectTutorial = arr;
@@ -56,8 +58,20 @@ const GlobalContextProvider = ({ children }) => {
     }
   }
 
+  function resize(params) {
+    console.log("Xxx");
+  }
+
+  useEffect(() => {
+    window.addEventListener("resize", resize);
+    return () => {
+      window.removeEventListener("resize", resize);
+    }
+  },[])
+
   return (
     <GlobalContext.Provider value={{ 
+      isMobile,
       isSign, 
       setIsSign, 
       selectTutorial, 

@@ -1,0 +1,50 @@
+{
+    "tutorial": {
+        "filter": "筛选",
+        "type": "分类",
+        "theme": "主题",
+        "media": "媒体类型",
+        "lang": "语言",
+        "clear": "清除",
+        "sort": "排序",
+        "sort-default": "默认",
+        "sort-popular": "最受欢迎的",
+        "sort-lastest": "最新的",
+        
+        "dapps": "去中心化应用",
+        "chain-public": "公链",
+        "programming-lang": "编程语言",
+        "layer2": "Layer2",
+        "safe": "安全",
+        "chain-consortium": "联盟链",
+        "storage": "存储",
+        "theory": "理论",
+        "research": "研究",
+        "others": "其他",
+        
+        "defi": "DeFi",
+        "nft": "NFT",
+        "btc": "比特币",
+        "eth": "以太坊",
+        "blockchain": "区块链",
+        "metaverse": "元宇宙",
+        "web3": "Web3",
+        "contract": "智能合约",
+        "zkp": "零知识证明",
+        "consensus": "共识机制",
+        "cryptography": "密码学",
+        "wallet": "钱包",
+        "dao": "DAO",
+        "technical-analysis": "技术分析",
+        "solidity": "solidity",
+        "move": "move",
+        "sui": "sui",
+        "go": "go",
+        
+        "article": "文章",
+        "video": "视频",
+    
+        "zh": "中文",
+        "en": "English"
+    }
+}

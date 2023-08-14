@@ -1,0 +1,52 @@
+.CustomCategory{
+    .label{
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        color: #191919;
+        font-size: 16px;
+        font-weight: 600;
+        line-height: 19px;
+        .arrow{
+            width: 16px;
+            height: 16px;
+            display: flex;
+            cursor: pointer;
+            img{
+                width: 100%;
+            }
+        }
+        .arrow-rotate{
+            transform: rotate(180deg);
+        }
+    }
+    .items-hide{
+        display: none !important;
+    }
+    .items{
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        .item{
+            padding: 12px;
+            color: #666666;
+            font-size: 12px;
+            font-weight: 500;
+            border-radius: 8px;
+            background-color: #F7F7F7;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            img{
+                width: 16px;
+                height: 16px;
+                margin-left: 5px;
+            }
+        }
+        .item-active{
+            color: #FFFFFF;
+            background-color: #000000;
+        }
+    }
+}

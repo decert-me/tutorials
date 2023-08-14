@@ -1,0 +1,50 @@
+{
+    "tutorial": {
+        "filter": "Filters",
+        "type": "Types",
+        "theme": "Topics",
+        "media": "Media Type",
+        "lang": "Language",
+        "clear": "Clear All",
+        "sort": "sort",
+        "sort-default": "Default sort",
+        "sort-popular": "Most Popular",
+        "sort-lastest": "Latest",
+        
+        "dapps": "Dapp",
+        "chain-public": "Public blockchain",
+        "programming-lang": "Programming language",
+        "layer2": "Layer 2",
+        "safe": "Security",
+        "chain-consortium": "Consortium blockchain",
+        "storage": "Storage",
+        "theory": "Theory",
+        "research": "Research",
+        "others": "Others",
+        
+        "defi": "DeFi",
+        "nft": "NFT",
+        "btc": "Bitcoin",
+        "eth": "Ethereum",
+        "blockchain": "Blockchain",
+        "metaverse": "Metaverse",
+        "web3": "Web3",
+        "contract": "Smart contract",
+        "zkp": "zero-knowledge proof",
+        "consensus": "Consensus",
+        "cryptography": "Cryptography",
+        "wallet": "Wallet",
+        "dao": "DAO",
+        "technical-analysis": "Technical Analysis",
+        "solidity": "solidity",
+        "move": "move",
+        "sui": "sui",
+        "go": "go",
+
+        "article": "Article",
+        "video": "Video",
+
+        "zh": "中文",
+        "en": "English"
+    }
+}
