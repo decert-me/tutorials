@@ -369,8 +369,8 @@ const main = async () => {
   await generateVideo(tutorials);
 
   const files = fs.readdirSync(DOCS_DIR);
-  await generateSidebars(files, arr);
-  await generateNavbarItemsFile(files, arr); // 执行函数
+  await generateSidebars(files, tutorials);
+  await generateNavbarItemsFile(files, tutorials); // 执行函数
 }
 
 module.exports = {

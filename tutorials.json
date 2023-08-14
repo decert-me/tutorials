@@ -43,5 +43,27 @@
         "catalogueName": "sui-move-intro-course-zh",
         "img": "https://ipfs.learnblockchain.cn/images/sui.png",
         "docType": "mdBook"
+    },
+    {
+        "repoUrl": "https://github.com/ingonyama-zk/ingopedia",
+        "label": "ZK 文档",
+        "startPage": "README",
+        "catalogueName": "ingopedia",
+        "img": "https://ipfs.learnblockchain.cn/images/sui.png",
+        "docType": "mdBook",
+        "branch": "master",
+        "docPath": "/src",
+        "commitHash": "1549b86f5a0c1be82fac329f1e1563b5bd9d8b56"
+    },
+    {
+        "url": "https://www.youtube.com/watch?v=CTJ1JkYLiyw&list=PLBIxCe-LDnGC-hfuyKRBvi1eC_X_7JzU7",
+        "label": "ZK Shanghai-Lesson2 零知识证明工作坊",
+        "catalogueName": "ZK",
+        "docType": "video",
+        "img": "https://ipfs.decert.me/images/blockchain-basic.png",
+        "desc": "区块链是一项令人兴奋且在快速发展的技术，你也许看到过这些频繁在社交媒体、新闻频道上冒出的新名词：智能合约、代币（通证）、Web3、DeFi、DAO 组织。 如果你还不是很明白他们的意思，这份免费区块链基础教程就是为你（小白们）准备的。",
+        "challenge": 10000,
+        "sort": "ordered",
+        "videoCategory": "youtube"
     }
 ]

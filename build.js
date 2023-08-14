@@ -178,8 +178,8 @@ const main = async () => {
   }, { catalogueNames: [], docTypes: [], docPath: [] });
 
 
-  //  全量更新时预先删除
-  !index && await fsextra.remove("./docs");     
+  //  预先删除
+  await fsextra.remove("./docs");     
 
   // mkdir
   const folder = "./tmpl";
@@ -202,21 +202,13 @@ const main = async () => {
   // Build project
   await buildProject();
 
-  const buildPath = "./build/tutorials.json";
-  // 将JSON放到build中
-  await fsextra.copy("./tutorials.json", "./build/tutorials.json")
-  .then(res => {
-    console.log('copy tutorials.json successfully');
-  })
-  const json = await readFileAsync(buildPath, 'utf8');
-  const data = eval(json);
+  // 返回json
   const navbarItems = require("./navbarItems");
-
-  data.forEach((ele, index) => {
-    ele.startPage = navbarItems[index].docId;
-  })
-
-  await writeFileAsync(buildPath, JSON.stringify(data), 'utf8');
+  const obj = {
+    ...tutorials[0],
+    startPage: navbarItems[0].docId
+  }
+  return obj
 };
 
 main();
