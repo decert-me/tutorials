@@ -1,4 +1,13 @@
 {
+    "header": {
+        "explore": "Challenges",
+        "lesson": "Tutorials",
+        "lesson-sub": "Recommended course",
+        "cert": "Vitae",
+        "connect": "Connect wallet",
+        "disconnect": "Disconnect",
+        "profile": "Profile"
+    },
     "tutorial": {
         "filter": "Filters",
         "type": "Types",
@@ -46,5 +55,11 @@
 
         "zh": "中文",
         "en": "English"
+    },
+    "diff": "Difficulty",
+    "diff-info": {
+       "easy": "Easy",
+       "normal": "Medium",
+       "diff": "Difficult"
     }
 }

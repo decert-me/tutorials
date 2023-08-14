@@ -59,7 +59,7 @@ function CustomCategory(props, ref) {
                     className={`arrow ${isActive ? "" : "arrow-rotate"}`} 
                     onClick={() => setIsActive(!isActive)}
                 >
-                    <img src={require("@site/static/img/icon-arrow.png")} alt="" />
+                    <img src={require("@site/static/img/icon-arrow.png").default} alt="" />
                 </div>
             </div>
             <div className={`items ${isActive ? "" : "items-hide"}`}>

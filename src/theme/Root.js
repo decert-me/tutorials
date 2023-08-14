@@ -1,5 +1,5 @@
 import React from 'react';
-// import "../locales/config"
+import "../locales/config"
 import { WagmiConfig, configureChains, createClient } from 'wagmi';
 import { mainnet, polygon, polygonMumbai } from 'wagmi/chains'
 import { publicProvider } from 'wagmi/providers/public'

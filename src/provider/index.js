@@ -59,7 +59,9 @@ const GlobalContextProvider = ({ children }) => {
   }
 
   function resize(params) {
-    console.log("Xxx");
+    const width = window.screen.width;
+    isMobile = width < 997;
+    setIsMobile(isMobile);
   }
 
   useEffect(() => {

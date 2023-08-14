@@ -1,4 +1,13 @@
 {
+    "header": {
+        "explore": "挑战",
+        "lesson": "教程",
+        "lesson-sub": "推荐课程",
+        "cert": "认证",
+        "connect": "链接钱包",
+        "disconnect": "断开连接",
+        "profile": "个人中心"
+    },
     "tutorial": {
         "filter": "筛选",
         "type": "分类",
@@ -46,5 +55,11 @@
     
         "zh": "中文",
         "en": "English"
+    },
+    "diff": "难度",
+    "diff-info": {
+       "easy": "简单",
+       "normal": "中等",
+       "diff": "困难"
     }
 }

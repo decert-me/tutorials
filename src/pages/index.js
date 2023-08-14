@@ -1,13 +1,15 @@
 import React from 'react';
 import "./index.scss"
 import { useTranslation } from "react-i18next";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAccount } from "wagmi";
 import { progressList } from "../request/public";
 import { Button, Divider, Drawer } from "antd";
 import { useRequest, useUpdateEffect } from "ahooks";
 import CustomCategory from "../components/CustomCategory";
-import { GlobalContext } from '../provider';
+import axios from 'axios';
+import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
+import Layout from '@theme/Layout';
 
 function totalTime(time) {
   const s = time / 1000;    //  秒
@@ -75,7 +77,7 @@ function SelectItems({selectItems: items, removeItem, removeAllItems, sidebarIsO
             {
                 !sidebarIsOpen &&
                 <div className="icon" onClick={() => changeSidebar()}>
-                    <img src={require("@site/static/img/icon-filter.png")} alt="" />
+                    <img src={require("@site/static/img/icon-filter.png").default} alt="" />
                 </div>
             }
             {
@@ -85,7 +87,7 @@ function SelectItems({selectItems: items, removeItem, removeAllItems, sidebarIsO
                         key={item.key}
                         onClick={() => removeItem(item.key, item.index)}
                     >
-                        {t(`tutorial.${item.label}`)} <img src={require("@site/static/img/icon-close.png")} alt="" />
+                        {t(`tutorial.${item.label}`)} <img src={require("@site/static/img/icon-close.png").default} alt="" />
                     </div>
                 )
             }
@@ -108,11 +110,64 @@ export default function Home() {
   const childRef = useRef(null);
   const boxsRef = useRef(null);
   
-  const { isMobile } = useContext(GlobalContext);
-  const json = require("../../tutorials.json");
+  const {siteConfig} = useDocusaurusContext();
+  let [isMobile, setIsMobile] = useState(false);
   const { t } = useTranslation();
   const { address } = useAccount();
-  const { tutorialsSidebar } = require([]);
+  const tutorialsSidebar = [
+    {
+        label: "type",
+        list: [
+            { key: 101, label: "dapps" },
+            { key: 102, label: "chain-public" },
+            { key: 103, label: "programming-lang" },
+            { key: 104, label: "layer2" },
+            { key: 105, label: "safe" },
+            { key: 106, label: "chain-consortium" },
+            { key: 107, label: "storage" },
+            { key: 108, label: "theory" },
+            { key: 109, label: "research" },
+            { key: 110, label: "others" },
+        ]
+    },
+    {
+        label: "theme",
+        list: [
+            { key: 201, label: "defi" },
+            { key: 202, label: "nft" },
+            { key: 203, label: "btc" },
+            { key: 204, label: "eth" },
+            { key: 205, label: "blockchain" },
+            { key: 206, label: "metaverse" },
+            { key: 207, label: "web3" },
+            { key: 208, label: "contract" },
+            { key: 209, label: "zkp" },
+            { key: 210, label: "consensus" },
+            { key: 211, label: "cryptography" },
+            { key: 212, label: "wallet" },
+            { key: 213, label: "dao" },
+            { key: 215, label: "technical-analysis" },
+            { key: 216, label: "solidity" },
+            { key: 217, label: "move" },
+            { key: 218, label: "sui" },
+            { key: 219, label: "go" }
+        ]
+    },
+    {
+        label: "media",
+        list: [
+            {key: 301, label: "article", value: "article"}, 
+            {key: 302, label: "video", value: "video"}
+        ]
+    },
+    {
+        label: "lang",
+        list: [
+            {key: 401, label: "zh", value: "zh"}, 
+            {key: 402, label: "en", value: "en"}
+        ]
+    }
+];
   const [openM, setOpenM] = useState(false);    //  移动端抽屉
   let [tutorials, setTutorials] = useState([]);   //  教程列表
   let [newTutorials, setNewTutorials] = useState([]);   //  选中的教程列表
@@ -139,13 +194,11 @@ export default function Home() {
   // 侧边栏删除类名
   function removeClassName() {
       sidebarRef.current.classList.remove("content-sidebar-scrollbar")
-      console.log("remove");
   }
 
   // 侧边栏添加类名
   function addClassName() {
       sidebarRef.current.classList.add("content-sidebar-scrollbar")
-      console.log("add");
       runRemove()
   }
 
@@ -277,12 +330,23 @@ export default function Home() {
       })
   }
 
-  function init(params) {
+  function resize() {
+    const clientWidth = document.documentElement.clientWidth;
+    if (clientWidth < 490) {
+      const scale = document.documentElement.clientWidth / 390;
+      document.documentElement.style.fontSize = 16 * Math.min(scale, 2) + 'px'
+    }
+
+    const width = window.screen.width;
+    isMobile = width < 490;
+    setIsMobile(isMobile);
+  }
+
+  function init() {
       const host = window.location.origin;
-      // axios.get(`${host.indexOf("localhost") === -1 ? host : "https://decert.me"}/tutorial/tutorials.json`)
-      // .then(res => {
-      //     tutorials = res.data;
-          tutorials = json;
+      axios.get(`${host.indexOf("localhost") === -1 ? host : "https://decert.me"}/tutorial/tutorials.json`)
+      .then(res => {
+          tutorials = res.data;
           tutorials.forEach(tutorial => {
               tutorial.docType = tutorial.docType === "video" ? "video" : "article";
           })
@@ -291,10 +355,10 @@ export default function Home() {
           getProgress();
           filterTutorials();
           run();
-      // })
-      // .catch(err => {
-      //     console.log(err);
-      // })
+      })
+      .catch(err => {
+          console.log(err);
+      })
   }
 
   useUpdateEffect(() => {
@@ -336,8 +400,19 @@ export default function Home() {
       resizeContent();
   },[newTutorials])
 
+  useEffect(() => {
+    window.addEventListener("resize", resize);
+    return () => {
+      window.removeEventListener("resize", resize);
+    }
+  },[])
+
   return (
-    <div className="Lesson" ref={contentRef}>
+    <Layout
+    title={`Hello from ${siteConfig.title}`}
+    description="Description will go into a meta tag in <head />">
+    <main>
+    <div className={`Lesson ${isMobile ? "Lesson-mobile" : ""}`} ref={contentRef}>
       <div className="custom-bg-round" />
       <div className="content">
           {/* 侧边栏 */}
@@ -354,8 +429,8 @@ export default function Home() {
               >
                   <div className="content-sidebar">
                       <div className="sidebar-list">
-                          <div className="close tutorial-icon-full icon" onClick={() => setOpenM(false)}>
-                              <img src={require("@site/static/img/icon-close.png")} alt="" />
+                          <div className="sidebar-close tutorial-icon-full icon" onClick={() => setOpenM(false)}>
+                              <img src={require("@site/static/img/icon-close.png").default} alt="" />
                           </div>
                           {
                               tutorialsSidebar.map((item, i) => 
@@ -383,7 +458,7 @@ export default function Home() {
                       ref={buttonRef}
                   >
                       <div className="icon">
-                          <img src={require("@site/static/img/icon-filter.png")} alt="" />
+                          <img src={require("@site/static/img/icon-filter.png").default} alt="" />
                       </div>
                       {t("tutorial.filter")}
                   </Button>
@@ -414,7 +489,7 @@ export default function Home() {
                   isMobile && 
                   <div className="tutorials-operate">
                       <div className="tutorial-icon-full filter-icon icon" onClick={() => setOpenM(true)}>
-                          <img src={require("@site/static/img/icon-filter.png")} alt="" />
+                          <img src={require("@site/static/img/icon-filter.png").default} alt="" />
                       </div>
                   </div>
               }
@@ -422,15 +497,14 @@ export default function Home() {
                   {
                       newTutorials.map(e => 
                           <a 
-                              href={`https://decert.me/tutorial/${e.catalogueName}${/^README$/i.test(e.startPage.split("/")[1]) ? "/" : "/"+e.startPage.split("/")[1]}`} 
-                              target="_blank" 
+                              href={`/tutorial/${e.catalogueName}${/^README$/i.test(e.startPage.split("/")[1]) ? "/" : "/"+e.startPage.split("/")[1]}`} 
                               rel="noopener noreferrer"
                               key={e.catalogueName}
                               className="box-link"
                           >
                               <div className="box">
                                   <div className="img">
-                                      {/* <img src={e?.img?.indexOf("http") === -1 ? require(`@/${e.img}`) : e.img} alt="" /> */}
+                                      <img src={e.img} alt="" />
                                   </div>
                                   <div className="box-content">
                                       <p className="box-title newline-omitted">
@@ -446,10 +520,10 @@ export default function Home() {
                                                   tutorial={e} 
                                                   label={t(`diff-info.${e.difficulty == 0 ? "easy" : e.difficulty == 1 ? "normal" : "diff"}`)} />
                                           </li>
-                                          {/* <li className="font-color"><div className="icon"><img src={require("@/assets/images/icon/icon-people.png")} alt="" /></div>{e?.readNum}</li> */}
+                                          <li className="font-color"><div className="icon"><img src={require("@site/static/img/icon-people.png").default} alt="" /></div>{e?.readNum}</li>
                                           {
                                               e?.time &&
-                                              <li className="font-color-span"><div className="icon"><img src={require("@site/static/img/icon-time.png")} alt="" /></div>{totalTime(e.time)}</li>
+                                              <li className="font-color-span"><div className="icon"><img src={require("@site/static/img/icon-time.png").default} alt="" /></div>{totalTime(e.time)}</li>
                                           }
                                       </ul>
                                       <Divider />
@@ -458,7 +532,7 @@ export default function Home() {
                                       </ul>
                                   </div>
                                   {
-                                      e?.percent && e.percent !== 0 &&
+                                      e?.percent !== 0 &&
                                       <div className="progress">
                                           {e.percent}
                                           {t("progress")} {parseInt(e.percent * 100)}%
@@ -472,5 +546,9 @@ export default function Home() {
           </div>
       </div>
     </div>
+    </main>
+  </Layout>
+
+
   );
 }

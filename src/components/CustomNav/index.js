@@ -59,9 +59,9 @@ export default function CustomNav() {
     }
 
     const menus = [
-        { to: "https://decert.me/tutorials", label: json[language].lesson },
-        { to: "https://decert.me/challenges", label: json[language].explore },
-        { to: "https://decert.me/vitae", label: json[language].cert }
+        { to: "/tutorial", label: json[language].lesson },
+        { to: "/challenges", label: json[language].explore },
+        { to: "/vitae", label: json[language].cert }
     ]
 
     useEffect(() => {

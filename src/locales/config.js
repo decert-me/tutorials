@@ -1,4 +1,4 @@
-import i18n from 'react-i18next';
+import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
 import publicUS from './en-US/public.json';
