@@ -66,5 +66,23 @@
         "desc": "由 Kepler42B - ZK Planet 和 Sutulabs 共同举办的工作坊所开发的零知识证明的系列课程",
         "videoCategory": "youtube",
         "sort": "ordered"
+    },
+    {
+        "repoUrl": "https://github.com/0xdwong/ingopedia",
+        "label": "ZKP 百科全书",
+        "catalogueName": "zkp-encyclopaedia",
+        "img": "https://ipfs.learnblockchain.cn/images/helmet4a.png",
+        "desc": "ZK精选资源",
+        "docType": "mdBook",
+        "branch": "master",
+        "docPath": "/zh",
+        "category": [
+            "theory"
+        ],
+        "theme": [
+            "zkp"
+        ],
+        "language": "zh",
+        "difficulty": 2
     }
 ]
