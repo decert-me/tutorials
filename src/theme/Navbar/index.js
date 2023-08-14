@@ -1,15 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '@theme-original/Navbar';
+import { useLocation } from '@docusaurus/router';
 import CustomNav from '../../components/CustomNav';
 
 export default function NavbarWrapper(props) {
 
+  const location = useLocation();
   let [isMobile, setIsMobile] = useState(false);
+  let [isShow, setIsShow] = useState(false);
 
   useEffect(() => {
     isMobile = document.documentElement.clientWidth <= 996;
     setIsMobile(isMobile);
   },[])
+
+  useEffect(() => {
+    isShow = location.pathname === "/tutorial/";
+    setIsShow(isShow);
+  },[location])
 
   return (
     <>
@@ -26,7 +34,10 @@ export default function NavbarWrapper(props) {
             zIndex: 999
           }} />
       }
-      <Navbar {...props} />
+      {
+        !isShow &&
+        <Navbar {...props} />
+      }
     </>
   );
 }
