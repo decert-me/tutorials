@@ -37,7 +37,7 @@ const downloadFile = async(repoUrl, commitHash, catalogueName) => {
         console.log(`已切换到commit：${commitHash}`);
       }
     } catch (error) {
-      console.error('代码克隆或切换commit失败:', error.message);
+      // console.error('代码克隆或切换commit失败:', error.message);
     }
   })
   .catch(error => {
@@ -76,7 +76,7 @@ const extractFilesAndCopyFolder = async(destinationPath, filesNames, filesToDown
 const createFolder = (folderPath) => {
     fs.mkdir(folderPath, (err) => {
       if (err) {
-        console.error(`Error creating folder: ${err}`);
+        console.error(err.message);
       } else {
         console.log(`Folder created successfully: ${folderPath}`);
       }
