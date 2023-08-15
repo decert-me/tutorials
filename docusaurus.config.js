@@ -5,7 +5,7 @@ const lightCodeTheme = require('prism-react-renderer/themes/github');
 const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 const codeBlock = require('./src/comment/codeBlock');
 const navbarItems = require('./navbarItems.js');
-const baseUrl = require('./siteBaseUrl');
+const { baseUrl, metadata } = require('./siteMetadata');
 
 
 /** @type {import('@docusaurus/types').Config} */
@@ -65,6 +65,7 @@ const config = {
     ({
       // Replace with your project's social card
       image: 'img/docusaurus-social-card.jpg',
+      metadata: metadata,
       navbar: {
         // title: 'Decert.me',
         // logo: {

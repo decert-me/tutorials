@@ -1,6 +1,5 @@
 const util = require('util');
 const fs = require('fs');
-const readFileAsync = util.promisify(fs.readFile);
 const writeFileAsync = util.promisify(fs.writeFile);
 const fsextra = require('fs-extra');
 const path = require('path');
@@ -139,10 +138,12 @@ const main = async () => {
   const index = process.argv.slice(2)[0];
   const arr = await readJsonFile("tutorials.json");
   let tutorials = arr;
-
-  const path = "./siteBaseUrl.js"
-  const data = index ? `module.exports = "/tutorial/${index}"` : `module.exports = ""`;
-  await writeFileAsync(path, data, 'utf8');
+  const path = "./siteMetadata.js"
+  const metadata = {
+    baseUrl: "",
+    metadata: []
+  };
+  metadata.baseUrl = index ? `/tutorial/${index}` : "/tutorial" ;
 
   if (index) {
     arr.map((e, i) => {
@@ -150,7 +151,16 @@ const main = async () => {
         tutorials = [arr[i]]
       }
     })
+    metadata.metadata = [
+      {name: "twiter:card", content: "summary_large_image"},
+      {property: "og:url", content: "https://decert.me/tutorials"},
+      {property: "og:title", content: `DeCert.Me | ${arr[0].label}`},
+      {property: "og:description", content: arr[0].desc},
+      {property: "og:image", content: arr[0].img}
+    ]
   }
+
+  await writeFileAsync(path, "module.exports = " + JSON.stringify(metadata), 'utf8');
   
   const filesToDownload = tutorials.map(e => {
     if (e.docType === "video") {
@@ -209,6 +219,18 @@ const main = async () => {
 
   // 返回json
   const navbarItems = require("./navbarItems");
+  navbarItems.forEach(navbarItem => {
+    // TODO: 插入以下内容作为动态meta
+    /**
+     * 
+     * ---
+       title: Your Page Title
+       description: Description of your page
+       og_image: /images/your-image.png
+       twitter_image: /images/your-image.png
+       ---
+     */
+  })
   const obj = {
     ...tutorials[0],
     startPage: navbarItems[0].docId
