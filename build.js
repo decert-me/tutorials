@@ -232,10 +232,9 @@ const main = async () => {
      */
   })
   const obj = {
-    ...tutorials[0],
     startPage: navbarItems[0].docId
   }
-  return obj
+  console.log(obj);
 };
 
 main();
