@@ -234,7 +234,7 @@ const main = async () => {
   const obj = {
     startPage: navbarItems[0].docId
   }
-  console.log(obj);
+  console.log(JSON.stringify(obj));
 };
 
 main();
