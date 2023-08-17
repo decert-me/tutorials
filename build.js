@@ -156,7 +156,7 @@ const main = async () => {
       {property: "og:url", content: "https://decert.me/tutorials"},
       {property: "og:title", content: `DeCert.Me | ${arr[0].label}`},
       {property: "og:description", content: arr[0].desc},
-      {property: "og:image", content: arr[0].img}
+      {property: "og:image", content: "https://ipfs.decert.me/" + arr[0].img}
     ]
   }
 
@@ -219,18 +219,6 @@ const main = async () => {
 
   // 返回json
   const navbarItems = require("./navbarItems");
-  navbarItems.forEach(navbarItem => {
-    // TODO: 插入以下内容作为动态meta
-    /**
-     * 
-     * ---
-       title: Your Page Title
-       description: Description of your page
-       og_image: /images/your-image.png
-       twitter_image: /images/your-image.png
-       ---
-     */
-  })
   const obj = {
     startPage: navbarItems[0].docId
   }
