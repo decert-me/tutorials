@@ -294,19 +294,7 @@ async function startGenerate(ele) {
   })
   // TODO: 判断适配类型: bilibili、Youtebe
   if (ele.videoCategory === "youtube") {
-    // 发起请求 ==> 获取播放列表内容
-    const playlistId = ele.url.split("=").pop();
-    await getPlaylistVideos(youtubeApiKey, playlistId)
-    .then(result => {
-      if (result.length > 0) {
-        videoItems = result;
-      } else {
-        console.log('Failed to fetch video links.');
-      }
-    })
-    .catch(error => {
-      console.error('Error:', error.message);
-    });
+    videoItems = ele.video;
   }else{
     // bilibili
     const arr = ele.videoItems;
@@ -315,14 +303,6 @@ async function startGenerate(ele) {
       element.time_length = await bilibili.getBilibiliTimeLength(element.id);
     }
     videoItems = arr;
-  }
-  // 根据有序配置添加权重
-  if (ele?.sort) {
-    videoItems.sort();
-    videoItems.forEach(obj => {
-      obj.weights = 200;
-    })
-    videoItems = weights.toSort(ele.catalogueName, videoItems);
   }
   for (let i = 0; i < videoItems.length; i++) {
     const videoItem = videoItems[i];
