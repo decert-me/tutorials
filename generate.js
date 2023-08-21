@@ -292,22 +292,24 @@ async function startGenerate(ele) {
       }
     });
   })
-  // TODO: 判断适配类型: bilibili、Youtebe
-  if (ele.videoCategory === "youtube") {
-    videoItems = ele.video;
-  }else{
-    // bilibili
-    const arr = ele.videoItems;
-    for (let i = 0; i < arr.length; i++) {
-      const element = arr[i];
-      element.time_length = await bilibili.getBilibiliTimeLength(element.id);
-    }
-    videoItems = arr;
-  }
+  videoItems = ele.video;
+  
   for (let i = 0; i < videoItems.length; i++) {
-    const videoItem = videoItems[i];
-    const fileName = `./docs/${ele.catalogueName}/${i}_video${i}.md`;
-    const fileContent = `# ${videoItem.label}\n\n<CustomVideo videoId="${videoItem.id}" videoCategory="${ele.videoCategory}" ${videoItem.time_length ? "time_length=\"" + videoItem.time_length + "\"" : ""} youtubeInfo={${ele.videoCategory === "youtube" ? JSON.stringify(videoItem) : null}} />`;
+    // 判断适配类型: bilibili、Youtebe
+    let fileName = ""
+    let fileContent = ""
+    if (ele.videoCategory === "youtube") {
+      const videoItem = videoItems[i];
+      fileName = `./docs/${ele.catalogueName}/${i}_video${i}.md`;
+      fileContent = `# ${videoItem.label}\n\n<CustomVideo videoId="${videoItem.id}" videoCategory="${ele.videoCategory}" ${videoItem.time_length ? "time_length=\"" + videoItem.time_length + "\"" : ""} youtubeInfo={${ele.videoCategory === "youtube" ? JSON.stringify(videoItem) : null}} />`;
+    }else{
+      const {label, code} = videoItems[i];
+      const regex = /aid=([^&]+)&bvid=([^&]+)&cid=([^&]+)/;
+      const match = code.match(regex);
+      fileName = `./docs/${ele.catalogueName}/${i}_video${i}.md`;
+      fileContent = `# ${label}\n\n<CustomVideo videoId="${match[0]}" videoCategory="bilibili" />`;
+    }
+
 
     // 使用 fs.writeFile() 创建并写入文件
     await new Promise((resolve, reject) => {
