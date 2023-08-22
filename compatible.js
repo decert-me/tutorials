@@ -36,21 +36,32 @@ async function modifyFile() {
       }
     }
 
-    for (let i = 0; i < normal.length; i++) {
-      try {
-        // 读取文件
-        const data = await readFileAsync(normal[i].path, 'utf8');
-        
-        // 修改文件内容
-        const modifiedData = data.replace(normal[i].oldValue, normal[i].newValue);
-        
-        // 写入文件
-        await writeFileAsync(normal[i].path, modifiedData, 'utf8');
-        // console.log(`File ${normal[i].path} modified successfully.`);
-      } catch (err) {
-        // console.error(`Error modifying file ${normal[i].path}: ${err}`);
+    for (const key in normal) {
+      if (Object.hasOwnProperty.call(arr, key)) {
+        if (tutorials_table.filter(ele => ele.repoUrl === key).length === 0) {
+          continue;
+        }
+        const selectArr = arr[key];
+        const selectTutorial = tutorials_table.filter(ele => ele.repoUrl)[0];
+        const catalogueName = selectTutorial.catalogueName;
+        for (let i = 0; i < selectArr.length; i++) {
+          try {
+            // 读取文件
+            const data = await readFileAsync(selectArr[i].path, 'utf8');
+            
+            // 修改文件内容
+            const modifiedData = data.replace(catalogueName + selectArr[i].oldValue, catalogueName + selectArr[i].newValue);
+            
+            // 写入文件
+            await writeFileAsync(selectArr[i].path, modifiedData, 'utf8');
+            // console.log(`File ${normal[i].path} modified successfully.`);
+          } catch (err) {
+            // console.error(`Error modifying file ${normal[i].path}: ${err}`);
+          }
+        }
       }
     }
+    
     
     // 添加空文档处理
     for (const key in empty) {

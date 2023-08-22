@@ -1,34 +1,29 @@
 const replace = {
     "https://github.com/SixdegreeLab/MasteringChainAnalytics": [
         {
-            path: "./docs/MasteringChainAnalytics/08_nft_analysis/readme.md",
+            path: "/08_nft_analysis/readme.md",
             oldValue: "<br>",
             newValue: "<br/>"
         }
     ],
     "https://github.com/RandyPen/sui-move-intro-course-zh": [
         {
-            path: "./docs/sui-move-intro-course-zh/advanced-topics/BCS_encoding/lessons/BCS_encoding.md",
-            oldValue: "../example_projects/",
-            newValue: "https://github.com/RandyPen/sui-move-intro-course-zh/tree/main/advanced-topics/BCS_encoding/example_projects"
-        },
-        {
-            path: "./docs/sui-move-intro-course-zh/unit-four/lessons/4_marketplace_contract.md",
+            path: "/unit-four/lessons/4_marketplace_contract.md",
             oldValue: "../../unit-two/lessons/6_capability_design_pattern.md",
             newValue: "../../unit-two/lessons/6_capability_设计模式.md"
         },
         {
-            path: "./docs/sui-move-intro-course-zh/unit-two/lessons/1_使用sui_objects.md",
+            path: "/unit-two/lessons/1_使用sui_objects.md",
             oldValue: "../../unit-one/lessons/4_定制类型与能力.md#定制类型与能力",
             newValue: "../../unit-one/lessons/4_函数.md"
         },
         {
-            path: "./docs/sui-move-intro-course-zh/unit-two/lessons/6_capability_设计模式.md",
+            path: "/unit-two/lessons/6_capability_设计模式.md",
             oldValue: "../../unit-one/lessons/6_hello_world.md#viewing-the-object-with-sui-explorer",
             newValue: "../../unit-one/lessons/5_hello_world.md"
         },
         {
-            path: "./docs/sui-move-intro-course-zh/advanced-topics/BCS_encoding/lessons/BCS_编码.md",
+            path: "/advanced-topics/BCS_encoding/lessons/BCS_编码.md",
             oldValue: "../example_projects/",
             newValue: "https://github.com/RandyPen/sui-move-intro-course-zh/tree/main/advanced-topics/BCS_encoding/example_projects"
         }
@@ -36,55 +31,59 @@ const replace = {
     "https://github.com/miguelmota/ethereum-development-with-go-book": [
 
         {
-            path: "./docs/ethereum-development-with-go-book/README.md",
+            path: "/README.md",
             oldValue: "../zh/client",
             newValue: "./client/README.md"
         },
         {
-            path: "./docs/ethereum-development-with-go-book/README.md",
+            path: "/README.md",
             oldValue: "((https://invite.slack.golangbridge.org/))",
             newValue: "(https://invite.slack.golangbridge.org/)"
         },
         {
-            path: "./docs/ethereum-development-with-go-book/README.md",
+            path: "/README.md",
             oldValue: "((https://gophers.slack.com/messages/C9HP1S9V2/))",
             newValue: "(https://gophers.slack.com/messages/C9HP1S9V2/)"
         },
         {
-            path: "./docs/ethereum-development-with-go-book/event-read/README.md",
+            path: "/event-read/README.md",
             oldValue: "((../smart-contract-compile))",
             newValue: "(../smart-contract-compile/README.md)"
         },
         {
-            path: "./docs/ethereum-development-with-go-book/event-read/README.md",
+            path: "/event-read/README.md",
             oldValue: "((../event-subscribe))",
             newValue: "(../event-subscribe/README.md)"
         },
         {
-            path: "./docs/ethereum-development-with-go-book/smart-contract-load/README.md",
+            path: "/smart-contract-load/README.md",
             oldValue: "<ContractName>",
             newValue: "<ContractName/>"
         }
     ]
 }
 
-const normal = [
-    {
-        path: "./navbarItems.js",
-        oldValue: "ingopedia/README",
-        newValue: "ingopedia/communityguide"
-    },
-    {
-        path: "./navbarItems.js",
-        oldValue: "zkp-encyclopaedia/README",
-        newValue: "zkp-encyclopaedia/communityguide"
-    }
-]
+const normal = {
+    "https://github.com/ingonyama-zk/ingopedia": [
+        {
+            path: "./navbarItems.js",
+            oldValue: "/README",
+            newValue: "/communityguide"
+        }
+    ],
+    "https://github.com/0xdwong/ingopedia": [
+        {
+            path: "./navbarItems.js",
+            oldValue: "/README",
+            newValue: "/communityguide"
+        }
+    ]
+}
 
 const empty = {
     "https://github.com/RandyPen/sui-move-intro-course-zh": [
         {
-            path: "./docs/sui-move-intro-course-zh/advanced-topics/upgrade_packages/readme.md",
+            path: "/advanced-topics/upgrade_packages/readme.md",
             oldValue: "",
             newValue: "# 合约升级"
         }
@@ -92,7 +91,7 @@ const empty = {
     "https://github.com/ingonyama-zk/ingopedia": [
 
         {
-            path: "./docs/ingopedia/protocolsFoldingSchemes.md",
+            path: "/protocolsFoldingSchemes.md",
             oldValue: "",
             newValue: `# Folding Scheme Protocols 
     
@@ -105,7 +104,7 @@ Sangria - 2023|[→📝](https://github.com/geometryresearch/technical_notes/blo
 Protostar - 2023|[→📝](https://eprint.iacr.org/2023/620)|`
         },
         {
-            path: "./docs/ingopedia/protocolsLookup.md",
+            path: "/protocolsLookup.md",
             oldValue: "",
             newValue: `# Lookup Protocols
     
@@ -119,7 +118,7 @@ Protostar - 2023|[→📝](https://eprint.iacr.org/2023/620)|`
 |CqLin - 2023|[ →📝 ](https://eprint.iacr.org/2023/393)|`
         },
         {
-            path: "./docs/ingopedia/protocolsOther.md",
+            path: "/protocolsOther.md",
             oldValue: "",
             newValue: `# Other Protocols 
     
@@ -130,7 +129,7 @@ Protostar - 2023|[→📝](https://eprint.iacr.org/2023/620)|`
 |Virgo - 2020|[→📝](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=9152704)|[sunblaze-ucb](https://github.com/sunblaze-ucb/Virgo)| | ✅|✅|`
         },
         {
-            path: "./docs/ingopedia/protocolsSNARK.md",
+            path: "/protocolsSNARK.md",
             oldValue: "",
             newValue: `# SNARK Protocols 
     
@@ -166,7 +165,7 @@ Protostar - 2023|[→📝](https://eprint.iacr.org/2023/620)|`
 |Testudo: Groth+Spartan - 2023|[ →📝](https://cryptonet.org/blog/testudo-efficient-snarks-with-smaller-setups)|[cryptonetlab](https://github.com/cryptonetlab/Testudo)`
         },
         {
-            path: "./docs/ingopedia/protocolsSTARK.md",
+            path: "/protocolsSTARK.md",
             oldValue: "",
             newValue: `# STARK Protocols 
     
