@@ -31,15 +31,16 @@ const downloadFile = async(repoUrl, commitHash, catalogueName) => {
     try {
       execSync(`git clone ${cloneUrl} ${targetFolder}`);
       console.log('代码克隆成功！');
-
-      if (commitHash) {        
-        // 切换到指定的commit
-        execSync(`cd ${targetFolder} && git checkout ${commitHash}`);
-        console.log(`已切换到commit：${commitHash}`);
-      }
     } catch (error) {
       // console.error('代码克隆或切换commit失败:', error.message);
     }
+    // 切换到指定的commit
+    if (commitHash) {        
+      execSync(`cd ${targetFolder} && git checkout ${commitHash}`);
+      console.log(`已切换到commit：${commitHash}`);
+    }
+    execSync(`git pull`);
+    console.log("代码更新成功！");
   })
   .catch(error => {
     console.error('获取GitHub仓库信息失败:', error.message);
