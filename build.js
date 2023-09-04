@@ -7,6 +7,7 @@ const path = require('path');
 const { exec } = require('child_process');
 const axios = require('axios');
 const { execSync } = require('child_process');
+const { spawn } = require('child_process');
 
 const common = {
   gitbook: "/",
@@ -106,11 +107,19 @@ function readJsonFile(filePath) {
 const buildProject = () => {
   console.log("start build");
   return new Promise((resolve, reject) => {
-    const buildCommand = 'npm run docusaurus build';
-    exec(buildCommand, (err, stdout, stderr) => {
-      if (err) {
-        console.error(`Error running build command: ${err}`);
-        reject(err);
+    const buildCommand = spawn('npm', ['run', 'docusaurus', 'build']);
+
+    buildCommand.stdout.on('data', (data) => {
+      console.log(`stdout: ${data}`);
+    });
+
+    // buildCommand.stderr.on('data', (data) => {
+    //   console.error(`stderr: ${data}`);
+    // });
+    buildCommand.on('close', (code) => {
+      if (code !== 0) {
+        console.log(`build process exited with code ${code}`);
+        reject(code);
       } else {
         console.log('Build completed successfully');
         resolve();
