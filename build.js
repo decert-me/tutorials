@@ -113,7 +113,7 @@ const buildProject = () => {
     });
 
     buildCommand.stderr.on('data', (data) => {
-      console.log(`stderr: ${data}`);
+      console.error(`stderr: ${data}`);
     });
     buildCommand.on('close', (code) => {
       if (code !== 0) {
