@@ -43,7 +43,7 @@ const downloadFile = async(repoUrl, commitHash, catalogueName) => {
     console.log("代码更新成功！");
   })
   .catch(error => {
-    console.error('获取GitHub仓库信息失败:', error.message);
+    console.log('获取GitHub仓库信息失败:', error.message);
   });
 };
 
