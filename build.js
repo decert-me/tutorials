@@ -112,9 +112,9 @@ const buildProject = () => {
       console.log(`stdout: ${data}`);
     });
 
-    // buildCommand.stderr.on('data', (data) => {
-    //   console.error(`stderr: ${data}`);
-    // });
+    buildCommand.stderr.on('data', (data) => {
+      console.log(`stderr: ${data}`);
+    });
     buildCommand.on('close', (code) => {
       if (code !== 0) {
         console.log(`build process exited with code ${code}`);
