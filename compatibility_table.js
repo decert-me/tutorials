@@ -30,7 +30,7 @@ const replace = {
     ],
     "https://github.com/ordinals/ord": [
         {
-            path: "/ordinals/bounty/2.md",
+            path: "/bounty/2.md",
             oldValue: "class=uncommon",
             newValue: "class=\"uncommon\""
         }
