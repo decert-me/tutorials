@@ -75,15 +75,13 @@ async function getPlaylistVideos(apiKey, playlistId) {
   return videoItems;
 }
 
-async function getParseSummary(data, catalogueName, repoUrl) {
+async function getParseSummary(data, catalogueName, root) {
   const tokens = md.parse(data, {});
   const summary = parse.parseSummary(tokens, catalogueName);
   const isStringFound = summary.some(item => item?.id?.includes(catalogueName + "/README"));
-  if (!isStringFound && (
-    repoUrl !== "https://github.com/ingonyama-zk/ingopedia" && 
-    repoUrl !== "https://github.com/0xdwong/ingopedia" &&
-    repoUrl !== "https://github.com/ordinals/ord"
-    )) {
+  // 检测是否存在README.md
+  const filePath = `${root}/README.md`;
+  if (!isStringFound && fs.existsSync(filePath)) {
     summary.unshift({
         type: 'doc',
         id: `${catalogueName}/README`,
@@ -109,7 +107,7 @@ const getSummary = async(filename, root, tutorial) => {
   return await new Promise((resolve, reject) => {
     fs.readFile(root+"/"+filename, 'utf8', async(err, data) => {
       if (err) reject(err)
-      const arr = await getParseSummary(data, tutorial.catalogueName, tutorial.repoUrl)
+      const arr = await getParseSummary(data, tutorial.catalogueName, root)
       resolve(arr)
     });
   }).then(res => {
@@ -221,7 +219,8 @@ function readJsonFile(filePath) {
   async function getStartPage(file, item) {
     let page;
     if (item.docType === "gitbook" || item.docType === "mdBook") {
-      page = "README"
+      const text = require("./sidebars.js")
+      page = text[item.catalogueName][0].id;
     }else {
       // docusaurus
       const filepath = `./docs/${item.catalogueName}`;
@@ -247,7 +246,7 @@ const getNavbarItems = async(files, tutorials, navbarItems = []) => {
         }
         if (e.docType !== "video") {
           const startPage = await getStartPage(file, e);
-          obj.docId = file+"/"+startPage;
+          obj.docId = startPage;
         }else{
           obj.docId = file+"/video0";
         }
