@@ -57,16 +57,7 @@
         "docPath": "/src",
         "commitHash": "9f27ed7ab0fdd92c446a14e1df59891c17f6e8ed"
     },
-    {
-        "url": "https://www.youtube.com/watch?v=CTJ1JkYLiyw&list=PLBIxCe-LDnGC-hfuyKRBvi1eC_X_7JzU7",
-        "label": "ZK Shanghai课程",
-        "catalogueName": "ZK-Shanghai",
-        "docType": "video",
-        "img": "https://ipfs.decert.me/images/zkp-shanghai.jpg",
-        "desc": "由 Kepler42B - ZK Planet 和 Sutulabs 共同举办的工作坊所开发的零知识证明的系列课程",
-        "videoCategory": "youtube",
-        "sort": "ordered"
-    },
+
     {
         "repoUrl": "https://github.com/0xdwong/ingopedia",
         "label": "ZKP 百科全书",

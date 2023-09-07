@@ -75,11 +75,15 @@ async function getPlaylistVideos(apiKey, playlistId) {
   return videoItems;
 }
 
-async function getParseSummary(data, catalogueName) {
+async function getParseSummary(data, catalogueName, repoUrl) {
   const tokens = md.parse(data, {});
   const summary = parse.parseSummary(tokens, catalogueName);
   const isStringFound = summary.some(item => item?.id?.includes(catalogueName + "/README"));
-  if (!isStringFound && (catalogueName !== "ingopedia" && catalogueName !== "zkp-encyclopaedia")) {
+  if (!isStringFound && (
+    repoUrl !== "https://github.com/ingonyama-zk/ingopedia" && 
+    repoUrl !== "https://github.com/0xdwong/ingopedia" &&
+    repoUrl !== "https://github.com/ordinals/ord"
+    )) {
     summary.unshift({
         type: 'doc',
         id: `${catalogueName}/README`,
@@ -105,7 +109,7 @@ const getSummary = async(filename, root, tutorial) => {
   return await new Promise((resolve, reject) => {
     fs.readFile(root+"/"+filename, 'utf8', async(err, data) => {
       if (err) reject(err)
-      const arr = await getParseSummary(data, tutorial.catalogueName)
+      const arr = await getParseSummary(data, tutorial.catalogueName, tutorial.repoUrl)
       resolve(arr)
     });
   }).then(res => {
