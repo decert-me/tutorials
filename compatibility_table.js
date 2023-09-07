@@ -28,6 +28,13 @@ const replace = {
             newValue: "https://github.com/RandyPen/sui-move-intro-course-zh/tree/main/advanced-topics/BCS_encoding/example_projects"
         }
     ],
+    "https://github.com/ordinals/ord": [
+        {
+            path: "/ordinals/bounty/2.md",
+            oldValue: "class=uncommon",
+            newValue: "class=\"uncommon\""
+        }
+    ],
     "https://github.com/miguelmota/ethereum-development-with-go-book": [
 
         {
