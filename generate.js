@@ -227,7 +227,7 @@ function readJsonFile(filePath) {
       const files = filterMDFiles(filepath);
         const path = findMDFiles(files)
         const res = await categoryContrast(path, filepath)
-        page = res;
+        page = file+"/"+res;
     }
     return page
   }
