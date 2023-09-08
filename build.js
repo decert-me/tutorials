@@ -161,6 +161,7 @@ const main = async () => {
   metadata.baseUrl = index ? `/tutorial/${index}` : "/tutorial" ;
 
   const meta = arr[0];
+  console.log("matadata ======>", meta);
   metadata.metadata = [
     {name: "twiter:card", content: "summary_large_image"},
     {property: "og:url", content: "https://decert.me/tutorials"},
