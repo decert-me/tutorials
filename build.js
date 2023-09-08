@@ -161,13 +161,17 @@ const main = async () => {
   metadata.baseUrl = index ? `/tutorial/${index}` : "/tutorial" ;
 
   const meta = arr[0];
-  console.log("matadata ======>", meta);
+
   metadata.metadata = [
     {name: "twiter:card", content: "summary_large_image"},
     {property: "og:url", content: "https://decert.me/tutorials"},
+    {property: "title", content: `DeCert.Me | ${meta.label}`},
     {property: "og:title", content: `DeCert.Me | ${meta.label}`},
+    {property: "description", content: meta.desc},
     {property: "og:description", content: meta.desc},
-    {property: "og:image", content: "https://ipfs.decert.me/" + meta.img}
+    {property: "og:image", content: "https://ipfs.decert.me/" + meta.img},
+    {property: "twitter:image", content: "https://ipfs.decert.me/" + meta.img},
+    
   ]
 
   await writeFileAsync(path, "module.exports = " + JSON.stringify(metadata), 'utf8');
