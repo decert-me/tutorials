@@ -160,17 +160,13 @@ const main = async () => {
   };
   metadata.baseUrl = index ? `/tutorial/${index}` : "/tutorial" ;
 
-  arr.map((e, i) => {
-    if (e.catalogueName === index) {
-      tutorials = [arr[i]]
-    }
-  })
+  const meta = arr[0];
   metadata.metadata = [
     {name: "twiter:card", content: "summary_large_image"},
     {property: "og:url", content: "https://decert.me/tutorials"},
-    {property: "og:title", content: `DeCert.Me | ${arr[0].label}`},
-    {property: "og:description", content: arr[0].desc},
-    {property: "og:image", content: "https://ipfs.decert.me/" + arr[0].img}
+    {property: "og:title", content: `DeCert.Me | ${meta.label}`},
+    {property: "og:description", content: meta.desc},
+    {property: "og:image", content: "https://ipfs.decert.me/" + meta.img}
   ]
 
   await writeFileAsync(path, "module.exports = " + JSON.stringify(metadata), 'utf8');
