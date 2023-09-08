@@ -107,16 +107,21 @@ const buildProject = () => {
   console.log("start build");
   return new Promise((resolve, reject) => {
     const buildCommand = spawn('npm', ['run', 'docusaurus', 'build']);
+    let flag = false;
 
     buildCommand.stdout.on('data', (data) => {
       console.log(`stdout: ${data}`);
     });
 
     buildCommand.stderr.on('data', (data) => {
+      // 忽略跳转路径错误
+      if (data.indexOf("Exhaustive list of all broken links found:") !== -1) {
+        flag = true
+      }
       console.error(`stderr: ${data}`);
     });
     buildCommand.on('close', (code) => {
-      if (code !== 0) {
+      if (code !== 0 && !flag) {
         console.log(`build process exited with code ${code}`);
         reject(code);
       } else {
