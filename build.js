@@ -147,6 +147,45 @@ const compatible = () => {
   });
 };
 
+function fromDir(startPath, filter, meta) {
+  if (!fs.existsSync(startPath)) {
+      console.log("no dir ", startPath);
+      return;
+  }
+
+  const files = fs.readdirSync(startPath);
+
+  for (let i = 0; i < files.length; i++) {
+      const filename = path.join(startPath, files[i]);
+      const stat = fs.lstatSync(filename);
+
+      if (stat.isDirectory()) {
+          fromDir(filename, filter, meta); // recurse
+      } else if (filename.indexOf(filter) >= 0) {
+        //  添加metadata
+          console.log('-- found: ', filename);
+          let content = fs.readFileSync(filename, 'utf8');
+          let regex = /#\s(.*)/;
+          let match = content.match(regex);
+          if (!match) {
+            console.log(match);
+          }
+          const textToAdd = `---
+title: DeCert.Me | ${meta.label}
+description: ${meta.desc}
+image: https://ipfs.decert.me/${meta.img}
+sidebar_label: "${match[1]}"
+hide_title: true
+---
+`
+          content = textToAdd + content;
+          fs.writeFileSync(filename, content, 'utf8');
+          // console.log(textToAdd);
+      }
+  }
+}
+
+
 const main = async () => {
   
   // init 
@@ -161,7 +200,6 @@ const main = async () => {
   metadata.baseUrl = index ? `/tutorial/${index}` : "/tutorial" ;
 
   const meta = arr[0];
-
   metadata.metadata = [
     {name: "twiter:card", content: "summary_large_image"},
     {property: "og:url", content: "https://decert.me/tutorials"},
@@ -224,9 +262,9 @@ const main = async () => {
 
   // Delete destinationPath
   // await fsextra.remove(folder)
-
   await generate.main();
-
+  // 遍历文档，生成指定metadata。
+  fromDir('./docs', '.md', meta);
   await compatible();
   // Build project
   await buildProject();
