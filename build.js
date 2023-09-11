@@ -174,7 +174,6 @@ title: "DeCert.Me | ${meta.label}"
 description: "${meta.desc}"
 image: "https://ipfs.decert.me/${meta.img}"
 sidebar_label: "${match[1]}"
-hide_title: true
 ---
 `
           content = textToAdd + content;
