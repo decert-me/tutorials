@@ -161,7 +161,7 @@ function fromDir(startPath, filter, meta) {
 
       if (stat.isDirectory()) {
           fromDir(filename, filter, meta); // recurse
-      } else if (filename.indexOf(filter) >= 0 && filename.indexOf("SUMMARY.md") >= 0) {
+      } else if (filename.indexOf(filter) >= 0 && filename.indexOf("SUMMARY.md") === -1) {
         //  添加metadata
           let content = fs.readFileSync(filename, 'utf8');
           let regex = /#\s(.*)/;
