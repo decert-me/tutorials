@@ -161,19 +161,18 @@ function fromDir(startPath, filter, meta) {
 
       if (stat.isDirectory()) {
           fromDir(filename, filter, meta); // recurse
-      } else if (filename.indexOf(filter) >= 0) {
+      } else if (filename.indexOf(filter) >= 0 && filename.indexOf("SUMMARY.md") >= 0) {
         //  添加metadata
-          console.log('-- found: ', filename);
           let content = fs.readFileSync(filename, 'utf8');
           let regex = /#\s(.*)/;
           let match = content.match(regex);
           if (!match) {
-            console.log(match);
+            console.log(match, filename);
           }
           const textToAdd = `---
-title: DeCert.Me | ${meta.label}
-description: ${meta.desc}
-image: https://ipfs.decert.me/${meta.img}
+title: "DeCert.Me | ${meta.label}"
+description: "${meta.desc}"
+image: "https://ipfs.decert.me/${meta.img}"
 sidebar_label: "${match[1]}"
 hide_title: true
 ---
