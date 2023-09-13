@@ -183,7 +183,6 @@ ${match ? `sidebar_label: "${match[1]}"` : ""}
 `
           content = textToAdd + content;
           fs.writeFileSync(filename, content, 'utf8');
-          // console.log(textToAdd);
       }
   }
 }
@@ -266,9 +265,13 @@ const main = async () => {
   // Delete destinationPath
   // await fsextra.remove(folder)
   await generate.main();
+  
+  // 兼容
+  await compatible();
+
   // 遍历文档，生成指定metadata。
   fromDir('./docs', '.md', meta);
-  await compatible();
+
   // Build project
   await buildProject();
 
