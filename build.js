@@ -166,14 +166,19 @@ function fromDir(startPath, filter, meta) {
           let content = fs.readFileSync(filename, 'utf8');
           let regex = /#\s(.*)/;
           let match = content.match(regex);
-          if (!match) {
-            console.log(match, filename);
-          }
-          const textToAdd = `---
+          const textToAdd = content.startsWith("---") ?
+content = content.replace("---",
+`---
 title: "DeCert.Me | ${meta.label}"
 description: "${meta.desc}"
 image: "https://ipfs.decert.me/${meta.img}"
-sidebar_label: "${match[1]}"
+${match ? `sidebar_label: "${match[1]}"` : ""}`)
+:
+`---
+title: "DeCert.Me | ${meta.label}"
+description: "${meta.desc}"
+image: "https://ipfs.decert.me/${meta.img}"
+${match ? `sidebar_label: "${match[1]}"` : ""}
 ---
 `
           content = textToAdd + content;
