@@ -23,10 +23,14 @@ export default function NavbarWrapper(props) {
             position: "fixed",
             top: "82px",
             left: 0,
-            zIndex: 999
+            zIndex: 999,
+            display: 'none'
           }} />
       }
-      <Navbar {...props} />
+      <div style={{ display: "none" }}>
+
+        <Navbar {...props} />
+      </div>
     </>
   );
 }
