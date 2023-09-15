@@ -19,8 +19,16 @@
     ) !important;
   }
   .margin_top_83{
-    margin-top: calc(92px + 8px) !important;
+    margin-top: calc(92px) !important;
     margin-left: 10px;
     background-color: #FEFEFE;
+  }
+  h2::before {
+    content: "";
+    display: block;
+    height: 50px; /* Adjust this value to change the height */
+    margin: -50px 0 0; /* Adjust this value to change the height */
+    visibility: hidden;
+    pointer-events: none;
   }
 }
