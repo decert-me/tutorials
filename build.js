@@ -39,7 +39,7 @@ const downloadFile = async(repoUrl, commitHash, catalogueName) => {
       execSync(`cd ${targetFolder} && git checkout ${commitHash}`);
       console.log(`已切换到commit：${commitHash}`);
     }
-    execSync(`git pull`);
+    execSync(`cd ${targetFolder} && git pull`);
     console.log("代码更新成功！");
   })
   .catch(error => {
