@@ -227,7 +227,7 @@ function readJsonFile(filePath) {
       const files = filterMDFiles(filepath);
         const path = findMDFiles(files)
         const res = await categoryContrast(path, filepath)
-        page = res;
+        page = file+"/"+res;
     }
     return page
   }
@@ -295,42 +295,24 @@ async function startGenerate(ele) {
       }
     });
   })
-  // TODO: 判断适配类型: bilibili、Youtebe
-  if (ele.videoCategory === "youtube") {
-    // 发起请求 ==> 获取播放列表内容
-    const playlistId = ele.url.split("=").pop();
-    await getPlaylistVideos(youtubeApiKey, playlistId)
-    .then(result => {
-      if (result.length > 0) {
-        videoItems = result;
-      } else {
-        console.log('Failed to fetch video links.');
-      }
-    })
-    .catch(error => {
-      console.error('Error:', error.message);
-    });
-  }else{
-    // bilibili
-    const arr = ele.videoItems;
-    for (let i = 0; i < arr.length; i++) {
-      const element = arr[i];
-      element.time_length = await bilibili.getBilibiliTimeLength(element.id);
-    }
-    videoItems = arr;
-  }
-  // 根据有序配置添加权重
-  if (ele?.sort) {
-    videoItems.sort();
-    videoItems.forEach(obj => {
-      obj.weights = 200;
-    })
-    videoItems = weights.toSort(ele.catalogueName, videoItems);
-  }
+  videoItems = ele.video;
+  
   for (let i = 0; i < videoItems.length; i++) {
-    const videoItem = videoItems[i];
-    const fileName = `./docs/${ele.catalogueName}/${i}_video${i}.md`;
-    const fileContent = `# ${videoItem.label}\n\n<CustomVideo videoId="${videoItem.id}" videoCategory="${ele.videoCategory}" ${videoItem.time_length ? "time_length=\"" + videoItem.time_length + "\"" : ""} youtubeInfo={${ele.videoCategory === "youtube" ? JSON.stringify(videoItem) : null}} />`;
+    // 判断适配类型: bilibili、Youtebe
+    let fileName = ""
+    let fileContent = ""
+    if (ele.videoCategory === "youtube") {
+      const videoItem = videoItems[i];
+      fileName = `./docs/${ele.catalogueName}/${i}_video${i}.md`;
+      fileContent = `# ${videoItem.label}\n\n<CustomVideo videoId="${videoItem.id}" videoCategory="${ele.videoCategory}" ${videoItem.time_length ? "time_length=\"" + videoItem.time_length + "\"" : ""} youtubeInfo={${ele.videoCategory === "youtube" ? JSON.stringify(videoItem) : null}} />`;
+    }else{
+      const {label, code} = videoItems[i];
+      const regex = /aid=([^&]+)&bvid=([^&]+)&cid=([^&]+)/;
+      const match = code.match(regex);
+      fileName = `./docs/${ele.catalogueName}/${i}_video${i}.md`;
+      fileContent = `# ${label}\n\n<CustomVideo videoId="${match[0]}" videoCategory="bilibili" />`;
+    }
+
 
     // 使用 fs.writeFile() 创建并写入文件
     await new Promise((resolve, reject) => {
@@ -372,8 +354,8 @@ const main = async () => {
   await generateVideo(tutorials);
 
   const files = fs.readdirSync(DOCS_DIR);
-  await generateSidebars(files, arr);
-  await generateNavbarItemsFile(files, arr); // 执行函数
+  await generateSidebars(files, tutorials);
+  await generateNavbarItemsFile(files, tutorials); // 执行函数
 }
 
 module.exports = {

@@ -1,6 +1,5 @@
 const util = require('util');
 const fs = require('fs');
-const readFileAsync = util.promisify(fs.readFile);
 const writeFileAsync = util.promisify(fs.writeFile);
 const fsextra = require('fs-extra');
 const path = require('path');
@@ -44,7 +43,7 @@ const downloadFile = async(repoUrl, commitHash, catalogueName) => {
     console.log("代码更新成功！");
   })
   .catch(error => {
-    console.error('获取GitHub仓库信息失败:', error.message);
+    console.log('获取GitHub仓库信息失败:', error.message);
   });
 };
 
@@ -108,16 +107,21 @@ const buildProject = () => {
   console.log("start build");
   return new Promise((resolve, reject) => {
     const buildCommand = spawn('npm', ['run', 'docusaurus', 'build']);
+    let flag = false;
 
     buildCommand.stdout.on('data', (data) => {
       console.log(`stdout: ${data}`);
     });
 
-    // buildCommand.stderr.on('data', (data) => {
-    //   console.error(`stderr: ${data}`);
-    // });
+    buildCommand.stderr.on('data', (data) => {
+      // 忽略跳转路径错误
+      if (data.indexOf("Exhaustive list of all broken links found:") !== -1) {
+        flag = true
+      }
+      console.error(`stderr: ${data}`);
+    });
     buildCommand.on('close', (code) => {
-      if (code !== 0) {
+      if (code !== 0 && !flag) {
         console.log(`build process exited with code ${code}`);
         reject(code);
       } else {
@@ -143,19 +147,74 @@ const compatible = () => {
   });
 };
 
+function fromDir(startPath, filter, meta) {
+  if (!fs.existsSync(startPath)) {
+      console.log("no dir ", startPath);
+      return;
+  }
+
+  const files = fs.readdirSync(startPath);
+
+  for (let i = 0; i < files.length; i++) {
+      const filename = path.join(startPath, files[i]);
+      const stat = fs.lstatSync(filename);
+
+      if (stat.isDirectory()) {
+          fromDir(filename, filter, meta); // recurse
+      } else if (filename.indexOf(filter) >= 0 && filename.indexOf("SUMMARY.md") === -1) {
+        //  添加metadata
+          let content = fs.readFileSync(filename, 'utf8');
+          let regex = /#\s(.*)/;
+          let match = content.match(regex);
+          const textToAdd = content.startsWith("---") ?
+content = content.replace("---",
+`---
+title: "DeCert.Me | ${meta.label}"
+description: "${meta.desc}"
+image: "https://ipfs.decert.me/${meta.img}"
+${match ? `sidebar_label: "${match[1]}"` : ""}`)
+:
+`---
+title: "DeCert.Me | ${meta.label}"
+description: "${meta.desc}"
+image: "https://ipfs.decert.me/${meta.img}"
+${match ? `sidebar_label: "${match[1]}"` : ""}
+---
+`
+          content = textToAdd + content;
+          fs.writeFileSync(filename, content, 'utf8');
+      }
+  }
+}
+
+
 const main = async () => {
   
   // init 
   const index = process.argv.slice(2)[0];
   const arr = await readJsonFile("tutorials.json");
   let tutorials = arr;
-  if (index) {
-    arr.map((e, i) => {
-      if (e.catalogueName === index) {
-        tutorials = [arr[i]]
-      }
-    })
-  }
+  const path = "./siteMetadata.js"
+  const metadata = {
+    baseUrl: "",
+    metadata: []
+  };
+  metadata.baseUrl = index ? `/tutorial/${index}` : "/tutorial" ;
+
+  const meta = arr[0];
+  metadata.metadata = [
+    {name: "twiter:card", content: "summary_large_image"},
+    {property: "og:url", content: "https://decert.me/tutorials"},
+    {property: "title", content: `DeCert.Me | ${meta.label}`},
+    {property: "og:title", content: `DeCert.Me | ${meta.label}`},
+    {property: "description", content: meta.desc},
+    {property: "og:description", content: meta.desc},
+    {property: "og:image", content: "https://ipfs.decert.me/" + meta.img},
+    {property: "twitter:image", content: "https://ipfs.decert.me/" + meta.img},
+    
+  ]
+
+  await writeFileAsync(path, "module.exports = " + JSON.stringify(metadata), 'utf8');
   
   const filesToDownload = tutorials.map(e => {
     if (e.docType === "video") {
@@ -188,8 +247,8 @@ const main = async () => {
   }, { catalogueNames: [], docTypes: [], docPath: [] });
 
 
-  //  全量更新时预先删除
-  !index && await fsextra.remove("./docs");     
+  //  预先删除
+  await fsextra.remove("./docs");     
 
   // mkdir
   const folder = "./tmpl";
@@ -205,28 +264,23 @@ const main = async () => {
 
   // Delete destinationPath
   // await fsextra.remove(folder)
-
   await generate.main();
-
+  
+  // 兼容
   await compatible();
+
+  // 遍历文档，生成指定metadata。
+  fromDir('./docs', '.md', meta);
+
   // Build project
   await buildProject();
 
-  const buildPath = "./build/tutorials.json";
-  // 将JSON放到build中
-  await fsextra.copy("./tutorials.json", "./build/tutorials.json")
-  .then(res => {
-    console.log('copy tutorials.json successfully');
-  })
-  const json = await readFileAsync(buildPath, 'utf8');
-  const data = eval(json);
+  // 返回json
   const navbarItems = require("./navbarItems");
-
-  data.forEach((ele, index) => {
-    ele.startPage = navbarItems[index].docId;
-  })
-
-  await writeFileAsync(buildPath, JSON.stringify(data), 'utf8');
+  const obj = {
+    startPage: navbarItems[0].docId
+  }
+  console.log(JSON.stringify(obj));
 };
 
 main();
