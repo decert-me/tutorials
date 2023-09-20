@@ -394,18 +394,6 @@ async function generatePage(tutorials) {
   }
 }
 
-const createFolder = async(folderPath) => {
-  await new Promise((resolve, reject) => {
-    fs.mkdir(folderPath, (err) => {
-      if (err) {
-        resolve()
-      } else {
-        resolve()
-      }
-    });
-  })
-};
-
 const main = async () => {
   const index = process.argv.slice(2)[0];
   const arr = await readJsonFile("tutorials.json");
@@ -423,13 +411,11 @@ const main = async () => {
   await generatePage(arr);
 
   if (tutorials.length === 0) {
-    await createFolder("./docs")
     const filePath = path.join("./docs", "index.md");
-    fs.writeFileSync(filePath, ' 111', function(err) {
+    fs.writeFileSync(filePath, '', function(err) {
       if(err) {
           return console.log(err);
       }
-      console.log("The file was saved!");
     }); 
   }
   const files = fs.readdirSync(DOCS_DIR);
