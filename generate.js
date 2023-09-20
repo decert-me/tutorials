@@ -436,7 +436,7 @@ const main = async () => {
   await generateSidebars(files, tutorials, tutorials.length === 0);
   await generateNavbarItemsFile(files, tutorials, tutorials.length === 0); // 执行函数
 }
-main()
+
 module.exports = {
   main
 };

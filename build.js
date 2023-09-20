@@ -272,16 +272,15 @@ const main = async () => {
   let tutorials = arr;
 
   await metadataInit(arr[0], index);
+  //  预先删除
+  await deleteCache();
 
   // mkdir
   const folder = "./tmpl";
   createFolder(folder);
   createFolder("./docs")
-  
-  const { filesToDownload, filesNames, tutorial } = paramsInit(tutorials)
 
-  //  预先删除
-  await deleteCache();
+  const { filesToDownload, filesNames, tutorial } = paramsInit(tutorials)
 
   const generate = require('./generate');
 
