@@ -67,7 +67,12 @@ const config = {
       }),
     ],
   ],
-
+  stylesheets: [
+    {
+      href: '/tutorial/katex/katex.min.css',
+      type: 'text/css',
+    },
+  ],
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
