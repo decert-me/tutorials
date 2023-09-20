@@ -123,6 +123,9 @@ body{
     background-color: #fff;
   }
 }
+.katex-html{
+  display: none;
+}
 
 /* iframe */
 @media screen and (min-width: 996px){

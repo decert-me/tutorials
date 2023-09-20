@@ -213,7 +213,7 @@ async function metadataInit(meta, index) {
 
 function paramsInit(tutorials) {
   const filesToDownload = tutorials.map(e => {
-    if (e.docType === "video") {
+    if (e.docType === "video" || e.docType === "page") {
       return
     }
     const file = e.repoUrl;
@@ -242,24 +242,17 @@ function paramsInit(tutorials) {
     return acc;
   }, { catalogueNames: [], docTypes: [], docPath: [] });
 
-  // mkdir
-  const folder = "./tmpl";
-
-  createFolder(folder);
-  createFolder("./docs")
-
   return {
     filesToDownload,
     filesNames,
-    tutorial,
-    folder
+    tutorial
   }
 }
 
 async function deleteCache() {
   await fsextra.remove("./docs");
   await new Promise((resolve, reject) => {
-    const compatibleCommand = 'find ./src/pages -type d -mindepth 1 -maxdepth 1 -exec rm -rf {} \;';
+    const compatibleCommand = 'find ./src/pages -type d -mindepth 1 -maxdepth 1 -exec rm -rf {} \\;';
     exec(compatibleCommand, (err, stdout, stderr) => {
       if (err) {
         console.error(`Error running compatible command: ${err}`);
@@ -280,7 +273,12 @@ const main = async () => {
 
   await metadataInit(arr[0], index);
 
-  const { folder, filesToDownload, filesNames, tutorial } = paramsInit(tutorials)
+  // mkdir
+  const folder = "./tmpl";
+  createFolder(folder);
+  createFolder("./docs")
+  
+  const { filesToDownload, filesNames, tutorial } = paramsInit(tutorials)
 
   //  预先删除
   await deleteCache();
@@ -307,10 +305,18 @@ const main = async () => {
 
   // 返回json
   const navbarItems = require("./navbarItems");
-  const obj = {
-    startPage: navbarItems[0].docId
+  if (navbarItems.length === 0) {
+    // 没有起始页，说明是单页应用
+    const obj = {
+      startPage: tutorials[0].catalogueName
+    }
+    console.log(JSON.stringify(obj));
+  }else{
+    const obj = {
+      startPage: navbarItems[0].docId
+    }
+    console.log(JSON.stringify(obj));
   }
-  console.log(JSON.stringify(obj));
 };
 
 main();

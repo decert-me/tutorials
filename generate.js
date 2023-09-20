@@ -261,7 +261,14 @@ const getNavbarItems = async(files, tutorials, navbarItems = []) => {
 };
 
 
-async function generateSidebars(files, tutorials) {
+async function generateSidebars(files, tutorials, isNull) {
+  if (isNull) {
+    fs.writeFileSync(
+      path.join(__dirname, 'sidebars.js'),
+      `module.exports = {};`
+    );
+    return
+  }
   const sidebar = await getSidebars(files, tutorials);
   // 侧边栏
   fs.writeFileSync(
@@ -270,7 +277,14 @@ async function generateSidebars(files, tutorials) {
   );
 }
 
-async function generateNavbarItemsFile(files, tutorials) {
+async function generateNavbarItemsFile(files, tutorials, isNull) {
+  if (isNull) {
+    fs.writeFileSync(
+      path.join(__dirname, 'navbarItems.js'),
+      `module.exports = [];`
+    );
+    return
+  }
   const navbarItems = await getNavbarItems(files, tutorials);
   fs.writeFileSync(
     path.join(__dirname, 'navbarItems.js'),
@@ -329,6 +343,39 @@ async function startGenerate(ele) {
   }
 }
 
+async function startGeneratePage(ele) {
+  const res = await axios.get(ele.repoUrl);
+  const folderPath = `./src/pages/${ele.catalogueName}`;
+  fs.mkdir(folderPath, (err) => {
+    if (err) {
+      console.error(err.message);
+    }
+  });
+
+  let mdContent = res.data;
+  // 处理图片
+  const regex = /!\[.*?\]\((.*?)\)/g;
+  const matchedUrls = mdContent.match(regex);
+  const imageUrls = matchedUrls && matchedUrls.map(url => url.replace(/!\[.*?\]\((.*?)\)/, '$1'));
+  imageUrls.forEach(e => {
+    if (!/^(http|https):\/\//.test(e)) {
+      let url = ele.repoUrl.split(/(master|main)\//)[0];
+      const branch = ele.repoUrl.includes("master") ? "master" : "main";
+      mdContent = mdContent.replace(e, url + branch + "/" + e);
+    }
+  })
+
+  // 处理公式
+  mdContent = mdContent.replace(/eqnarray\*/g, "matrix");
+  mdContent = mdContent.replace(/eqnarray/g, "matrix");
+  mdContent = mdContent.replace(/align\*/g, "matrix");
+  mdContent = mdContent.replace(/align/g, "matrix");
+
+  fs.writeFileSync(
+    path.join(folderPath, "index.md")
+  , mdContent)
+}
+
 async function generateVideo(tutorials) {
   for (let i = 0; i < tutorials.length; i++) {
     const ele = tutorials[i];
@@ -338,11 +385,31 @@ async function generateVideo(tutorials) {
   }
 }
 
+async function generatePage(tutorials) {
+  for (let i = 0; i < tutorials.length; i++) {
+    const ele = tutorials[i];
+    if (ele.docType === "page") {
+      await startGeneratePage(ele)
+    }
+  }
+}
+
+const createFolder = async(folderPath) => {
+  await new Promise((resolve, reject) => {
+    fs.mkdir(folderPath, (err) => {
+      if (err) {
+        resolve()
+      } else {
+        resolve()
+      }
+    });
+  })
+};
 
 const main = async () => {
   const index = process.argv.slice(2)[0];
   const arr = await readJsonFile("tutorials.json");
-  let tutorials = arr;
+  let tutorials = arr.filter(e => e.docType !== "page");
   if (index) {
     arr.map((e, i) => {
       if (e.catalogueName === index) {
@@ -352,12 +419,24 @@ const main = async () => {
   }
   // video生成.md文件
   await generateVideo(tutorials);
+  // page生成.md文件
+  await generatePage(arr);
 
+  if (tutorials.length === 0) {
+    await createFolder("./docs")
+    const filePath = path.join("./docs", "index.md");
+    fs.writeFileSync(filePath, ' 111', function(err) {
+      if(err) {
+          return console.log(err);
+      }
+      console.log("The file was saved!");
+    }); 
+  }
   const files = fs.readdirSync(DOCS_DIR);
-  await generateSidebars(files, tutorials);
-  await generateNavbarItemsFile(files, tutorials); // 执行函数
+  await generateSidebars(files, tutorials, tutorials.length === 0);
+  await generateNavbarItemsFile(files, tutorials, tutorials.length === 0); // 执行函数
 }
-
+main()
 module.exports = {
   main
 };
