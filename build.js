@@ -187,13 +187,8 @@ ${match ? `sidebar_label: "${match[1]}"` : ""}
   }
 }
 
+async function metadataInit(meta, index) {
 
-const main = async () => {
-  
-  // init 
-  const index = process.argv.slice(2)[0];
-  const arr = await readJsonFile("tutorials.json");
-  let tutorials = arr;
   const path = "./siteMetadata.js"
   const metadata = {
     baseUrl: "",
@@ -201,7 +196,6 @@ const main = async () => {
   };
   metadata.baseUrl = index ? `/tutorial/${index}` : "/tutorial" ;
 
-  const meta = arr[0];
   metadata.metadata = [
     {name: "twiter:card", content: "summary_large_image"},
     {property: "og:url", content: "https://decert.me/tutorials"},
@@ -211,11 +205,13 @@ const main = async () => {
     {property: "og:description", content: meta.desc},
     {property: "og:image", content: "https://ipfs.decert.me/" + meta.img},
     {property: "twitter:image", content: "https://ipfs.decert.me/" + meta.img},
-    
   ]
 
   await writeFileAsync(path, "module.exports = " + JSON.stringify(metadata), 'utf8');
-  
+
+}
+
+function paramsInit(tutorials) {
   const filesToDownload = tutorials.map(e => {
     if (e.docType === "video") {
       return
@@ -246,9 +242,41 @@ const main = async () => {
     return acc;
   }, { catalogueNames: [], docTypes: [], docPath: [] });
 
+  return {
+    filesToDownload,
+    filesNames,
+    tutorial
+  }
+}
+
+async function deleteCache() {
+  await fsextra.remove("./docs");
+  await new Promise((resolve, reject) => {
+    const compatibleCommand = 'find ./src/pages -type d -mindepth 1 -maxdepth 1 -exec rm -rf {} \;';
+    exec(compatibleCommand, (err, stdout, stderr) => {
+      if (err) {
+        console.error(`Error running compatible command: ${err}`);
+        reject(err);
+      } else {
+        resolve();
+      }
+    });
+  });
+}
+
+const main = async () => {
+  
+  // init 
+  const index = process.argv.slice(2)[0];
+  const arr = await readJsonFile("tutorials.json");
+  let tutorials = arr;
+
+  await metadataInit(arr[0], index);
+
+  const { filesToDownload, filesNames, tutorial } = paramsInit(tutorials)
 
   //  预先删除
-  await fsextra.remove("./docs");     
+  await deleteCache();
 
   // mkdir
   const folder = "./tmpl";
