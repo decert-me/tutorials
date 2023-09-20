@@ -242,10 +242,17 @@ function paramsInit(tutorials) {
     return acc;
   }, { catalogueNames: [], docTypes: [], docPath: [] });
 
+  // mkdir
+  const folder = "./tmpl";
+
+  createFolder(folder);
+  createFolder("./docs")
+
   return {
     filesToDownload,
     filesNames,
-    tutorial
+    tutorial,
+    folder
   }
 }
 
@@ -273,32 +280,27 @@ const main = async () => {
 
   await metadataInit(arr[0], index);
 
-  const { filesToDownload, filesNames, tutorial } = paramsInit(tutorials)
+  const { folder, filesToDownload, filesNames, tutorial } = paramsInit(tutorials)
 
   //  预先删除
   await deleteCache();
 
-  // mkdir
-  const folder = "./tmpl";
   const generate = require('./generate');
-  createFolder(folder);
-  createFolder("./docs")
+
   // Download all files
   await downloadAllFiles(filesToDownload);
 
-  // Extract downloaded files
   // copy to the docs
   await extractFilesAndCopyFolder(folder, filesNames, filesToDownload, tutorial);
 
-  // Delete destinationPath
-  // await fsextra.remove(folder)
+  // generate sidebars、navbarItems
   await generate.main();
   
   // 兼容
   await compatible();
 
   // 遍历文档，生成指定metadata。
-  fromDir('./docs', '.md', meta);
+  fromDir('./docs', '.md', arr[0]);
 
   // Build project
   await buildProject();
