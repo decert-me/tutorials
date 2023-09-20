@@ -3,6 +3,9 @@
 
 const lightCodeTheme = require('prism-react-renderer/themes/github');
 const darkCodeTheme = require('prism-react-renderer/themes/dracula');
+const math = require('remark-math');
+const katex = require('rehype-katex');
+const mathAlign = require('./src/remark/align');
 const codeBlock = require('./src/comment/codeBlock');
 const navbarItems = require('./navbarItems.js');
 const { baseUrl, metadata } = require('./siteMetadata');
@@ -48,6 +51,11 @@ const config = {
           routeBasePath: '/',
           sidebarPath: require.resolve('./sidebars.js'),
           remarkPlugins: [codeBlock]
+        },
+        pages: {
+          beforeDefaultRemarkPlugins: [mathAlign],
+          remarkPlugins: [math],
+          rehypePlugins: [katex]
         },
         blog: false,
         theme: {

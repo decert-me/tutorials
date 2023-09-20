@@ -19,6 +19,9 @@
 # docs
 /docs/*
 
+# page
+/src/pages/*
+
 # config
 navbarItems.js
 sidebars.js
