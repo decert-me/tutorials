@@ -32,6 +32,8 @@
     "docusaurus-plugin-sass": "^0.2.3",
     "docusaurus2-dotenv": "^1.4.0",
     "ethers": "^5.7.2",
+    "highlight.js": "^11.8.0",
+    "highlightjs-solidity": "^2.0.6",
     "https-browserify": "^1.0.0",
     "identicon.js": "^2.3.3",
     "markdown-it": "^13.0.1",
