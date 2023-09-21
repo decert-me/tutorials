@@ -37,8 +37,11 @@ export default function MDXPage(props) {
   const json = require("@site/tutorials.json");
   let [tutorial, setTutorial] = useState();
   let [isMobile, setIsMobile] = useState(false);
+  let [isOpen, setIsOpen] = useState(false);
 
-
+  function changeToc(params) {
+    setIsOpen(!isOpen);
+  }
 
   useEffect(() => {
     const arr = source.split("/");
@@ -78,7 +81,8 @@ export default function MDXPage(props) {
                   className="breadcrumbs__link"
                   style={{
                     color: "#986344",
-                    fontWeight: 600
+                    fontWeight: 600,
+                    fontSize: "12px"
                   }}
                 >{tutorial.label}</span>
               </li>
@@ -89,11 +93,26 @@ export default function MDXPage(props) {
           <div className={clsx('row', styles.mdxPageWrapper)}>
             <div className={clsx('col', !hideTableOfContents && 'col--8')}>
               <article style={{ position: "relative" }}>
-                {/* {
+                {
                   isMobile &&
                   // toc写入
-                  "xx"
-                } */}
+                  <div className="theme-doc-toc-mobile page-toc">
+                    <button className={`clean-btn toc-btn ${isOpen ? "transform" : ""}`} onClick={() => changeToc()}>
+                      本页总览
+                    </button>
+                    <div className={`toc-collapsibleContent ${isOpen ? "toc-open" : ""}`}>
+                      <ul>
+                        {
+                          MDXPageContent.toc.map(item => 
+                            <li key={item.id}>
+                              <a href={`#${item.id}`}>{item.value}</a>
+                            </li>  
+                          )
+                        }
+                      </ul>
+                    </div>
+                  </div>
+                }
               {
                 tutorial && !isMobile && 
                 <div className="page-header">
