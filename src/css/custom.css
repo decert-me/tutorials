@@ -114,13 +114,34 @@ body{
 }
 
 /* page style */
+.page{
+  overflow: hidden;
+}
+.math{
+  overflow-x: auto;
+}
 @media (min-width: 1440px){
-  .container{
+  .page{
     max-width: 100vw !important;
     margin-top: 92px !important;
     margin-bottom: 0 !important;
-    padding: calc(16px + 32px) 10%;
+    padding: 16px 10% 100px;
     background-color: #fff;
+  }
+  .page-header{
+    height: 32px;
+    margin-bottom: 13px;
+  }
+}
+
+@media screen and (max-width: 996px){
+  .page-breadcrumbs{
+    margin-top: 3.75rem;
+    padding: 8px 16px;
+    box-shadow: 0 1px 2px 0 #0000001a;
+  }
+  .page-breadcrumbs>.breadcrumbs__link{
+    font-size: .8125rem;
   }
 }
 
