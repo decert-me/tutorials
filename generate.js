@@ -1,18 +1,19 @@
 const fs = require('fs');
+const fsAsync = require('fs').promises;
 const path = require('path');
 require('dotenv').config();
 const fsextra = require('fs-extra');
 const axios = require('axios');
 const util = require('util');
+const writeFileAsync = util.promisify(fs.writeFile);
 const markdownIt = require('markdown-it');
 const readFileAsync = util.promisify(fs.readFile);
-const bilibili = require('./utils/video/bilibili');
 const parse = require('./utils/docs/summary');
 const DOCS_DIR = path.join(__dirname, 'docs');
-const youtubeApiKey = process.env.YOUTUBE_API_KEY;
-const weights = require('./weights');
 const md = markdownIt();
-
+const gettextParser = require('gettext-parser');
+const readline = require('readline');
+const visit = require('unist-util-visit');
 
 function pathReplace(path) {
   return path.replace(".md", '').replace(/\d+_/, "").replace(/%20/g, " ")
@@ -394,10 +395,101 @@ async function generatePage(tutorials) {
   }
 }
 
+async function replaceStr(selectArr, path) {
+  // 读一次
+  const regex = /^\W+ /;
+  const data = await readFileAsync(path, 'utf8');
+  let modifiedData = data.split("\n");
+  let reduceLine = 0;      // 记录减少的行号
+  for (let i = 0; i < selectArr.length; i++) {
+    const item = selectArr[i]
+    try {
+      item.msgid.split("\n").forEach((e, index) => {
+        // 修改文件内容
+        const match = modifiedData[item.line + index].match(regex);
+        if (match && index === 0) {
+          modifiedData[item.line + index] = match[0];
+        }else{
+          modifiedData[item.line + index] = "";
+        }
+      })
+      modifiedData[item.line] = modifiedData[item.line] + item.msgstr.replace(/"/g, "").replace(/^\n+/, "") || "";
+    } catch (err) {
+      console.error(`Error modifying file: ${err}`);
+    }
+  }
+  selectArr.forEach(item => {
+    for (let i = 0; i < ((item.msgstr.split("\n").length - 2)); i++) {
+      modifiedData.splice(item.line + 1, 1)
+    }
+  })
+  modifiedData = modifiedData.join('\n');
+  // 写入文件
+  await writeFileAsync(path, modifiedData, 'utf8');
+}
+
+async function processLineByLine(input) {
+  const regex1 = /#: (.*?)\nmsgid/s;
+  const regex2 = /msgid "(.*?)"(?=\nmsgstr)/s;
+  const path = [];
+  const msgid = [];
+  const msgstr = [];
+  const line = [];
+
+  input.forEach(ele => {
+    // console.log(regex1.exec(ele)[1]);
+    const str = ele.match(regex1)[1].replace("\n#:","").split("\n")[0];
+    const paths = str.split(" ");
+    if (paths.length !== 1) {
+      for (let i = 0; i < paths.length; i++) {
+        const p = paths[i];
+        path.push(p.split(":")[0].replace("src/",""));
+        line.push(p.split(":")[1]);
+        msgid.push(regex2.exec(ele)[1]);
+        msgstr.push(ele.split("msgstr ")[1]);
+      }
+    }else{
+      path.push(paths[0].split(":")[0].replace("src/",""));
+      line.push(paths[0].split(":")[1]);
+      msgid.push(regex2.exec(ele)[1]);
+      msgstr.push(ele.split("msgstr ")[1]);
+    }
+  })
+
+  const result = path.map((value, index) => {
+    return {
+      path: value,
+      msgid: msgid[index],
+      msgstr: msgstr[index],
+      line: line[index] - 1,
+    }
+  })
+  return result
+}
+
+async function translatorMdBook(items) {
+  await items.forEach(async(item) => {
+    const path = `./tmpl/${item.catalogueName}/${item.repoUrl.split("/").pop()}${item.mdbookTranslator}`;
+    const data = await fsAsync.readFile(path, 'utf8');
+    const block = data.split("\n\n");
+    block.splice(0,1);
+    const res = await processLineByLine(block);
+    let groupedByPath = res.reduce((result, currentItem) => {
+      (result[currentItem['path']] = result[currentItem['path']] || []).push(currentItem);
+      return result;
+    }, {});
+    for (const key in groupedByPath) {
+      const element = groupedByPath[key];
+      await replaceStr(element, `./docs/${item.catalogueName}/${key}`)
+    }
+  })
+}
+
 const main = async () => {
   const index = process.argv.slice(2)[0];
   const arr = await readJsonFile("tutorials.json");
   let tutorials = arr.filter(e => e.docType !== "page");
+  let mdbook = tutorials.filter(e => e?.mdbookTranslator);
   if (index) {
     arr.map((e, i) => {
       if (e.catalogueName === index) {
@@ -405,11 +497,17 @@ const main = async () => {
       }
     })
   }
+
   // video生成.md文件
   await generateVideo(tutorials);
+  
   // page生成.md文件
   await generatePage(arr);
 
+  // mdBook语种切换
+  if (mdbook.length !== 0) {
+    await translatorMdBook(mdbook)
+  }
   if (tutorials.length === 0) {
     const filePath = path.join("./docs", "index.md");
     fs.writeFileSync(filePath, '', function(err) {
