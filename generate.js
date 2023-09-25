@@ -11,9 +11,6 @@ const readFileAsync = util.promisify(fs.readFile);
 const parse = require('./utils/docs/summary');
 const DOCS_DIR = path.join(__dirname, 'docs');
 const md = markdownIt();
-const gettextParser = require('gettext-parser');
-const readline = require('readline');
-const visit = require('unist-util-visit');
 
 function pathReplace(path) {
   return path.replace(".md", '').replace(/\d+_/, "").replace(/%20/g, " ")
@@ -413,16 +410,25 @@ async function replaceStr(selectArr, path) {
           modifiedData[item.line + index] = "";
         }
       })
-      modifiedData[item.line] = modifiedData[item.line] + item.msgstr.replace(/"/g, "").replace(/^\n+/, "") || "";
+
+      if (item.msgstr === `""`) {
+        modifiedData[item.line] = (modifiedData[item.line] + item.msgid.replace(/"/g, "").replace(/^\n+/, "").replace(/\\/g, "").replace(/\(([^)]+)\)/g, function(match) {
+    return match.replace(/[\n\s]/g, '');
+})).trim() || "";
+      }else{
+        modifiedData[item.line] = (modifiedData[item.line] + item.msgstr.replace(/"/g, "").replace(/^\n+/, "").replace(/\\/g, "").replace(/\(([^)]+)\)/g, function(match) {
+    return match.replace(/[\n\s]/g, '');
+})).trim() || "";
+      }
     } catch (err) {
       console.error(`Error modifying file: ${err}`);
     }
   }
-  selectArr.forEach(item => {
-    for (let i = 0; i < ((item.msgstr.split("\n").length - 2)); i++) {
-      modifiedData.splice(item.line + 1, 1)
-    }
-  })
+  // selectArr.forEach(item => {
+  //   for (let i = 0; i < ((item.msgstr.split("\n").length - 2)); i++) {
+  //     modifiedData.splice(item.line + 1, 1)
+  //   }
+  // })
   modifiedData = modifiedData.join('\n');
   // 写入文件
   await writeFileAsync(path, modifiedData, 'utf8');
