@@ -1,4 +1,60 @@
 const replace = {
+    "https://github.com/ordinals/ord": [
+        {
+            path: "/inscriptions.md",
+            oldValue: 
+`Indices
+|:-----:|:-----------------:|:----------:|
+| i0, i1
+| i2
+| i3, i4, i5
+| 3
+| i6`,
+            newValue:
+`| Input | Inscription Count | Indices    |
+|:-----:|:-----------------:|:----------:|
+| 0     | 2                 | i0, i1     |
+| 1     | 1                 | i2         |
+| 2     | 3                 | i3, i4, i5 |
+| 3     | 0                 |            |
+| 4     | 1                 | i6         |`
+        },
+        {
+            path: "/guides/testing.md",
+            oldValue:
+`| Flag
+|---------|------|
+| \`--testnet\` or \`-t\`
+| \`--signet\` or \`-s\`
+| \`--regtest\` or \`-r\``,
+            newValue:
+`| Network | Flag |
+|---------|------|
+| Testnet | \`--testnet\` or \`-t\` |
+| Signet  | \`--signet\` or \`-s\` |
+| Regtest | \`--regtest\` or \`-r\` |`
+        },
+        {
+            path: "/guides/reindexing.md",
+            oldValue: "<FILENAME>",
+            newValue: "<FILENAME />"
+        },
+        {
+            path: "/guides/reindexing.md",
+            oldValue: 
+`Value
+| ------- | ------------------------------------------------ | -------------------------------------------- |
+| /home/alice/.local/share/ord
+| /Users/Alice/Library/Application Support/ord
+| C:UsersAliceAppDataRoamingord`,
+            newValue:
+`|Platform | Value                                            | Example                                      |
+| ------- | ------------------------------------------------ | -------------------------------------------- |
+| Linux   | \`$XDG_DATA_HOME\`/ord or \`$HOME\`/.local/share/ord | /home/alice/.local/share/ord                 |
+| macOS   | \`$HOME\`/Library/Application Support/ord          | /Users/Alice/Library/Application Support/ord |
+| Windows | \`{FOLDERID_RoamingAppData}\`\ord                  | C:\Users\Alice\AppData\Roaming\ord           |`
+        }
+    ],
     "https://github.com/SixdegreeLab/MasteringChainAnalytics": [
         {
             path: "/08_nft_analysis/readme.md",
@@ -28,13 +84,13 @@ const replace = {
             newValue: "https://github.com/RandyPen/sui-move-intro-course-zh/tree/main/advanced-topics/BCS_encoding/example_projects"
         }
     ],
-    "https://github.com/ordinals/ord": [
-        {
-            path: "/bounty/2.md",
-            oldValue: "class=uncommon",
-            newValue: "class=\"uncommon\""
-        }
-    ],
+    // "https://github.com/ordinals/ord": [
+    //     {
+    //         path: "/bounty/2.md",
+    //         oldValue: "class=uncommon",
+    //         newValue: "class=\"uncommon\""
+    //     }
+    // ],
     "https://github.com/miguelmota/ethereum-development-with-go-book": [
 
         {
