@@ -242,8 +242,18 @@ Protostar - 2023|[→📝](https://eprint.iacr.org/2023/620)|`
     ]
 }
 
+const summary = {
+    "https://github.com/ordinals/ord": [
+        {
+            oldValue: "[介绍](introduction.md)",
+            newValue: "- [介绍](introduction.md)"
+        }
+    ]
+}
+
 module.exports = {
     replace,
     empty,
-    normal
+    normal,
+    summary
 };

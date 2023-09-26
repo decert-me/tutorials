@@ -501,6 +501,22 @@ async function translatorMdBook(items) {
   // })
 }
 
+async function compatibleSummary(files) {
+  const file = files[0];
+  const path = "./docs/" + file + "/SUMMARY.md";    
+  let data = await readFileAsync(path, 'utf8');
+  const { summary } = require('./compatibility_table');
+  for (const key in summary) {
+    if (Object.hasOwnProperty.call(summary, key)) {
+      const list = summary[key];
+      list.forEach(item => {
+        data = data.replace(item.oldValue, item.newValue);
+      })
+    }
+  }
+  await writeFileAsync(path, data, 'utf8');
+}
+
 const main = async () => {
   const index = process.argv.slice(2)[0];
   const arr = await readJsonFile("tutorials.json");
@@ -533,6 +549,8 @@ const main = async () => {
     }); 
   }
   const files = fs.readdirSync(DOCS_DIR);
+  // summary兼容
+  await compatibleSummary(files);
   await generateSidebars(files, tutorials, tutorials.length === 0);
   await generateNavbarItemsFile(files, tutorials, tutorials.length === 0); // 执行函数
 }
