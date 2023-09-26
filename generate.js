@@ -394,8 +394,8 @@ async function generatePage(tutorials) {
 
 async function replaceStr(selectArr, path) {
   // 读一次
-  const regex = /^\W+ /;
-  // const regex = /^(?:\W+|\d+\. )/;
+  // const regex = /^\W+ /;
+  const regex = /^(\W |\d+\. )/;
   // const regex = /^(?:(?![`])\W+|\d+\. )/;
   const data = await readFileAsync(path, 'utf8');
   let modifiedData = data.split("\n");
