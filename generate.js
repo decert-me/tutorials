@@ -398,30 +398,37 @@ async function replaceStr(selectArr, path) {
   const data = await readFileAsync(path, 'utf8');
   let modifiedData = data.split("\n");
   let reduceLine = 0;      // 记录减少的行号
-  for (let i = 0; i < selectArr.length; i++) {
-    const item = selectArr[i]
-    try {
-      item.msgid.split("\n").forEach((e, index) => {
-        // 修改文件内容
-        const match = modifiedData[item.line + index].match(regex);
-        if (match && index === 0) {
-          modifiedData[item.line + index] = match[0];
+  if (path.indexOf("SUMMARY.md") !== -1) {
+    for (let i = 0; i < selectArr.length; i++) {
+      const item = selectArr[i];
+      modifiedData[item.line] = modifiedData[item.line].replace(item.msgid, item.msgstr).replace(/"/g, "");
+    }
+  }else{
+    for (let i = 0; i < selectArr.length; i++) {
+      const item = selectArr[i]
+      try {
+        item.msgid.split("\n").forEach((e, index) => {
+          // 修改文件内容
+          const match = modifiedData[item.line + index].match(regex);
+          if (match && index === 0) {
+            modifiedData[item.line + index] = match[0];
+          }else{
+            modifiedData[item.line + index] = "";
+          }
+        })
+  
+        if (item.msgstr === `""`) {
+          modifiedData[item.line] = (modifiedData[item.line] + item.msgid.replace(/"/g, "").replace(/^\n+/, "").replace(/\\/g, "").replace(/\(([^)]+)\)/g, function(match) {
+      return match.replace(/[\n\s]/g, '');
+  })).trim() || "";
         }else{
-          modifiedData[item.line + index] = "";
+          modifiedData[item.line] = (modifiedData[item.line] + item.msgstr.replace(/"/g, "").replace(/^\n+/, "").replace(/\\/g, "").replace(/\(([^)]+)\)/g, function(match) {
+      return match.replace(/[\n\s]/g, '');
+  })).trim() || "";
         }
-      })
-
-      if (item.msgstr === `""`) {
-        modifiedData[item.line] = (modifiedData[item.line] + item.msgid.replace(/"/g, "").replace(/^\n+/, "").replace(/\\/g, "").replace(/\(([^)]+)\)/g, function(match) {
-    return match.replace(/[\n\s]/g, '');
-})).trim() || "";
-      }else{
-        modifiedData[item.line] = (modifiedData[item.line] + item.msgstr.replace(/"/g, "").replace(/^\n+/, "").replace(/\\/g, "").replace(/\(([^)]+)\)/g, function(match) {
-    return match.replace(/[\n\s]/g, '');
-})).trim() || "";
+      } catch (err) {
+        console.error(`Error modifying file: ${err}`);
       }
-    } catch (err) {
-      console.error(`Error modifying file: ${err}`);
     }
   }
   // selectArr.forEach(item => {
@@ -474,21 +481,24 @@ async function processLineByLine(input) {
 }
 
 async function translatorMdBook(items) {
-  await items.forEach(async(item) => {
-    const path = `./tmpl/${item.catalogueName}/${item.repoUrl.split("/").pop()}${item.mdbookTranslator}`;
-    const data = await fsAsync.readFile(path, 'utf8');
-    const block = data.split("\n\n");
-    block.splice(0,1);
-    const res = await processLineByLine(block);
-    let groupedByPath = res.reduce((result, currentItem) => {
-      (result[currentItem['path']] = result[currentItem['path']] || []).push(currentItem);
-      return result;
-    }, {});
-    for (const key in groupedByPath) {
-      const element = groupedByPath[key];
-      await replaceStr(element, `./docs/${item.catalogueName}/${key}`)
+  // items.forEach(async(item) => {
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];      
+      const path = `./tmpl/${item.catalogueName}/${item.repoUrl.split("/").pop()}${item.mdbookTranslator}`;
+      const data = await fsAsync.readFile(path, 'utf8');
+      const block = data.split("\n\n");
+      block.splice(0,1);
+      const res = await processLineByLine(block);
+      let groupedByPath = res.reduce((result, currentItem) => {
+        (result[currentItem['path']] = result[currentItem['path']] || []).push(currentItem);
+        return result;
+      }, {});
+      for (const key in groupedByPath) {
+        const element = groupedByPath[key];
+        await replaceStr(element, `./docs/${item.catalogueName}/${key}`)
+      }
     }
-  })
+  // })
 }
 
 const main = async () => {
@@ -528,5 +538,6 @@ const main = async () => {
 }
 
 module.exports = {
-  main
+  main,
+  getSummary
 };

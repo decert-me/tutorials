@@ -7,6 +7,7 @@ const { exec } = require('child_process');
 const axios = require('axios');
 const { execSync } = require('child_process');
 const { spawn } = require('child_process');
+const DOCS_DIR = path.join(__dirname, 'docs');
 
 const common = {
   gitbook: "/",
@@ -147,7 +148,25 @@ const compatible = () => {
   });
 };
 
-function fromDir(startPath, filter, meta) {
+function findLabel(data, id) {
+  for (let item of data) {
+    if (item.id === id) {
+        return item.label;
+    }
+    if (item.link && item.link.id === id) {
+        return item.label;
+    }
+    if (item.items) {
+        let foundLabel = findLabel(item.items, id);
+        if (foundLabel) {
+            return foundLabel;
+        }
+    }
+}
+return null;
+}
+
+function fromDir(startPath, filter, meta, list) {
   if (!fs.existsSync(startPath)) {
       console.log("no dir ", startPath);
       return;
@@ -160,25 +179,27 @@ function fromDir(startPath, filter, meta) {
       const stat = fs.lstatSync(filename);
 
       if (stat.isDirectory()) {
-          fromDir(filename, filter, meta); // recurse
+          fromDir(filename, filter, meta, list); // recurse
       } else if (filename.indexOf(filter) >= 0 && filename.indexOf("SUMMARY.md") === -1) {
         //  添加metadata
           let content = fs.readFileSync(filename, 'utf8');
-          let regex = /#\s(.*)/;
-          let match = content.match(regex);
+          const idToFind = filename.replace("docs/", "").replace(".md", "");
+          let label = findLabel(list, idToFind);
+
           const textToAdd = content.startsWith("---") ?
 content = content.replace("---",
 `---
 title: "DeCert.Me | ${meta.label}"
 description: "${meta.desc}"
 image: "https://ipfs.decert.me/${meta.img}"
-${match ? `#sidebar_label: "${match[1]}"` : ""}`)
+sidebar_label: "${label}"
+`)
 :
 `---
 title: "DeCert.Me | ${meta.label}"
 description: "${meta.desc}"
 image: "https://ipfs.decert.me/${meta.img}"
-${match ? `#sidebar_label: "${match[1]}"` : ""}
+sidebar_label: "${label}"
 ---
 `
           content = textToAdd + content;
@@ -296,8 +317,12 @@ const main = async () => {
   // 兼容
   await compatible();
 
+  let json = arr.filter(e => e.docType !== "page");
+  const files = fs.readdirSync(DOCS_DIR);
+  const root = DOCS_DIR+"/"+files[0];
+  const list = await generate.getSummary("SUMMARY.md", root, json[0])
   // 遍历文档，生成指定metadata。
-  // fromDir('./docs', '.md', arr[0]);
+  fromDir('./docs', '.md', json, list);
 
   // Build project
   await buildProject();
