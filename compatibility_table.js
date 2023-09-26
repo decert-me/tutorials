@@ -40,6 +40,11 @@ const replace = {
             newValue: "<FILENAME />"
         },
         {
+            path: "/bounty/2.md",
+            oldValue: "class=uncommon",
+            newValue: "class=\"uncommon\""
+        },
+        {
             path: "/guides/reindexing.md",
             oldValue: 
 `Value
@@ -84,13 +89,6 @@ const replace = {
             newValue: "https://github.com/RandyPen/sui-move-intro-course-zh/tree/main/advanced-topics/BCS_encoding/example_projects"
         }
     ],
-    // "https://github.com/ordinals/ord": [
-    //     {
-    //         path: "/bounty/2.md",
-    //         oldValue: "class=uncommon",
-    //         newValue: "class=\"uncommon\""
-    //     }
-    // ],
     "https://github.com/miguelmota/ethereum-development-with-go-book": [
 
         {
