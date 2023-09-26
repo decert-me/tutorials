@@ -45,6 +45,56 @@ const replace = {
             newValue: "class=\"uncommon\""
         },
         {
+            path: "/guides/sat-hunting.md",
+            oldValue: "Create a watch-only wallet named `foo-watch-only`:",
+            newValue: "2. Create a watch-only wallet named `foo-watch-only`:"
+        },
+        {
+            path: "/guides/sat-hunting.md",
+            oldValue: "7. Display your wallet's rare ordinals:",
+            newValue: "6. Display your wallet's rare ordinals:"
+        },
+        {
+            path: "/guides/sat-hunting.md",
+            oldValue: "Create a descriptor for the receive address path:",
+            newValue: "2. Create a descriptor for the receive address path:"
+        },
+        {
+            path: "/guides/sat-hunting.md",
+            oldValue: "Get and note the checksum",
+            newValue: "3. Get and note the checksum"
+        },
+        {
+            path: "/guides/sat-hunting.md",
+            oldValue: "Load the wallet you want",
+            newValue: "4. Load the wallet you want"
+        },
+        {
+            path: "/guides/sat-hunting.md",
+            oldValue: "4. Now import the descriptors",
+            newValue: "5. Now import the descriptors"
+        },
+        {
+            path: "/guides/sat-hunting.md",
+            oldValue: 
+`to 
+search for your wallet's UTXOs.
+
+
+
+
+5.`,
+            newValue: 
+`to 
+search for your wallet's UTXOs.
+
+
+
+
+6.`
+        },
+        
+        {
             path: "/guides/reindexing.md",
             oldValue: 
 `Value
