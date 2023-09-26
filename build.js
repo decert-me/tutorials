@@ -172,13 +172,13 @@ content = content.replace("---",
 title: "DeCert.Me | ${meta.label}"
 description: "${meta.desc}"
 image: "https://ipfs.decert.me/${meta.img}"
-${match ? `sidebar_label: "${match[1]}"` : ""}`)
+${match ? `#sidebar_label: "${match[1]}"` : ""}`)
 :
 `---
 title: "DeCert.Me | ${meta.label}"
 description: "${meta.desc}"
 image: "https://ipfs.decert.me/${meta.img}"
-${match ? `sidebar_label: "${match[1]}"` : ""}
+${match ? `#sidebar_label: "${match[1]}"` : ""}
 ---
 `
           content = textToAdd + content;
@@ -297,7 +297,7 @@ const main = async () => {
   await compatible();
 
   // 遍历文档，生成指定metadata。
-  fromDir('./docs', '.md', arr[0]);
+  // fromDir('./docs', '.md', arr[0]);
 
   // Build project
   await buildProject();
