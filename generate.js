@@ -395,6 +395,8 @@ async function generatePage(tutorials) {
 async function replaceStr(selectArr, path) {
   // 读一次
   const regex = /^\W+ /;
+  // const regex = /^(?:\W+|\d+\. )/;
+  // const regex = /^(?:(?![`])\W+|\d+\. )/;
   const data = await readFileAsync(path, 'utf8');
   let modifiedData = data.split("\n");
   let reduceLine = 0;      // 记录减少的行号
@@ -418,11 +420,11 @@ async function replaceStr(selectArr, path) {
         })
   
         if (item.msgstr === `""`) {
-          modifiedData[item.line] = (modifiedData[item.line] + item.msgid.replace(/(?<!\\)"/g, "").replace(/^\n+/, "").replace(/\\/g, "").replace(/\(([^)]+)\)/g, function(match) {
+          modifiedData[item.line] = (modifiedData[item.line] + item.msgid.replace(/(?<!\\)"/g, "").replace(/^\n+/, "").replace(/\\(?!n)/g, "").replace(/\(([^)]+)\)/g, function(match) {
       return match.replace(/[\n\s]/g, '');
   })).trim() || "";
         }else{
-          modifiedData[item.line] = (modifiedData[item.line] + item.msgstr.replace(/(?<!\\)"/g, "").replace(/^\n+/, "").replace(/\\/g, "").replace(/\(([^)]+)\)/g, function(match) {
+          modifiedData[item.line] = (modifiedData[item.line] + item.msgstr.replace(/(?<!\\)"/g, "").replace(/^\n+/, "").replace(/\\(?!n)/g, "").replace(/\(([^)]+)\)/g, function(match) {
       return match.replace(/[\n\s]/g, '');
   })).trim() || "";
         }
@@ -437,6 +439,11 @@ async function replaceStr(selectArr, path) {
   //   }
   // })
   modifiedData = modifiedData.join('\n');
+  const block = /```[\s\S]*?```/g;
+  modifiedData = modifiedData.replace(block, function(match) {
+    return match.replace(/\\n/g, '');
+  })
+  // .replace(/<([^>]+)>/g, '{`<$1>`}');
   // 写入文件
   await writeFileAsync(path, modifiedData, 'utf8');
 }
