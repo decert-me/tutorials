@@ -418,11 +418,11 @@ async function replaceStr(selectArr, path) {
         })
   
         if (item.msgstr === `""`) {
-          modifiedData[item.line] = (modifiedData[item.line] + item.msgid.replace(/"/g, "").replace(/^\n+/, "").replace(/\\/g, "").replace(/\(([^)]+)\)/g, function(match) {
+          modifiedData[item.line] = (modifiedData[item.line] + item.msgid.replace(/(?<!\\)"/g, "").replace(/^\n+/, "").replace(/\\/g, "").replace(/\(([^)]+)\)/g, function(match) {
       return match.replace(/[\n\s]/g, '');
   })).trim() || "";
         }else{
-          modifiedData[item.line] = (modifiedData[item.line] + item.msgstr.replace(/"/g, "").replace(/^\n+/, "").replace(/\\/g, "").replace(/\(([^)]+)\)/g, function(match) {
+          modifiedData[item.line] = (modifiedData[item.line] + item.msgstr.replace(/(?<!\\)"/g, "").replace(/^\n+/, "").replace(/\\/g, "").replace(/\(([^)]+)\)/g, function(match) {
       return match.replace(/[\n\s]/g, '');
   })).trim() || "";
         }
