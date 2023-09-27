@@ -313,16 +313,18 @@ const main = async () => {
 
   // generate sidebars、navbarItems
   await generate.main();
-  
+
   // 兼容
   await compatible();
 
-  let json = arr.filter(e => e.docType !== "page");
-  const files = fs.readdirSync(DOCS_DIR);
-  const root = DOCS_DIR+"/"+files[0];
-  const list = await generate.getSummary("SUMMARY.md", root, json[0])
-  // 遍历文档，生成指定metadata。
-  fromDir('./docs', '.md', json[0], list);
+  if (arr[0].docType !== "page") {    
+    // 遍历文档，生成指定metadata。
+    let json = arr.filter(e => e.docType !== "page");
+    const files = fs.readdirSync(DOCS_DIR);
+    const root = DOCS_DIR+"/"+files[0];
+    const list = await generate.getSummary("SUMMARY.md", root, json[0])
+    fromDir('./docs', '.md', json[0], list);
+  }
 
   // Build project
   await buildProject();

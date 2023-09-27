@@ -556,8 +556,10 @@ const main = async () => {
     }); 
   }
   const files = fs.readdirSync(DOCS_DIR);
-  // summary兼容
-  await compatibleSummary(files);
+  if (tutorials.length !== 0) {    
+    // summary兼容
+    await compatibleSummary(files);
+  }
   await generateSidebars(files, tutorials, tutorials.length === 0);
   await generateNavbarItemsFile(files, tutorials, tutorials.length === 0); // 执行函数
 }
