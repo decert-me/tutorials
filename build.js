@@ -189,14 +189,14 @@ function fromDir(startPath, filter, meta, list) {
           const textToAdd = content.startsWith("---") ?
 content = content.replace("---",
 `---
-title: "DeCert.Me | ${meta.label}"
+title: "${label}"
 description: "${meta.desc}"
 image: "https://ipfs.decert.me/${meta.img}"
 sidebar_label: "${label}"
 `)
 :
 `---
-title: "DeCert.Me | ${meta.label}"
+title: "${label}"
 description: "${meta.desc}"
 image: "https://ipfs.decert.me/${meta.img}"
 sidebar_label: "${label}"
@@ -220,8 +220,8 @@ async function metadataInit(meta, index) {
   metadata.metadata = [
     {name: "twiter:card", content: "summary_large_image"},
     {property: "og:url", content: "https://decert.me/tutorials"},
-    {property: "title", content: `DeCert.Me | ${meta.label}`},
-    {property: "og:title", content: `DeCert.Me | ${meta.label}`},
+    {property: "title", content: `${meta.label}`},
+    {property: "og:title", content: `${meta.label}`},
     {property: "description", content: meta.desc},
     {property: "og:description", content: meta.desc},
     {property: "og:image", content: "https://ipfs.decert.me/" + meta.img},
@@ -322,7 +322,7 @@ const main = async () => {
   const root = DOCS_DIR+"/"+files[0];
   const list = await generate.getSummary("SUMMARY.md", root, json[0])
   // 遍历文档，生成指定metadata。
-  fromDir('./docs', '.md', json, list);
+  fromDir('./docs', '.md', json[0], list);
 
   // Build project
   await buildProject();
