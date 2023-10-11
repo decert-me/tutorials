@@ -21,7 +21,7 @@ function getRepoPath(repoUrl) {
   return repoPath.endsWith('.git') ? repoPath.slice(0, -4) : repoPath;
 }
 
-const downloadFile = async(repoUrl, commitHash, catalogueName) => {
+const downloadFile = async({repoUrl, commitHash, catalogueName, branch}) => {
   const targetFolder = `./tmpl/${catalogueName}/${repoUrl.split("/").reverse()[0]}`; // 替换为你要将代码拉取到的目标文件夹
   await axios.get(`https://api.github.com/repos/${getRepoPath(repoUrl)}`)
   .then(async(response) => {
@@ -35,13 +35,16 @@ const downloadFile = async(repoUrl, commitHash, catalogueName) => {
     } catch (error) {
       // console.error('代码克隆或切换commit失败:', error.message);
     }
+    // 先默认回到指定分支
+    execSync(`cd ${targetFolder} && git checkout ${branch || "main"}`);
     // 切换到指定的commit
     if (commitHash) {        
       execSync(`cd ${targetFolder} && git checkout ${commitHash}`);
       console.log(`已切换到commit：${commitHash}`);
+    }else{
+      execSync(`cd ${targetFolder} && git pull`);
+      console.log("代码更新成功！");
     }
-    execSync(`cd ${targetFolder} && git pull`);
-    console.log("代码更新成功！");
   })
   .catch(error => {
     console.log('获取GitHub仓库信息失败:', error.message);
@@ -51,8 +54,8 @@ const downloadFile = async(repoUrl, commitHash, catalogueName) => {
 const downloadAllFiles = async (filesToDownload) => {
   for (let i = 0; i < filesToDownload.length; i++) {
     if (filesToDownload[i]) {
-      const {repoUrl, commitHash, catalogueName} = filesToDownload[i];
-      await downloadFile(repoUrl, commitHash, catalogueName);
+      const obj = filesToDownload[i];
+      await downloadFile(obj);
     }
   }
 };
@@ -242,7 +245,8 @@ function paramsInit(tutorials) {
     return {
       repoUrl: `${url[1]}/${url[0]}`,
       commitHash: e.commitHash,
-      catalogueName: e.catalogueName
+      catalogueName: e.catalogueName,
+      branch: e.branch
     }
   })
   
