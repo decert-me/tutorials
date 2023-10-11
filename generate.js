@@ -77,9 +77,10 @@ async function getParseSummary(data, catalogueName, root) {
   const tokens = md.parse(data, {});
   const summary = parse.parseSummary(tokens, catalogueName);
   const isStringFound = summary.some(item => item?.id?.includes(catalogueName + "/README"));
+  const isStringFound_ = summary.some(item => item?.id?.includes(catalogueName + "/readme"));
   // 检测是否存在README.md
   const filePath = `${root}/README.md`;
-  if (!isStringFound && fs.existsSync(filePath)) {
+  if (!isStringFound && !isStringFound_ && fs.existsSync(filePath)) {
     summary.unshift({
         type: 'doc',
         id: `${catalogueName}/README`,

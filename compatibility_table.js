@@ -112,7 +112,7 @@ search for your wallet's UTXOs.
     ],
     "https://github.com/SixdegreeLab/MasteringChainAnalytics": [
         {
-            path: "/08_nft_analysis/readme.md",
+            path: "/ch12/ch12-nft-analysis.md",
             oldValue: "<br>",
             newValue: "<br/>"
         }
