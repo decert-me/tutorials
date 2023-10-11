@@ -115,6 +115,19 @@ search for your wallet's UTXOs.
             path: "/ch12/ch12-nft-analysis.md",
             oldValue: "<br>",
             newValue: "<br/>"
+        },
+        {
+            path: "/readme.md",
+            oldValue: 
+`<p align="center">
+  <img src="assets/bookcover-zh.png" alt="book" width="60%"/>
+</p>`,
+            newValue:
+`import Image from './assets/bookcover-zh.png';
+
+<p align="center">
+<img src={Image} alt="book" width="60%"/>
+</p>`
         }
     ],
     "https://github.com/RandyPen/sui-move-intro-course-zh": [
