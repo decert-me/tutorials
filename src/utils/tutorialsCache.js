@@ -128,7 +128,7 @@ export function updateLocalTutorial(params) {
         tutorials.forEach(e => {
             if (e.catalogueName === catalogueName) {
                 e.list.forEach(ele => {
-                    if (ele.docId === docId) {
+                    if (docId.includes(ele.docId)) {
                         ele.is_finish = !ele.is_finish;
                     }
                 })

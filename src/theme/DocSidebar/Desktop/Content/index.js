@@ -103,7 +103,7 @@ export default function DocSidebarDesktopContent({path, sidebar, className}) {
   }
 
   useEffect(() => {
-    address && init()
+    init()
   },[address])
 
   useEffect(() => {
