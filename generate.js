@@ -356,7 +356,8 @@ async function startGeneratePage(ele) {
   const regex = /!\[.*?\]\((.*?)\)/g;
   const matchedUrls = mdContent.match(regex);
   const imageUrls = matchedUrls && matchedUrls.map(url => url.replace(/!\[.*?\]\((.*?)\)/, '$1'));
-  imageUrls.forEach(e => {
+  
+  imageUrls && imageUrls.forEach(e => {
     if (!/^(http|https):\/\//.test(e)) {
       let url = ele.repoUrl.split(/(master|main)\//)[0];
       const branch = ele.repoUrl.includes("master") ? "master" : "main";
