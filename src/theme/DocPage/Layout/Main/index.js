@@ -68,7 +68,7 @@ export default function DocPageLayoutMain({hiddenSidebarContainer, children}) {
     if (location.pathname.indexOf("/tutorial/category") !== -1) {
       return
     }
-    // init()
+    init()
   },[location])
 
   return (
