@@ -321,7 +321,7 @@ const main = async () => {
   // 兼容
   await compatible();
 
-  if (arr[0].docType !== "page") {    
+  if (arr[0].docType !== "page" && arr[0].docType !== "docusaurus") {    
     // 遍历文档，生成指定metadata。
     let json = arr.filter(e => e.docType !== "page");
     const files = fs.readdirSync(DOCS_DIR);

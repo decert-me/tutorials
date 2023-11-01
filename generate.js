@@ -224,9 +224,9 @@ function readJsonFile(filePath) {
       // docusaurus
       const filepath = `./docs/${item.catalogueName}`;
       const files = filterMDFiles(filepath);
-        const path = findMDFiles(files)
-        const res = await categoryContrast(path, filepath)
-        page = file+"/"+res;
+      const path = findMDFiles(files)
+      const res = await categoryContrast(path, filepath)
+      page = file+"/"+res;
     }
     return page
   }
@@ -558,7 +558,7 @@ const main = async () => {
     }); 
   }
   const files = fs.readdirSync(DOCS_DIR);
-  if (tutorials.length !== 0) {    
+  if (tutorials.length !== 0 && tutorials[0].docType !== "docusaurus") {    
     // summary兼容
     await compatibleSummary(files);
   }
