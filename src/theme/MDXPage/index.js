@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import {
   PageMetadata,
@@ -15,6 +15,8 @@ import {
 } from '@ant-design/icons';
 import { useLocation } from '@docusaurus/router';
 import { Button } from 'antd';
+import { useAccount } from 'wagmi';
+import { getTutorialProgress, updateProgress } from '../../request/public';
 
 function RepoUrl(selectRepoUrl, isMobile) {
   
@@ -39,9 +41,16 @@ export default function MDXPage(props) {
     frontMatter;
   const json = require("@site/tutorials.json");
   const location = useLocation();
+  const boxRef = useRef(null);
+  const { isConnected } = useAccount();
+
+
   let [tutorial, setTutorial] = useState();
   let [isMobile, setIsMobile] = useState(false);
   let [isOpen, setIsOpen] = useState(false);
+  let [isBottomVisible, setIsBottomVisible] = useState(false);
+  let [selectItem, setSelectItem] = useState();
+  let [isFinish, setIsFinish] = useState();
 
   function changeToc(params) {
     setIsOpen(!isOpen);
@@ -58,12 +67,20 @@ export default function MDXPage(props) {
     const { top } = foot.getBoundingClientRect();
     const hasBtn = tutorial?.challenge && button;
 
+    if (boxRef.current) {
+      const elementRect = boxRef.current.getBoundingClientRect();
+      const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+      isBottomVisible = elementRect.bottom * 0.8 <= viewportHeight;
+      setIsBottomVisible(isBottomVisible);
+    }
+
     if (document.documentElement.clientWidth <= 996) {
       return
     }
+
     if (hasBtn) {
       button.style.width = element.clientWidth + "px";
-      button.style.left = left || myLeft + 1 + "px";
+      button.style.left = (left || myLeft) + 1 + "px";
     }
     if (window.pageYOffset >= 16) {
       placeholder.style.display = "block";
@@ -97,6 +114,86 @@ export default function MDXPage(props) {
     }
   }
 
+  // 阅读完当前页
+  function update(params) {
+    updateStatus()
+    setIsFinish(true);
+  }
+
+  // 更新学习进度
+  async function updateStatus() {
+    // 判断当前是否登陆 => 
+    const {catalogueName, docId} = selectItem;
+    if (isConnected) {
+      await updateProgress({
+        catalogueName,
+        data: [{ docId, is_finish: true}]
+      })
+    }else{
+      const local = JSON.parse(localStorage.getItem("decert.tutorials"));
+      local.forEach(e => {
+        if (e.catalogueName === catalogueName) {
+          e.list[0].is_finish = true;
+        }
+      })
+      localStorage.setItem("decert.tutorials", JSON.stringify(local));
+    }
+  }
+  
+  // 判断当前的教程是否有被初始化
+  function hasRecord({catalogueName, docId}) {
+    if (isConnected) {
+      getTutorialProgress({
+        catalogueName: catalogueName,
+        data: [{docId}]
+      })
+      .then(res => {
+        if (res.status === 0) {
+          setIsFinish(res.data.data[0].is_finish);
+        }
+
+      })
+      return
+    }
+    const local = localStorage.getItem("decert.tutorials");
+    if (local) {
+      const data = JSON.parse(local);
+      const has = data.filter(e => e.catalogueName === catalogueName)
+
+      // 如果有 ? 则获取记录 : 则初始化记录
+      if (has.length !== 0) {
+        const {is_finish} = has[0];
+        setIsFinish(is_finish)
+      }else{
+        data.push({
+          catalogueName,
+          list: [{
+            docId,
+            is_finish: false
+          }]
+        })
+        localStorage.setItem("decert.tutorials", JSON.stringify(data));
+      }
+    }
+  }
+
+  function init(params) {
+    const path = location.pathname.split("/tutorial/")[1];
+    const catalogueName = path.split("/")[0];
+    const selectJson = json.filter(e => e.catalogueName === catalogueName)[0];
+    setIsBottomVisible(false);
+    selectItem = {
+      catalogueName: catalogueName,
+      docId: path,
+      docType: selectJson.docType
+    }
+    setSelectItem({...selectItem});
+
+    // 获取本地缓存内是否有page的阅读记录，如果没有则创建
+    hasRecord({catalogueName, docId: path});
+
+  }
+
   useEffect(() => {
     const arr = source.split("/");
     const select = arr[arr.length - 2];
@@ -119,11 +216,20 @@ export default function MDXPage(props) {
   useEffect(() => {
     const { hash } = location;
     hash && onScroll();
+    init();
   },[location])
+
+  useEffect(() => {
+    init()
+  },[isConnected])
 
   useEffect(() => {
     tutorial && onScroll();
   },[tutorial])
+
+  useEffect(() => {
+    isBottomVisible && !isFinish && update()
+  },[isBottomVisible])
 
   return (
     <HtmlClassNameProvider
@@ -160,7 +266,7 @@ export default function MDXPage(props) {
             </ul>
           </div>
         }
-        <main className="container container--fluid margin-vert--lg page">
+        <main ref={boxRef} className="container container--fluid margin-vert--lg page">
           <div className={clsx('row', styles.mdxPageWrapper)}>
             <div className={clsx('col', !hideTableOfContents && 'col--8')}>
               <article style={{ position: "relative" }}>
