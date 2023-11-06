@@ -9,9 +9,12 @@ import Layout from '@theme/Layout';
 import MDXContent from '@theme/MDXContent';
 import TOC from '@theme/TOC';
 import styles from './styles.module.css';
+import './index.css';
 import {
   HomeFilled,
 } from '@ant-design/icons';
+import { useLocation } from '@docusaurus/router';
+import { Button } from 'antd';
 
 function RepoUrl(selectRepoUrl, isMobile) {
   
@@ -35,12 +38,63 @@ export default function MDXPage(props) {
   const {wrapperClassName, hide_table_of_contents: hideTableOfContents} =
     frontMatter;
   const json = require("@site/tutorials.json");
+  const location = useLocation();
   let [tutorial, setTutorial] = useState();
   let [isMobile, setIsMobile] = useState(false);
   let [isOpen, setIsOpen] = useState(false);
 
   function changeToc(params) {
     setIsOpen(!isOpen);
+  }
+
+  function onScroll(params) {
+    const element = document.getElementById('custom-toc');
+    const button = document.querySelector("#custom-toc .custom-bottom");
+    const scrollbar = document.querySelector("#custom-toc .thin-scrollbar");
+    const placeholder = document.getElementById('placeholder');
+    const foot = document.querySelector(".Footer");
+    const { left, width } = placeholder.getBoundingClientRect();
+    const { left: myLeft, width: myWidth } = element.getBoundingClientRect();
+    const { top } = foot.getBoundingClientRect();
+    const hasBtn = tutorial?.challenge && button;
+
+    if (document.documentElement.clientWidth <= 996) {
+      return
+    }
+    if (hasBtn) {
+      button.style.width = element.clientWidth + "px";
+      button.style.left = left || myLeft + 1 + "px";
+    }
+    if (window.pageYOffset >= 16) {
+      placeholder.style.display = "block";
+      // 将元素设置为 fixed
+      element.style.position = 'fixed';
+      element.style.top = "92px";
+      element.style.left = left || myLeft + "px";
+      element.style.width = width || myWidth + "px";
+      if (hasBtn) {
+        button.style.bottom = 0;
+      }
+      scrollbar.style.height = "calc(100vh - 82px - 82px - 16px)";
+      if (window.innerHeight > top - 100) {
+        element.style.bottom = (window.innerHeight - top + 100) + "px";
+        element.style.top = "auto";
+        scrollbar.classList.add("small-height");
+        if (hasBtn) {
+          button.style.bottom = (window.innerHeight - top + 100) + "px";
+        }
+      }else{
+        scrollbar.classList.remove("small-height");
+      }
+    } else {
+      // 否则，将元素设置回正常位置
+      element.style.position = 'static';
+      placeholder.style.display = "none";
+      scrollbar.style.height = "calc(100vh - 82px - 10px - 82px - 16px)";
+      if (hasBtn) {
+        button.style.bottom = 0;
+      }
+    }
   }
 
   useEffect(() => {
@@ -54,6 +108,23 @@ export default function MDXPage(props) {
       setIsMobile(isMobile);
     }
   },[])
+
+  useEffect(() => {
+    window.addEventListener('scroll', onScroll)
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+    }
+  },[])
+
+  useEffect(() => {
+    const { hash } = location;
+    hash && onScroll();
+  },[location])
+
+  useEffect(() => {
+    tutorial && onScroll();
+  },[tutorial])
+
   return (
     <HtmlClassNameProvider
       className={clsx(
@@ -124,14 +195,32 @@ export default function MDXPage(props) {
                 </MDXContent>
               </article>
             </div>
-            {!hideTableOfContents && MDXPageContent.toc.length > 0 && (
-              <div className="col col--2">
-                <TOC
-                  toc={MDXPageContent.toc}
-                  minHeadingLevel={frontMatter.toc_min_heading_level}
-                  maxHeadingLevel={frontMatter.toc_max_heading_level}
-                />
-              </div>
+            {/* TODO: 样式调整 */}
+            {!hideTableOfContents && MDXPageContent.toc.length > 0 && !isMobile && (
+              <>
+                <div className="col col--2" id="placeholder"></div>
+
+                  <div className="col col--2" id="custom-toc">
+                    <TOC
+                      toc={MDXPageContent.toc}
+                      minHeadingLevel={frontMatter.toc_min_heading_level}
+                      maxHeadingLevel={frontMatter.toc_max_heading_level}
+                    />
+                    {
+                      tutorial?.challenge &&
+                      <div className="custom-bottom">
+                          <Button 
+                            type='primary'
+                            onClick={() => {
+                              window.open(`https://decert.me/quests/${tutorial.challenge}`, '_blank')
+                            }}
+                          >
+                            开始挑战
+                          </Button>
+                      </div>
+                    }
+                  </div>
+              </>
             )}
           </div>
         </main>
