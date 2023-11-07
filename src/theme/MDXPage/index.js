@@ -17,6 +17,7 @@ import { useLocation } from '@docusaurus/router';
 import { Button } from 'antd';
 import { useAccount } from 'wagmi';
 import { getTutorialProgress, updateProgress } from '../../request/public';
+import CustomSidebar from '../../components/CustomSidebar';
 
 function RepoUrl(selectRepoUrl, isMobile) {
   
@@ -334,6 +335,10 @@ export default function MDXPage(props) {
               </>
             )}
           </div>
+          {
+            typeof window !== 'undefined' && window.screen.width < 996 &&
+            <CustomSidebar />
+          }
         </main>
       </Layout>
     </HtmlClassNameProvider>
