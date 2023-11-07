@@ -46,7 +46,10 @@ export default function CustomSidebar(params) {
                 key="bottom"
                 // zIndex={20}
             >
-                {/* <NavbarMobileSidebarSecondaryMenu /> */}
+                {
+                    json[0].docType !== "page" &&
+                    <NavbarMobileSidebarSecondaryMenu />
+                }
 
                 {/* <NavbarMobileSidebarPrimaryMenu /> */}
                 {
