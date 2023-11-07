@@ -57,6 +57,18 @@ export default function MDXPage(props) {
   }
 
   function onScroll(params) {
+
+    if (boxRef.current) {
+      const elementRect = boxRef.current.getBoundingClientRect();
+      const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+      isBottomVisible = elementRect.bottom * 0.8 <= viewportHeight;
+      setIsBottomVisible(isBottomVisible);
+    }
+
+    if (isMobile) {
+      return
+    }
+
     const element = document.getElementById('custom-toc');
     const button = document.querySelector("#custom-toc .custom-bottom");
     const scrollbar = document.querySelector("#custom-toc .thin-scrollbar");
@@ -66,13 +78,6 @@ export default function MDXPage(props) {
     const { left: myLeft, width: myWidth } = element.getBoundingClientRect();
     const { top } = foot.getBoundingClientRect();
     const hasBtn = tutorial?.challenge && button;
-
-    if (boxRef.current) {
-      const elementRect = boxRef.current.getBoundingClientRect();
-      const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
-      isBottomVisible = elementRect.bottom * 0.8 <= viewportHeight;
-      setIsBottomVisible(isBottomVisible);
-    }
 
     if (document.documentElement.clientWidth <= 996) {
       return

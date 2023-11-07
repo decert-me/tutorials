@@ -1,16 +1,11 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import "./styles.scss"
 import { Button, Drawer } from 'antd';
-import NavbarMobileSidebarLayout from '@theme/Navbar/MobileSidebar/Layout';
-import NavbarMobileSidebarHeader from '@theme/Navbar/MobileSidebar/Header';
-import NavbarMobileSidebarPrimaryMenu from '@theme/Navbar/MobileSidebar/PrimaryMenu';
 import NavbarMobileSidebarSecondaryMenu from '@theme/Navbar/MobileSidebar/SecondaryMenu';
-import { GlobalContext } from '../../provider';
 
 export default function CustomSidebar(params) {
 
     const json = require("../../../tutorials.json");
-    const { selectTutorial } = useContext(GlobalContext);
     const [open, setOpen] = useState(false);
     let [tokenId, setTokenId] = useState();
 
@@ -23,15 +18,13 @@ export default function CustomSidebar(params) {
     };
 
     function init() {
-        const catalogueName = selectTutorial[0].docId.split("/")[0]
-        const arr = json.filter(e => e.catalogueName === catalogueName);
-        tokenId = arr[0]?.challenge;
+        tokenId = json[0]?.challenge;
         setTokenId(tokenId);
     }
 
     useEffect(() => {
-        selectTutorial && selectTutorial.length > 0 && init();
-    },[selectTutorial])
+        init();
+    },[])
     
     return (
         <>
@@ -53,7 +46,8 @@ export default function CustomSidebar(params) {
                 key="bottom"
                 // zIndex={20}
             >
-                <NavbarMobileSidebarSecondaryMenu />
+                {/* <NavbarMobileSidebarSecondaryMenu /> */}
+
                 {/* <NavbarMobileSidebarPrimaryMenu /> */}
                 {
                     tokenId &&

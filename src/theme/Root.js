@@ -9,6 +9,7 @@ import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum'
 import { Web3Modal } from '@web3modal/react'
 
 import { GlobalContextProvider } from '../provider';  //  全局变量
+import CustomSidebar from '../components/CustomSidebar';
 
 // Default implementation, that you can customize
 export default function Root({children}) {
@@ -51,9 +52,12 @@ export default function Root({children}) {
 
     return (
         <GlobalContextProvider>
-
             <WagmiConfig client={wagmiClient}>
                 <>{children}</>
+                {
+                  typeof window !== 'undefined' && window.screen.width < 996 &&
+                  <CustomSidebar />
+                }
             </WagmiConfig>
             <Web3Modal projectId={projectId} ethereumClient={ethereumClient} />
         </GlobalContextProvider>
