@@ -24,15 +24,14 @@
 
 .goChallenge{
     width: 100%;
-    padding: 20px 0;
+    padding: 20px 27px;
     border-top: 1px solid #EFEFEFFF;
     position: absolute;
     bottom: 0;
     background-color: #fff;
     button{
-        width: 337px;
+        width: 100%;
         height: 40px;
-        margin: 0 27px;
         font-weight: 500;
         background-color: #8F5A35;
         &:hover{
