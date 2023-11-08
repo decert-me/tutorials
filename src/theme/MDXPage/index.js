@@ -89,12 +89,14 @@ export default function MDXPage(props) {
       button.style.left = (left || myLeft) + 1 + "px";
     }
     if (window.pageYOffset >= 16) {
+      const pl = left || myLeft;
+      const pw = width || myWidth;
       placeholder.style.display = "block";
       // 将元素设置为 fixed
       element.style.position = 'fixed';
       element.style.top = "92px";
-      element.style.left = left || myLeft + "px";
-      element.style.width = width || myWidth + "px";
+      element.style.left = pl+ "px";
+      element.style.width = pw + "px";
       if (hasBtn) {
         button.style.bottom = 0;
       }
@@ -213,9 +215,11 @@ export default function MDXPage(props) {
   },[])
 
   useEffect(() => {
-    window.addEventListener('scroll', onScroll)
+    window.addEventListener('scroll', onScroll);
+    window.addEventListener("resize", onScroll);
     return () => {
-      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener("resize", onScroll);
     }
   },[])
 
@@ -236,6 +240,10 @@ export default function MDXPage(props) {
   useEffect(() => {
     isBottomVisible && !isFinish && update()
   },[isBottomVisible])
+
+  useEffect(() => {
+    console.log(MDXPageContent?.toc);
+  },[MDXPageContent])
 
   return (
     <HtmlClassNameProvider
@@ -337,7 +345,7 @@ export default function MDXPage(props) {
           </div>
           {
             typeof window !== 'undefined' && window.screen.width < 996 &&
-            <CustomSidebar />
+            <CustomSidebar toc={selectItem?.docType === "page" ? MDXPageContent?.toc : []} />
           }
         </main>
       </Layout>

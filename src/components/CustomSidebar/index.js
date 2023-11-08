@@ -3,7 +3,7 @@ import "./styles.scss"
 import { Button, Drawer } from 'antd';
 import NavbarMobileSidebarSecondaryMenu from '@theme/Navbar/MobileSidebar/SecondaryMenu';
 
-export default function CustomSidebar(params) {
+export default function CustomSidebar({toc}) {
 
     const json = require("../../../tutorials.json");
     const [open, setOpen] = useState(false);
@@ -47,8 +47,18 @@ export default function CustomSidebar(params) {
                 // zIndex={20}
             >
                 {
-                    json[0].docType !== "page" &&
+                    json[0].docType !== "page" ?
                     <NavbarMobileSidebarSecondaryMenu />
+                    :
+                    <ul className="page-ul">
+                        {
+                            toc.map(item => 
+                                <li key={item.id}>
+                                    <a href={`#${item.id}`} onClick={onClose}>{item.value}</a>
+                                </li>  
+                            )
+                        }
+                    </ul>
                 }
 
                 {/* <NavbarMobileSidebarPrimaryMenu /> */}

@@ -6,7 +6,7 @@
     justify-content: space-between;
     height: 100vh;
 }
-#custom-toc ul{
+#custom-toc .table-of-contents{
     padding-bottom: 80px;
     border: none;
     display: flex;

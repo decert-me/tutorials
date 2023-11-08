@@ -64,7 +64,19 @@
     .ant-drawer-body{
         padding: 0;
     }
-
+    .page-ul{
+        padding: 0;
+        list-style: none;
+        a{
+            height: 54px;
+            padding-left: 27px;
+            padding-right: 44px;
+            display: inline-block;
+            color: #606770;
+            font-weight: 500;
+            line-height: 54px;
+        }
+    }
     .menu__list-item-collapsible{
         border-radius: 0;
     }
