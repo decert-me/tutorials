@@ -544,7 +544,7 @@ const main = async () => {
   
   // page生成.md文件
   await generatePage(arr);
-
+  
   // mdBook语种切换
   if (mdbook.length !== 0) {
     await translatorMdBook(mdbook)
@@ -558,7 +558,7 @@ const main = async () => {
     }); 
   }
   const files = fs.readdirSync(DOCS_DIR);
-  if (tutorials.length !== 0 && tutorials[0].docType !== "docusaurus") {    
+  if (tutorials.length !== 0 && tutorials[0].docType !== "docusaurus" && tutorials[0].docType !== "video") {    
     // summary兼容
     await compatibleSummary(files);
   }
