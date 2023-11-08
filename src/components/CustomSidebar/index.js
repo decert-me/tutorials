@@ -11,10 +11,13 @@ export default function CustomSidebar({toc}) {
 
     const showDrawer = () => {
         setOpen(!open);
+        console.log(document.body);
+        document.body.classList.add("scroll-hidden");
     };
 
     const onClose = () => {
         setOpen(false);
+        document.body.classList.remove("scroll-hidden");
     };
 
     function init() {

@@ -1,3 +1,6 @@
+.scroll-hidden{
+    overflow: hidden !important;
+}
 #custom-toc{
     /* width: calc(2 / 12 * 100%); */
     border-left: 1px solid #dadde1;
