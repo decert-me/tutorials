@@ -11,7 +11,6 @@ export default function CustomSidebar({toc}) {
 
     const showDrawer = () => {
         setOpen(!open);
-        console.log(document.body);
         document.body.classList.add("scroll-hidden");
     };
 
@@ -25,9 +24,21 @@ export default function CustomSidebar({toc}) {
         setTokenId(tokenId);
     }
 
+    function eventInit(params) {
+        const doms = document.querySelectorAll(".custom-drawer .menu__link");
+        // 为每个节点添加点击事件
+        doms.forEach(function(dom) {
+            dom.addEventListener('click', onClose);
+        });
+    }
+
     useEffect(() => {
         init();
-    },[])
+    },[]);
+
+    useEffect(() => {
+        open && json[0].docType !== "page" && eventInit();
+    },[open])
     
     return (
         <>
