@@ -186,9 +186,8 @@ function fromDir(startPath, filter, meta, list) {
       } else if (filename.indexOf(filter) >= 0 && filename.indexOf("SUMMARY.md") === -1) {
         //  添加metadata
           let content = fs.readFileSync(filename, 'utf8');
-          const idToFind = filename.replace("docs/", "").replace(".md", "");
+          const idToFind = filename.replace("docs/", "").replace(".md", "").replace(/\/\d+_/, '/');;
           let label = findLabel(list, idToFind);
-
           const textToAdd = content.startsWith("---") ?
 content = content.replace("---",
 `---
