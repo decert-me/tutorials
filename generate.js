@@ -343,7 +343,8 @@ async function startGenerate(ele) {
 }
 
 async function startGeneratePage(ele) {
-  const res = await axios.get(ele.repoUrl);
+  let repoUrl = ele.repoUrl.replace(/github\.com\/(.*?)\/blob/, "raw.githubusercontent.com/$1");
+  const res = await axios.get(repoUrl);
   const folderPath = `./src/pages/${ele.catalogueName}`;
   fs.mkdir(folderPath, (err) => {
     if (err) {
@@ -359,8 +360,8 @@ async function startGeneratePage(ele) {
   
   imageUrls && imageUrls.forEach(e => {
     if (!/^(http|https):\/\//.test(e)) {
-      let url = ele.repoUrl.split(/(master|main)\//)[0];
-      const branch = ele.repoUrl.includes("master") ? "master" : "main";
+      let url = repoUrl.split(/(master|main)\//)[0];
+      const branch = repoUrl.includes("master") ? "master" : "main";
       mdContent = mdContent.replace(e, url + branch + "/" + e);
     }
   })
