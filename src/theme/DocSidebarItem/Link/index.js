@@ -46,11 +46,13 @@ export default function DocSidebarItemLink({
   }
 
   useEffect(() => {
+    console.log("===>", selectTutorial);
     if (selectTutorial.length > 0) {
       const res = selectTutorial.find(e => e.docId === item.docId.replace(/\/readme$/i, "/"));
       if (res) {        
         isFinish = res.is_finish;
         setIsFinish(isFinish)
+        console.log("===>", isFinish);
       }
     }
   },[selectTutorial])

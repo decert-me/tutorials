@@ -37,7 +37,7 @@ export default function CustomSidebar({toc}) {
     },[]);
 
     useEffect(() => {
-        // open && json[0].docType !== "page" && eventInit();
+        open && json[0].docType !== "page" && eventInit();
     },[open])
     
     return (
