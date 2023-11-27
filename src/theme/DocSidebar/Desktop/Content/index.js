@@ -89,7 +89,6 @@ export default function DocSidebarDesktopContent({path, sidebar, className}) {
 
     const local = JSON.parse(localStorage.getItem("decert.tutorials"));
     updateTutorial(local.filter(e => e.catalogueName === selectItem.catalogueName)[0].list)
-    console.log("===>");
   }
 
   function update(params) {
