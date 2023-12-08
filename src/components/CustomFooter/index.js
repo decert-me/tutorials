@@ -11,7 +11,7 @@ export default function AppFooter({ isMobile }) {
 
   const urls = [
     {label: "Dune", value: "https://dune.com/decertme/decert"},
-    {label: "Notion", value: "https://decert.notion.site/Decert-me-8b479c6e443740f192a56f2e090829ab"},
+    {label: "Notion", value: "https://decert.notion.site/Decert-me-741858476c314063835abf9cdc4758d3"},
     {label: "Twitter", value: "https://twitter.com/decertme"},
     {label: "Discord", value: `https://discord.gg/U3kRbnc6yG`},
     {label: "Github", value: "https://github.com/decert-me"},
