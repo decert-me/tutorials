@@ -191,7 +191,7 @@ function fromDir(startPath, filter, meta, list) {
           const textToAdd = content.startsWith("---") ?
 content = content.replace("---",
 `---
-title: "${label}"
+${content.indexOf("title:") !== -1 ? "" : "title: "+label}
 description: "${meta.desc}"
 image: "https://ipfs.decert.me/${meta.img}"
 sidebar_label: "${label}"
