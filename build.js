@@ -187,8 +187,19 @@ function fromDir(startPath, filter, meta, list) {
         //  添加metadata
           let content = fs.readFileSync(filename, 'utf8');
           const idToFind = filename.replace("docs/", "").replace(".md", "").replace(/\/\d+_/, '/');;
+          // 判断是否是指定库 ? 图片路径替换
+          if (meta.repoUrl === "https://github.com/0xdwong/rust-solana-bootcamp") {
+            const regex = /\(\.\.\/\.\.\/assets\/([^)]+)\)/g;
+            content = content.replace(regex, "(https://github.com/0xdwong/rust-solana-bootcamp/blob/main/assets/$1/?raw=true)");
+            // 闭合标签
+            const tag = /<T>|<br>/g;
+            content = content.replace(tag, (match) => {
+              return match === '<T>' ? '<T />' : '<br />';
+            });
+          }
           let label = findLabel(list, idToFind);
-          const textToAdd = content.startsWith("---") ?
+          const textToAdd = !label ? "" :
+content.startsWith("---") ?
 content = content.replace("---",
 `---
 ${content.indexOf("title:") !== -1 ? "" : "title: "+label}
