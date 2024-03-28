@@ -208,6 +208,8 @@ export default function MDXPage(props) {
     const selectTutorial = json.filter(item => item.catalogueName === select);
     if (selectTutorial.length !== 0) {
       tutorial = selectTutorial[0];
+      tutorial.repoUrl = tutorial.repoUrl + `/tree/${tutorial.branch || "main"}${tutorial.docPath || ""}`
+
       setTutorial({...tutorial});
       isMobile = document.documentElement.clientWidth <= 996 ? true : false;
       setIsMobile(isMobile);

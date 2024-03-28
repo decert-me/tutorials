@@ -148,7 +148,8 @@ export default function DocBreadcrumbs() {
       selectDoc = obj.docId.split("/")[0];
     }
     const arr = json.filter(e => e.catalogueName === selectDoc)
-    selectRepoUrl = arr[0]?.repoUrl || arr[0]?.url;
+    const repoUrl = arr[0]?.repoUrl || arr[0]?.url;
+    selectRepoUrl = repoUrl + `/tree/${arr[0].branch || "main"}${arr[0].docPath || ""}`
     setSelectRepoUrl(selectRepoUrl);
     
     isMobile = document.documentElement.clientWidth <= 996 ? true : false;
