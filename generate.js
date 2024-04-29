@@ -224,7 +224,8 @@ function readJsonFile(filePath) {
       // docusaurus
       const filepath = `./docs/${item.catalogueName}`;
       const files = filterMDFiles(filepath);
-      const path = findMDFiles(files)
+      let path = findMDFiles(files)
+      if(!path) path = 'intro.md';
       const res = await categoryContrast(path, filepath)
       page = file+"/"+res;
     }
