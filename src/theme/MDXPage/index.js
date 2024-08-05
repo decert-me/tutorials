@@ -334,7 +334,7 @@ export default function MDXPage(props) {
                           <Button 
                             type='primary'
                             onClick={() => {
-                              window.open(`https://decert.me/quests/${tutorial.challenge}`, '_blank')
+                              window.open(`${tutorial.challenge}`, '_blank')
                             }}
                           >
                             开始挑战

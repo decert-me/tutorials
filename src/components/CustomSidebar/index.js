@@ -158,7 +158,7 @@ export default function CustomSidebar({toc}) {
                         <Button 
                             type="primary"
                             onClick={() => {
-                                window.open(`https://decert.me/quests/${tokenId}`, '_blank')
+                                window.open(`${tokenId}`, '_blank')
                             }}
                         >
                             开始挑战</Button>
